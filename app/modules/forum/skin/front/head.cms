@@ -18,7 +18,6 @@
     #ut-table_wrapper{padding-left:0;padding-right:0;}
     #ut-table_filter{float:right;}
     #ut-table_filter input{display:inline;width:88%}
-    pre.prettyprint{border:0;border-left:3px solid rgb(204, 204, 204);margin-left:2em;padding:0.5em;font-size:110%;display:block;font-family:"Consolas", "Monaco", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;margin:1em 0px;white-space:pre;}
     @media(max-width:640px){.itemblock{width:100%;display:block;}#col-right{position:inherit;padding-right:0;max-width:100%;}.dt-buttons{display:none;}#ut-table_filter{float:left;}}
     </style>
 </head>

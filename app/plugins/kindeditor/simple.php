@@ -7,17 +7,21 @@
 	var KDEDITOR;
     KindEditor.ready(function (K) {
         KDEDITOR = K.create('textarea[name="ut-editor"]', {
+            cssPath : ['<?php echo$GLOBALS["config"]["APPURL"];?>/app/plugins/kindeditor/plugins/code/prettify.css'],
             allowFileManager: false,
             urlType:'domain',
             afterBlur: function(){this.sync();},
             items : [
-						'source','|','fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+						'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
 						'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
-						'insertunorderedlist', '|', 'emoticons', 'image', 'link','code']
+						'insertunorderedlist', '|', 'emoticons', 'image', 'link']
         });
         if($("#ut-content").length>0){
             KDEDITOR.html($("#ut-content").val());
         }
     });
 	</script>
-	<textarea name="ut-editor" id="ut-editor" style="width:100%;height:150px;visibility:hidden;"></textarea>
+	<textarea name="ut-editor" id="ut-editor" style="width:100%;height:300px;visibility:hidden;"></textarea>
+    <script type="text/javascript">
+        $(function () { prettyPrint(); });
+    </script>

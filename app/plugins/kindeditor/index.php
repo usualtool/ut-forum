@@ -7,6 +7,7 @@
 	var KDEDITOR;
     KindEditor.ready(function (K) {
         KDEDITOR = K.create('textarea[name="ut-editor"]', {
+            cssPath : ['<?php echo$GLOBALS["config"]["APPURL"];?>/app/plugins/kindeditor/plugins/code/prettify.css'],
             allowFileManager: false,
             urlType:'domain',
             afterBlur: function(){this.sync();}
@@ -17,3 +18,6 @@
     });
 	</script>
 	<textarea name="ut-editor" id="ut-editor" style="width:100%;height:300px;visibility:hidden;"></textarea>
+    <script type="text/javascript">
+        $(function () { prettyPrint(); });
+    </script>
