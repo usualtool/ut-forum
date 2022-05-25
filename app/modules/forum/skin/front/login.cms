@@ -1,0 +1,30 @@
+<{include "head.cms"}>
+      <div class="container">
+          <div class="row ml-0 mr-0">
+            <div class="col-md-4 bg-light p-3 flex-column align-items-center">
+            </div>
+            <div class="col-md-8 bg-light p-3">
+                  <form method="post" action="<{url=>Link("forum","login","do=login")}>" class="form-validate">
+                  <input name="goto" type="hidden" value="<{$goto}>">
+                    <div class="form-group">
+                      <input name="username" type="text" required placeholder="账户" class="input-material col-md-6">
+                    </div>
+                    <div class="form-group">
+                      <input name="password" type="password" required placeholder="密码" class="input-material col-md-6">
+                    </div>
+                    <div class="form-group">
+                      <input name="code" type="text" required placeholder="验证码" class="input-material col-md-6"> 
+                      <img onclick='this.src=this.src+"&"+Math.random()' src="?m=forum&p=captcha">
+                    </div>
+                    <button id="login" type="submit" class="btn btn-primary pl-3 pr-3">登录</button>
+                  </form>
+                  <br />
+                  <small>没有账号?</small>
+                  <a href="<{url=>Link("forum","register")}>" class="signup"><small>&nbsp;Sign up</small></a> 或 
+                  <a href="<{url=>Link("authlogin","","state=forum__auth&auth=qq")}>" class="card-link mr-1"><img src="<{$appurl}>/app/modules/authlogin/image/qq.png"></a>
+                  <a href="<{url=>Link("authlogin","","state=forum__auth&auth=weibo")}>" class="mr-1"><img src="<{$appurl}>/app/modules/authlogin/image/weibo.png"></a>
+                  <a href="<{url=>Link("authlogin","","state=forum__auth&auth=wechat")}>"><img src="<{$appurl}>/app/modules/authlogin/image/wechat.png"></a>
+            </div>
+          </div>
+      </div>
+    <{include "foot.cms"}>

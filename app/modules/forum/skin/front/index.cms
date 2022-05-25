@@ -1,0 +1,121 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-8 mb-2">
+            <div class="carousel slide mb-2" data-ride="carousel">
+              <ul class="carousel-indicators">
+                <li data-target="#demo" data-slide-to="0" class="active"></li>
+              </ul>
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img src="https://www.usualtool.com/blog/assets/images/ad/2020082173265.jpg" style="width:100%;height:100px;">
+                </div>
+              </div>
+              <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </a>
+              <a class="carousel-control-next" href="#demo" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </a>
+            </div>
+            <div class="panel-heading">
+                <h5 class="media-heading">
+                    最新主题
+                </h5>
+            </div>
+            <div class="border p-3 pb-0 mb-2">
+                <ul class="list-unstyled">
+                  <{loop=>$notice as $rows}>
+                      <li class="media mb-3">
+                      <figure class="figure mr-3">
+                        <img src="<{db=>QueryData("forum_member","avatar","id='".$rows["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                        <figcaption class="figure-caption text-center">
+                            <{db=>QueryData("forum_member","username","id='".$rows["uid"]."'","","")["querydata"][0]["username"]}>
+                        </figcaption>
+                      </figure>
+                      <div class="media-body">
+                          <a href="<{url=>Link("forum","post","id=".$rows["id"])}>"><h5 class="mt-0 mb-1 text-truncate-1 text-danger"><{$rows->title}></h5></a>
+                          <p class="text-truncate-2"><{inc=>DeleteHtml($rows["content"])}></p>
+                          <p class="mt-2" style="font-size:12px;">
+                          <span class="left">
+                              <i class="fas fa-calendar" aria-hidden="true"></i> <{php=>echo date("Y-m-d",strtotime(return=>$rows["posttime"]))}> 
+                          </span>
+                          <span class="right">
+                              <a href="<{url=>Link("forum","post","id=".$rows["id"])}>#reply">回复</a>(<{db=>QueryData("forum_reply","id","postid='".$rows["id"]."'","","")["querynum"]}>) | 浏览 <{$rows->hit}>
+                          </span>
+                          </p>
+                        </div>
+                        <{if $rows["ding"]==1}>
+                            <div style="position:absolute;right:5%;max-width:100%;">
+                                <img src="<{$appurl}>/app/modules/forum/image/ding.png" class="rounded-circle" style="width:60px;height:60px;">
+                            </div>
+                        <{/if}>
+                      </li>
+                  <{/loop}>
+                  <{loop=>$forum_post as $rows}>
+                      <li class="media mb-3">
+                      <figure class="figure mr-3">
+                        <img src="<{db=>QueryData("forum_member","avatar","id='".$rows["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                        <figcaption class="figure-caption text-center splitword" style="line-height:15px;">
+                            <{db=>QueryData("forum_member","username","id='".$rows["uid"]."'","","")["querydata"][0]["username"]}>
+                        </figcaption>
+                      </figure>
+                      <div class="media-body">
+                          <a href="<{url=>Link("forum","post","id=".$rows["id"])}>">
+                          <h5 class="mt-0 mb-1 text-truncate-1">
+                          <{$rows->title}>
+                          <{if !empty($rows["files"])}><sup><i class="fa fa-paperclip" style="color:#999;" title="附件"></i></sup><{/if}>
+                          </h5>
+                          </a>
+                          <p class="text-truncate-2"><{inc=>DeleteHtml($rows["content"])}></p>
+                          <p class="mt-2" style="font-size:12px;">
+                          <span class="left">
+                              <i class="fas fa-calendar" aria-hidden="true"></i> <{php=>echo date("Y-m-d",strtotime(return=>$rows["posttime"]))}> 
+                          </span>
+                          <span class="ml-3 mr-3">
+                              <a href="<{url=>Link("forum","list","id=".$rows["fid"])}>"><{db=>QueryData("forum","forum_name","id='".$rows["fid"]."'","","")["querydata"][0]["forum_name"]}></a>
+                          </span>
+                          <span class="right">
+                              <a href="<{url=>Link("forum","post","id=".$rows["id"])}>#reply">回复</a>(<{db=>QueryData("forum_reply","id","postid='".$rows["id"]."'","","")["querynum"]}>) | 浏览 <{$rows->hit}>
+                          </span>
+                          </p>
+                        </div>
+                        <{if $rows["ding"]==1}>
+                            <div style="position:absolute;right:5%;max-width:100%;">
+                                <img src="<{$appurl}>/app/modules/forum/image/ding.png" class="rounded-circle" style="width:60px;height:60px;">
+                            </div>
+                        <{/if}>
+                      </li>
+                  <{/loop}>
+                </ul>
+            </div>
+            <{page=>total,curpage,listnum,pagelink}>
+        </div>
+        <div class="col-md-4">
+        <{include "my_nav.cms"}>
+            <div class="border mb-2">
+                <div class="card-body pt-3">
+                  <form method="get" class="form-validate">
+                    <input type="hidden" name="m" value="forum">
+                    <input type="hidden" name="p" value="search">
+                    <input type="text" name="key" class="form-control mb-2">
+                    <input type="submit" class="btn btn-primary" value="搜索主题">
+                  </form>
+                </div>
+	        </div>
+            <div class="card">
+                <div class="card-header pb-0">
+                        <h5 class="card-title">版块</h5>
+                </div>
+                <div class="card-body pt-3">
+                    <{loop=>$forum as $rows}>
+                    <p class="mb-2">
+                    <a class="text-dark" href="<{url=>Link("forum","list","id=".$rows["id"])}>"><{$rows->forum_name}></a>
+                    </p>
+                    <{/loop}>
+                </div>
+	        </div>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

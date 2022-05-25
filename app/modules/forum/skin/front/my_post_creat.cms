@@ -1,0 +1,82 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     撰写主题
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0">
+              <form method="post" action="<{url=>Link("forum","my_post_creat","do=creat")}>" class="form-validate">
+                <{if $utype==99999}>
+                <div class="form-group">
+                     <label><strong>置顶公告</strong></label>
+                     <div class="radio">
+                         <label><input type="radio" name="notice" value=1> 是</label>
+                     </div>
+                     <div class="radio">
+                         <label><input type="radio" name="notice" value=0 checked> 否</label>
+                     </div>
+                </div>
+                <{/if}>
+                <div class="form-group">
+                     <label><strong>阅读权限</strong></label>
+                     <div class="radio">
+                         <label><input type="radio" name="look" value=0 checked> 无限制</label>
+                     </div>
+                     <div class="radio">
+                         <label><input type="radio" name="look" value=1> 登陆可阅读</label>
+                     </div>
+                     <div class="radio">
+                         <label><input type="radio" name="look" value=2> 回复可阅读</label>
+                     </div>
+                </div>
+                <div class="form-group">
+                 <label><strong>版块</strong></label>
+                     <select class="form-control input-square" name="fid">
+                            <{datatree=>1,$datatree,return=>$fid}>
+                     </select>
+                </div>
+                <div class="form-group">
+                 <label><strong>主题</strong></label>
+                 <input name="title" type="text" required class="form-control">
+                </div>
+                <div class="form-group">
+                 <label><strong>内容</strong></label>
+                 <{plugin=>kindeditor,simple.php}>
+                </div>
+                <div class="form-group mb-2 border-bottom pb-2">
+                     <label>
+                     <strong>附件</strong> +<span id="addupload" class="text-danger">增加</span>
+                     下载需要 <input class="ut-input" type="text" name="payfiles" value="0" style="text-align:center;"> 积分
+                     </label>
+                             <div class="form-inline" id="upload">
+                                <div id="matter0" style="display:contents;">
+                                <input type="button" class="ut-button bg-secondary text-white mr-1" disabled onclick=delitem("matter'+upcount+'") value="删" style="max-width:15%;">
+                                <input type="file" class="form-control-file mr-1" id="file0" style="max-width:25%;">
+                                <input type="text" class="form-control mr-1" name="files[]" id="files0" placeholder="文件地址" style="max-width:35%;">
+                                <input type="button" class="ut-button bg-info text-white" value="上传" onclick="upload('file0','files0','','<{$appurl}>/')" style="max-width:20%;">
+                                </div>
+                                <div class="block mt-2" style="width:100%"></div>
+                             </div>
+                </div>
+                <button id="post" type="submit" class="btn btn-primary pl-3 pr-3">确定</button>
+              </form>
+            </div>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>
+<script>
+    $(document).ready(function (){
+        var upcount=999;
+        $("#addupload").click(function (e){
+            upcount++;
+            $("#upload").append('<div id="matter'+upcount+'" style="display:contents;"><input type="button" class="ut-button bg-danger text-white mr-1" onclick=delitem("matter'+upcount+'") value="删" style="max-width:15%;"><input type="file" class="form-control-file mr-1" id="file'+upcount+'" style="max-width:25%;"><input type="text" class="form-control mr-1" name="files[]" id="files'+upcount+'" placeholder="文件地址" style="max-width:35%;"><input type="button" class="ut-button bg-info text-white mr-2" value="上传" onclick=upload("file'+upcount+'","files'+upcount+'","","<{$appurl}>/") style="max-width:20%;"></div><div class="block mt-2" style="width:100%"></div>');
+        });
+    });
+</script>

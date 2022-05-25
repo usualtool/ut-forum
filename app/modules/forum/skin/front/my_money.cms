@@ -1,0 +1,55 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     积分记录
+                     <span class="right" style="font-size:14px;"><a href="<{url=>Link("forum","my")}>">充值积分</a></span>
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0 mb-2">
+            <div class="table-responsive" id="ut-auto">
+            <table class="display table table-striped table-hover" id="ut-table">
+                <thead>
+                        <tr>
+                                <th width=15%>类型</th>
+                                <th width=15%>状态</th>
+                                <th width=25%>商户单号</th>
+                                <th width=15%>积分</th>
+                                <th width=30%>时间</th>
+                         </tr>
+                 </thead>
+                 <tbody>
+                    <{loop=>$data $rows}>
+                        <tr>
+                            <td>
+                            <{if $rows["types"]==1}>
+                                充值
+                            <{else if $rows["types"]==2}>
+                                <font color="green">收入</font>
+                            <{else if $rows["types"]==3}>
+                                <font color="red">支出</font>
+                            <{/if}>
+                            </td>
+                            <td><{if $rows["state"]==0}>失败<{else}>成功<{/if}></td>
+                            <td><{$rows->posnum}></td>
+                            <td>
+                            <{if $rows["types"]==1 || $rows["types"]==2}>+<{else}>-<{/if}>
+                            <{if $rows["pid"]==0}><{php=>echo return=>$rows["amount"]*return=>$rate}><{else}><{$rows->amount}><{/if}>
+                            </td>
+                            <td><{$rows->addtime}></td>
+                        </tr>
+                    <{/loop}>
+                </tbody>
+            </table>
+            </div>
+            </div>
+            <{page=>total,curpage,listnum,pagelink}>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

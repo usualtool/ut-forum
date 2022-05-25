@@ -1,0 +1,231 @@
+<{include "head.cms"}>
+<style>
+#content pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space:-pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap:break-word;
+}
+</style>
+<{loop=>$data as $row}>
+    <div class="container"> 
+        <div class="row">
+            <div class="col-md-8 mb-2">
+                <{if $row["close"]==1}>
+                    <div class="border p-3 pb-0 mb-2">
+                        <p class="text-danger">主题已被屏蔽</p>
+                    </div>
+                <{else}>
+                    <div class="panel-heading">
+                         <h5 class="media-heading">
+                         <{if $row["notice"]==0}>
+                             <a href="<{url=>Link("forum","list","id=".$row["fid"])}>">[<{db=>QueryData("forum","forum_name","id='".$row["fid"]."'","","")["querydata"][0]["forum_name"]}>]</a>
+                         <{/if}>
+                         <{$row->title}>
+                         </h5>
+                    </div>
+                    <div class="border p-3 pb-0 mb-2">
+                        <{if $row["look"]==1 && empty($uid)}>
+                            <p class="text-danger">
+                                阅读权限：
+                                <a href="?m=forum&p=login&goto=<{php=>echo urlencode(library\UsualToolInc\UTInc::CurPageUrl());}>">需登陆</a>
+                            </p>
+                        <{elseif $row["look"]==2 && $my_replynum==0}>
+                            <p class="text-danger">
+                                阅读权限：
+                                <a href="#reply">需回复</a>
+                            </p>
+                         <{else}>
+                         <ul class="list-unstyled">
+                         <{if $curpage<2}>
+                              <li class="media mb-3">
+                              <figure class="figure mr-3 none">
+                                <img src="<{db=>QueryData("forum_member","avatar","id='".$row["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                                <figcaption class="figure-caption text-center splitword">
+                                    <{db=>QueryData("forum_member","username","id='".$row["uid"]."'","","")["querydata"][0]["username"]}>
+                                </figcaption>
+                                <{php=>
+                                $post_utype=library\UsualToolData\UTData::QueryData("forum_member","utype","id='".return=>$row["uid"]."'","","")["querydata"][0]["utype"];
+                                if($post_utype>0):
+                                }>
+                                    <figcaption class="figure-caption text-center text-danger" style="font-size:9px;">
+                                        <{php=>if($post_utype==99999):echo"管理";else:echo"版主";endif;}>
+                                    </figcaption>
+                                <{php=>endif;}>
+                              </figure>
+                                  <div class="media-body">
+                                      <p class="mb-3" style="font-size:12px;">
+                                      <span>
+                                          <font class="mr-2"><i class="fa fa-user-circle" aria-hidden="true"></i> <{db=>QueryData("forum_member","username","id='".$row["uid"]."'","","")["querydata"][0]["username"]}> </font>
+                                          <font class="mr-2">发表于<{$row->posttime}> </font>
+                                      </span>
+                                      <span class="itemblock">
+                                          <font class="mr-2"><a href="<{url=>Link("forum","post","id=".$row["id"]."&uid=".$row["uid"])}>">只看该作者</a></font>
+                                          <font class="mr-2"><a href="#reply">回复主题</a></font>
+                                      </span>
+                                      </p>
+                                      <div id="content"><{inc=>DeSqlCheck($row["content"])}></div>
+                                      <{if !empty($row["files"])}>
+                                          <{if !empty($uid)}>
+                                              <div class="mt-3 border-top text-secondary pt-2 pb-2" style="font-size:13px;">
+                                                  <strong>主题附件</strong> 
+                                                  <{if $row["payfiles"]>0}>
+                                                      <{php=>if(library\UsualToolData\UTData::QueryData("forum_payment","","uid='".return=>$uid."' and pid='".return=>$row["id"]."'","","")["querynum"]>0):}>
+                                                          您已购买过本附件可直接下载附件
+                                                      <{php=>else:}>
+                                                          下载本附件需要 <font color="red"><{$row->payfiles}></font> 积分 <a href="?m=forum&p=post&id=<{$row->id}>&do=payfiles">支付</a>
+                                                      <{php=>endif;}>
+                                                  <{/if}>
+                                                  <{split=>$row->files,",",all}>
+                                                      <p><{php=>echo ($i+1).". <a class='text-secondary' href='".library\UsualToolRoute\UTRoute::Link("forum","download","pid=".return=>$row["id"]."&did=".$i)."'>**".substr(basename($row[$i]),-7)."</a>"}></p>
+                                                  <{/split}>
+                                              </div>
+                                           <{else}>
+                                              <p class="text-secondary mt-3" style="font-size:13px;">该主题包含附件需登录下载</p>
+                                           <{/if}>
+                                      <{/if}>
+                                  </div>
+                            <{if $row["ding"]==1}>
+                                <div style="position:absolute;right:5%;max-width:100%;">
+                                    <img src="<{$appurl}>/app/modules/forum/image/ding.png" class="rounded-circle" style="width:60px;height:60px;">
+                                </div>
+                            <{/if}>
+                              </li>
+                          <{/if}>
+                          <{loop=>$data_reply as $rows}>
+                              <li class="media mb-3 border-top pt-3">
+                              <figure class="figure mr-3">
+                                <img src="<{db=>QueryData("forum_member","avatar","id='".$rows["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                                <figcaption class="figure-caption text-center splitword">
+                                    <{db=>QueryData("forum_member","username","id='".$rows["uid"]."'","","")["querydata"][0]["username"]}>
+                                </figcaption>
+                                <{php=>
+                                $reply_utype=library\UsualToolData\UTData::QueryData("forum_member","utype","id='".return=>$rows["uid"]."'","","")["querydata"][0]["utype"];
+                                if($reply_utype>0):
+                                }>
+                                    <figcaption class="figure-caption text-center text-danger" style="font-size:9px;">
+                                        <{php=>if($reply_utype==99999):echo"管理";else:echo"版主";endif;}>
+                                    </figcaption>
+                                <{php=>endif;}>
+                              </figure>
+                                  <div class="media-body">
+                                      <p class="mb-3" style="font-size:12px;">
+                                          <span>
+                                              <font class="mr-2">发表于<{$rows->replytime}></font>
+                                          </span>
+                                          <span class="itemblock">
+                                              <font class="mr-2"><a href="<{url=>Link("forum","post","id=".$rows["postid"]."&uid=".$rows["uid"])}>">只看该作者</a></font>
+                                              <font class="mr-2"><a href="<{url=>Link("forum","post","id=".$row["id"]."&rid=".$rows["id"]."&page=".$curpage)}>#reply">引用回复</a></font>
+                                              <{if $utype==99999 || $utype==$row["fid"]}>
+                                                  <font><a href="<{url=>Link("forum","post_admin","id=".$row["id"]."&rid=".$rows["id"]."&do=delreply")}>">删除</a></font>
+                                              <{/if}>
+                                          </span>
+                                      </p>
+                                      <div id="content"><{inc=>DeSqlCheck($rows["content"])}></div>
+                                  </div>
+                              </li>
+                          <{/loop}>
+                          <a name="end"></a>
+                        </ul>
+                        <{/if}>
+                    </div>
+                    <{page=>total,curpage,listnum,pagelink}>
+                    <a name="reply"></a>
+                    <div class="mb-2">
+                    <{if !empty($uid)}>
+                        <form method="post" action="?m=forum&p=post&id=<{$row->id}>&do=reply" class="form-validate">
+                        <input type="hidden" name="postid" value="<{$row->id}>">
+                        <input type="hidden" name="replyid" value="0">
+                        <input type="hidden" name="page" value="<{$total}>">
+                            <div class="form-group">
+                               <label>快速回复</label>
+                                   <{if !empty($rid)}>
+                                   <{php=>
+                                   $re_data=library\UsualToolData\UTData::QueryData("forum_reply","","id='".return=>$rid."'","","")["querydata"][0];
+                                   $re_name=library\UsualToolData\UTData::QueryData("forum_member","username","id='".$re_data["uid"]."'","","")["querydata"][0]["username"];
+                                   }>
+                                       <textarea id="ut-content"><blockquote class="blockquote p-3" style="background-color:#f5f5f5;">引用<{php=>echo$re_name;}>回复: <br><{php=>echo library\UsualToolInc\UTInc::DeSqlCheck($re_data["content"]);}></blockquote><br></textarea>
+                                   <{/if}>
+                                   <{plugin=>kindeditor,simple.php}>
+                                </div>
+                                <button id="reply" type="submit" class="btn btn-primary pl-3 pr-3">回复</button>
+                        </form>
+                    <{else}>
+                    <p>回复主题，请 <a href="<{url=>Link("forum","login","goto=".urlencode(base64_encode(library\UsualToolInc\UTInc::CurPageUrl())))}>">登陆</a></p>
+                    <{/if}>
+                    </div>
+                <{/if}>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-12" id="col-right">
+                <div class="card" >
+                    <div class="card-header pb-0">
+                            <h5 class="card-title">看板</h5>
+                    </div>
+                    <div class="card-body pt-3">
+                        <figure class="figure mr-3">
+                            <h4><{$row->hit}></h4>
+                            <figcaption class="figure-caption text-center display-1">
+                                浏览                            
+                            </figcaption>
+                        </figure>
+                        <figure class="figure mr-3">
+                            <h4><{db=>QueryData("forum_reply","id","postid='".$row["id"]."'","","")["querynum"]}></h4>
+                            <figcaption class="figure-caption text-center display-1">
+                                回复                            
+                            </figcaption>
+                        </figure>
+                        <div class="col-md-12 pl-0 pr-0 mb-3">
+                            <a href="#reply" class="btn btn-info pl-3 pr-3 mr-3 text-white">回复主题</a>
+                            <{if $row["notice"]==0}>
+                                <a href="<{url=>Link("forum","list","id=".$row["fid"])}>" class="btn btn-info pl-3 pr-3 text-white">返回版块</a>
+                            <{else}>
+                                <a href="<{url=>Link("forum","","")}>" class="btn btn-info pl-3 pr-3 text-white">返回首页</a>
+                            <{/if}>
+                        </div>
+                        <div class="col-md-12 pl-0 pr-0 mb-3">
+                            <div class="dropdown">
+                              <button type="button" class="btn btn-danger pl-3 pr-3 mr-3 text-white dropdown-toggle" data-toggle="dropdown">
+                                  管理主题
+                              </button>
+                              <div class="dropdown-menu">
+                                <h5 class="dropdown-header">可操作项目</h5>
+                                <{if $utype==99999 || $utype==$row["fid"]}>
+                                    <{if $row["notice"]==1}>
+                                        <a class="dropdown-item" href="<{url=>Link("forum","post_admin","id=".$row["id"]."&do=notice")}>">解除公告</a>
+                                    <{/if}>
+                                    <{if $row["ding"]==1}>
+                                        <a class="dropdown-item" href="<{url=>Link("forum","post_admin","id=".$row["id"]."&ding=0&do=ding")}>">解除置顶</a>
+                                    <{else}>
+                                        <a class="dropdown-item" href="<{url=>Link("forum","post_admin","id=".$row["id"]."&ding=1&do=ding")}>">置顶主题</a>
+                                    <{/if}>
+                                    <{if $row["close"]==1}>
+                                        <a class="dropdown-item" href="<{url=>Link("forum","post_admin","id=".$row["id"]."&close=0&do=close")}>">解除屏蔽</a>
+                                    <{else}>
+                                        <a class="dropdown-item" href="<{url=>Link("forum","post_admin","id=".$row["id"]."&close=1&do=close")}>">屏蔽主题</a>
+                                    <{/if}>
+                                    <{if $row["uid"]==$uid}>
+                                        <a class="dropdown-item" href="<{url=>Link("forum","my_post_edit","id=".$row["id"])}>">编辑主题</a>
+                                    <{/if}>
+                                    <a class="dropdown-item" href="<{url=>Link("forum","post_admin","id=".$row["id"]."&do=del")}>">删除主题</a>
+                                <{else if $row["uid"]==$uid}>
+                                    <a class="dropdown-item" href="<{url=>Link("forum","my_post_edit","id=".$row["id"])}>">编辑主题</a>
+                                    <a class="dropdown-item" href="<{url=>Link("forum","my_post_list","id=".$row["id"]."&do=del")}>">删除主题</a>
+                                <{else}>
+                                    <a class="dropdown-item" href="#">无权限</a>
+                                <{/if}>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 pl-0 pr-0">
+                            <{pager=>total,curpage,listnum,pagelink,1}>
+                        </div>
+                    </div>
+	        </div>
+              </div>
+            </div>
+        </div>
+    </div>
+<{/loop}>
+<{include "foot.cms"}>

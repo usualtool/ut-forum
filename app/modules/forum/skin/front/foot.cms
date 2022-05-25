@@ -1,0 +1,18 @@
+    <div class="container mt-3">
+        <div class="border-top pt-2" style="font-size:13px;color:#666;">
+            <p>&copy;<{$appname}></p>
+        </div>
+    </div>
+    <script src="<{$appurl}>/app/assets/js/plugin/plupload/plupload.min.js"></script>
+    <script src="<{$appurl}>/app/assets/js/plugin/jquery-qrcode/qrcode.min.js"></script>
+    <!-- Datatables -->
+    <script src="<{$appurl}>/app/assets/js/plugin/datatables/datatables.min.js"></script>
+    <script src="<{$appurl}>/app/assets/js/plugin/datatables/datatables.buttons.min.js"></script>
+    <script src="<{$appurl}>/app/assets/js/plugin/datatables/buttons.html5.min.js "></script> 
+    <script src="<{$appurl}>/app/assets/js/plugin/datatables/jszip.min.js"></script> 
+    <script src="<{$appurl}>/app/assets/js/plugin/datatables/buttons.print.min.js"></script> 
+    <script src="<{$appurl}>/app/assets/js/jquery.localize.js"></script>
+    <script src="<{$appurl}>/app/assets/js/language.cookie.js"></script>
+    <script src="<{$appurl}>/app/assets/js/jquery.ready.js"></script>    
+</body>
+</html>

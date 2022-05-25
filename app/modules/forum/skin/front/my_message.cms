@@ -1,0 +1,29 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     发信
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0">
+              <form method="post" action="<{url=>Link("forum","my_message","do=creat")}>" class="form-validate">
+                <div class="form-group">
+                 <label>接收方（账号）</label>
+                 <input name="reve" type="text" required class="form-control" style="width:40%;" value="<{$reveuid}>">
+                </div>
+                <div class="form-group">
+                 <label>内容</label>
+                 <{plugin=>kindeditor,simple.php}>
+                </div>
+                <button id="login" type="submit" class="btn btn-primary pl-3 pr-3">确定发送</button>
+              </form>
+            </div>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

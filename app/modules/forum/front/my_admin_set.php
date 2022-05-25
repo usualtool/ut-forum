@@ -1,0 +1,124 @@
+<?php
+require dirname(__FILE__).'/'.'power.php';
+require dirname(__FILE__).'/'.'session.php';
+use library\UsualToolInc\UTInc;
+use library\UsualToolData\UTData;
+use library\UsualToolRoute\UTRoute;
+$l=$_GET["l"];
+$c=$_GET["c"];
+$payment=UTData::QueryData("cms_pay","","","","1")["querydata"];
+$connect=UTData::QueryData("cms_connect","","","","1")["querydata"];
+$app->Runin(array("webplace","set","l","c","payment","connect"),array("管理设置",$set,$l,$c,$payment,$connect));
+$app->Open("my_admin_set.cms");
+if($_GET["do"]=="update"){
+    $id=UTInc::SqlCheck($_POST["id"]);
+    $rate=UTInc::SqlCheck($_POST["rate"]);
+    $cookname=UTInc::SqlCheck($_POST["cookname"]);
+    if(UTData::UpdateData("forum_set",array("rate"=>$rate,"cookname"=>$cookname),"id='$id'")):
+        UTInc::GoUrl(UTRoute::Link("forum","my_admin_set"),"保存设置成功!");
+    else:
+        UTInc::GoUrl("-1","保存设置失败!");
+    endif;
+}
+if($_GET["do"]=="payment"){
+    $id=UTInc::SqlCheck($_POST["id"]);
+    $ali_appid=UTInc::SqlCheck($_POST["ali_appid"]);
+    $ali_private_key=urlencode(UTInc::SqlCheck($_POST["ali_private_key"]));
+    $ali_public_key=urlencode(UTInc::SqlCheck($_POST["ali_public_key"]));
+    $ali_notify_url=UTInc::SqlCheck($_POST["ali_notify_url"]);
+    $ali_return_url=UTInc::SqlCheck($_POST["ali_return_url"]);
+    $wx_appid=UTInc::SqlCheck($_POST["wx_appid"]);
+    $wx_mchid=UTInc::SqlCheck($_POST["wx_mchid"]);
+    $wx_key=UTInc::SqlCheck($_POST["wx_key"]);
+    $wx_secert=UTInc::SqlCheck($_POST["wx_secert"]);
+    $wx_notify_url=UTInc::SqlCheck($_POST["wx_notify_url"]);
+    $pp_mod=UTInc::SqlCheck($_POST["pp_mod"]);
+    $pp_clientid=UTInc::SqlCheck($_POST["pp_clientid"]);
+    $pp_secret=UTInc::SqlCheck($_POST["pp_secret"]);
+    $pp_return_url=UTInc::SqlCheck($_POST["pp_return_url"]);
+    $pp_notify_url=UTInc::SqlCheck($_POST["pp_notify_url"]);
+    $url_ok=UTInc::SqlCheck($_POST["url_ok"]);
+    $url_no=UTInc::SqlCheck($_POST["url_no"]);
+    if(!empty($id)){
+        if($l=="alipay"):
+            $sql=UTData::UpdateData("cms_pay",array(
+                "ali_appid"=>$ali_appid,
+                "ali_private_key"=>$ali_private_key,
+                "ali_public_key"=>$ali_public_key,
+                "ali_notify_url"=>$ali_notify_url,
+                "ali_return_url"=>$ali_return_url),"id='$id'");
+        elseif($l=="wechat"):
+            $sql=UTData::UpdateData("cms_pay",array(
+                "wx_appid"=>$wx_appid,
+                "wx_mchid"=>$wx_mchid,
+                "wx_key"=>$wx_key,
+                "wx_secert"=>$wx_secert,
+                "wx_notify_url"=>$wx_notify_url),"id='$id'");
+        elseif($l=="paypal"):
+            $sql=UTData::UpdateData("cms_pay",array(
+                "pp_mod"=>$pp_mod,
+                "pp_clientid"=>$pp_clientid,
+                "pp_secret"=>$pp_secret,
+                "pp_return_url"=>$pp_return_url,
+                "pp_notify_url"=>$pp_notify_url),"id='$id'");
+        elseif($l=="url"):
+            $sql=UTData::UpdateData("cms_pay",array(
+                "url_ok"=>$url_ok,
+                "url_no"=>$url_no),"id='$id'");
+        endif;
+    }else{
+        if($l=="alipay"):
+            $sql=UTData::InsertData("cms_pay",array(
+                "ali_appid"=>$ali_appid,
+                "ali_private_key"=>$ali_private_key,
+                "ali_public_key"=>$ali_public_key,
+                "ali_notify_url"=>$ali_notify_url,
+                "ali_return_url"=>$ali_return_url));
+        elseif($l=="wechat"):
+            $sql=UTData::InsertData("cms_pay",array(
+                "wx_appid"=>$wx_appid,
+                "wx_mchid"=>$wx_mchid,
+                "wx_key"=>$wx_key,
+                "wx_secert"=>$wx_secert,
+                "wx_notify_url"=>$wx_notify_url));
+        elseif($l=="paypal"):
+            $sql=UTData::InsertData("cms_pay",array(
+                "pp_mod"=>$pp_mod,
+                "pp_clientid"=>$pp_clientid,
+                "pp_secret"=>$pp_secret,
+                "pp_return_url"=>$pp_return_url,
+                "pp_notify_url"=>$pp_notify_url));
+        elseif($l=="url"):
+            $sql=UTData::InsertData("cms_pay",array(
+                "url_ok"=>$url_ok,
+                "url_no"=>$url_no));                
+        endif;
+    }
+    if($sql):
+        UTInc::GoUrl(UTRoute::Link("forum","my_admin_set","l=".$l)."#payment","操作成功!");
+    else:
+        UTInc::GoUrl("-1","操作失败!");
+    endif;
+}
+if($_GET["do"]=="connect"){
+    $id=UTInc::SqlCheck($_POST["id"]);
+    $qq_appid=UTInc::SqlCheck($_POST["qq_appid"]);
+    $qq_appkey=UTInc::SqlCheck($_POST["qq_appkey"]);
+    $qq_reurl=UTInc::SqlCheck($_POST["qq_reurl"]);
+    $wb_appid=UTInc::SqlCheck($_POST["wb_appid"]);
+    $wb_appkey=UTInc::SqlCheck($_POST["wb_appkey"]);
+    $wb_reurl=UTInc::SqlCheck($_POST["wb_reurl"]);
+    $wx_appid=UTInc::SqlCheck($_POST["wx_appid"]);
+    $wx_appkey=UTInc::SqlCheck($_POST["wx_appkey"]);
+    $wx_reurl=UTInc::SqlCheck($_POST["wx_reurl"]);
+        if($c=="qq"):
+            UTData::UpdateData("cms_connect",array("qq_appid"=>$qq_appid,"qq_appkey"=>$qq_appkey,"qq_reurl"=>$qq_reurl),"id='$id'");
+        endif;
+        if($c=="weibo"):
+            UTData::UpdateData("cms_connect",array("wb_appid"=>$wb_appid,"wb_appkey"=>$wb_appkey,"wb_reurl"=>$wb_reurl),"id='$id'");
+        endif;
+        if($c=="wechat"):
+            UTData::UpdateData("cms_connect",array("wx_appid"=>$wx_appid,"wx_appkey"=>$wx_appkey,"wx_reurl"=>$wx_reurl),"id='$id'");
+        endif;
+        UTInc::GoUrl(UTRoute::Link("forum","my_admin_set","c=".$c)."#connect","保存成功!");
+}

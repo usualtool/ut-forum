@@ -1,0 +1,13 @@
+{
+    "name":             "usualtool/ut-forum",
+    "description":      "UTForum是一款简洁的社区论坛系统，基于UT框架开发，遵循Apache2.0开源。",
+    "keywords":         ["UTBBS", "UsualTool", "UTForum"],
+    "homepage":         "http://frame.usualtool.com",
+    "license": "Apache-2.0",
+    "authors": [{
+        "name":         "HuangDou",
+        "email":        "292951110@qq.com"
+    }],
+    "require": {
+    }
+}

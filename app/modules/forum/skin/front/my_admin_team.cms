@@ -1,0 +1,77 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     用户管理
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0 mb-2">
+            <div class="table-responsive" id="ut-auto">
+            <table class="display table table-striped table-hover" id="ut-table">
+                <thead>
+                        <tr>
+                                <th width=15%>职务</th>
+                                <th width=15%>账号</th>
+                                <th width=20%>Email</th>
+                                <th width=15%>性别</th>
+                                <th>操作</th>
+                         </tr>
+                 </thead>
+                 <tbody>
+                    <{loop=>$data $rows}>
+                        <tr>
+                                <td>
+                                <{if $rows["utype"]>0}>
+                                    <{if $rows["utype"]==99999}>
+                                        <font class="text-danger">管理</font>
+                                    <{else}>
+                                        <font class="text-success">版主</font>
+                                    <{/if}>
+                                <{else}>
+                                <span class="text-secondary">普通</span>
+                                <{/if}>
+                                </td>
+                                <td><{$rows->username}></td>
+                                <td><{$rows->email}></td>
+                                <td><{if $rows["sex"]==1}>男<{else}>女<{/if}></td>
+                                <td>
+                                    <p class="mb-2">
+                                    <{if $rows["utype"]==99999}>
+                                        <a href="<{url=>Link("forum","my_admin_team","id=".$rows["id"]."&utype=0&do=admin")}>" class="text-danger">取消管理</a>
+                                    <{else}>
+                                        <a href="<{url=>Link("forum","my_admin_team","id=".$rows["id"]."&utype=99999&do=admin")}>">设为管理</a>
+                                    <{/if}> | 
+                                    <a href="<{url=>Link("forum","my_admin_team","id=".$rows["id"]."&do=del")}>">删除</a>
+                                    </p>
+                                        <form name="form<{$rows->id}>" method="post" action="<{url=>Link("forum","my_admin_team","do=banzhu")}>">
+                                        <input type="hidden" name="id" value="<{$rows->id}>">
+                                        <{if $rows["utype"]>0 && $rows["utype"]!=99999}>
+                                            <input type="hidden" name="utype" value=0>
+                                            <input type="submit" class="btn btn-danger" style="padding:1px 6px;" value="取消版主"> 
+                                            <span style="font-size:10px;">
+                                                （<{db=>QueryData("forum","forum_name","id='".$rows["utype"]."'","","")["querydata"][0]["forum_name"]}>）
+                                            </span>
+                                        <{else}>
+                                            <select class="ut-select" name="utype">
+                                                <{datatree=>1,$datatree,0}>
+                                            </select>
+                                            <input type="submit" class="btn btn-info" style="padding:1px 6px;" value="设为版主">
+                                        <{/if}>
+                                        </form>
+                                </td>
+                        </tr>
+                    <{/loop}>
+                </tbody>
+            </table>
+            </div>
+            </div>
+            <{page=>total,curpage,listnum,pagelink}>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

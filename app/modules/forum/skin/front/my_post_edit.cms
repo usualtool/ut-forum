@@ -1,0 +1,76 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     编辑主题
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0">
+              <form method="post" action="?m=forum&p=my_post_edit&id=<{$id}>&do=edit" class="form-validate">
+              <{loop=>$data as $row}>
+                <div class="form-group">
+                     <label>阅读权限</label>
+                     <div class="radio">
+                         <label><input type="radio" name="look" value=0 <{if $row["look"]==0}>checked<{/if}>> 无限制</label>
+                     </div>
+                     <div class="radio">
+                         <label><input type="radio" name="look" value=1 <{if $row["look"]==1}>checked<{/if}>> 登陆可阅读</label>
+                     </div>
+                     <div class="radio">
+                         <label><input type="radio" name="look" value=2 <{if $row["look"]==2}>checked<{/if}>> 回复可阅读</label>
+                     </div>
+                </div>
+                <div class="form-group">
+                 <label>版块</label>
+                     <select class="form-control input-square" name="fid">
+                            <{datatree=>1,$datatree,return=>$row->fid}>
+                     </select>
+                </div>
+                <div class="form-group">
+                 <label>主题</label>
+                 <input name="title" type="text" required class="form-control" value="<{$row->title}>">
+                </div>
+                <div class="form-group">
+                 <label>内容</label>
+                 <textarea id="ut-content"><{inc=>DeSqlCheck($row["content"])}></textarea>
+                 <{plugin=>kindeditor,simple.php}>
+                </div>
+                <div class="form-group mb-2 border-bottom pb-2">
+                     <label>
+                     <strong>附件</strong> +<span id="addupload" class="text-danger">增加</span>
+                     下载需要 <input class="ut-input" type="text" name="payfiles" value="<{$row->payfiles}>" style="text-align:center;"> 积分
+                     </label>
+                             <div class="form-inline" id="upload">
+                             <{split=>$row->files,",",all}>
+                                <div id="matter0" style="display:contents;">
+                                <input type="button" class="ut-button bg-danger text-white mr-1" onclick=delitem("matter<{php=>echo$i;}>") value="删" style="max-width:15%;">
+                                <input type="file" class="form-control-file mr-1" id="file<{php=>echo$i;}>" style="max-width:25%;">
+                                <input type="text" class="form-control mr-1" name="files[]" id="files<{php=>echo$i;}>" value="<{php=>echo$row[$i];}>" style="max-width:35%;">
+                                <input type="button" class="ut-button bg-info text-white" value="上传" onclick="upload('file<{php=>echo$i;}>','files<{php=>echo$i;}>','','<{$appurl}>/')" style="max-width:20%;">
+                                </div>
+                                <div class="block mt-2" style="width:100%"></div>
+                             <{/split}>
+                             </div>
+                </div>
+                <button id="post" type="submit" class="btn btn-primary pl-3 pr-3">确定</button>
+              </form>
+              <{/loop}>
+            </div>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>
+<script>
+    $(document).ready(function (){
+        var upcount=999;
+        $("#addupload").click(function (e){
+            upcount++;
+            $("#upload").append('<div id="matter'+upcount+'" style="display:contents;"><input type="button" class="ut-button bg-danger text-white mr-1" onclick=delitem("matter'+upcount+'") value="删" style="max-width:15%;"><input type="file" class="form-control-file mr-1" id="file'+upcount+'" style="max-width:25%;"><input type="text" class="form-control mr-1" name="files[]" id="files'+upcount+'" placeholder="文件地址" style="max-width:35%;"><input type="button" class="ut-button bg-info text-white mr-2" value="上传" onclick=upload("file'+upcount+'","files'+upcount+'","","<{$appurl}>/") style="max-width:20%;"></div><div class="block mt-2" style="width:100%"></div>');
+        });
+    });
+</script>

@@ -1,0 +1,49 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     更新账户
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0">
+            <{loop=>$user as $row}>
+                  <form method="post" action="<{url=>Link("forum","my_user","do=save")}>" class="form-validate">
+                  <input type="hidden" name="id" value="<{$row->id}>">
+                    <div class="form-group">
+                     <label>头像地址</label>
+                     <input name="avatar" type="text" required class="form-control" value="<{$row->avatar}>">
+                    </div>
+                    <div class="form-group">
+                     <label>Email</label>
+                     <input name="email" type="text" required class="form-control" value="<{$row->email}>">
+                    </div>
+                    <div class="form-group">
+                     <label>密码(不修改密码请保持原样)</label>
+                     <input name="password" type="password" class="form-control" value="<{$row->password}>">
+                    </div>
+                    <div class="form-group">
+                     <label>确认密码</label>
+                     <input name="passwords" type="password" class="form-control">
+                    </div>
+                    <div class="form-group">
+                     <label>姓名</label>
+                     <input name="fullname" type="text" required class="form-control" value="<{$row->fullname}>">
+                    </div>
+                    <div class="form-group">
+                     <label>性别</label><br>
+                     <label class="radio-inline"><input type="radio" name="sex" value="1" <{if $row["sex"]==1}>checked<{/if}>> 男</label>
+                     <label class="radio-inline"><input type="radio" name="sex" value="2" <{if $row["sex"]==2}>checked<{/if}>> 女</label>
+                    </div>
+                    <button id="login" type="submit" class="btn btn-primary pl-3 pr-3">保存</button>
+                  </form>
+            <{/loop}>
+            </div>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

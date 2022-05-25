@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UTForum安装</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="<?php echo$config["APPURL"];?>/app/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo$config["APPURL"];?>/app/assets/css/fontawesome.min.css">
+    <script src="<?php echo$config["APPURL"];?>/app/assets/js/jquery.min.js"></script>
+    <script src="<?php echo$config["APPURL"];?>/app/assets/js/bootstrap.min.js"></script>
+    <style>p{margin-bottom:0rem;font-size:14px;}.fontsmall{font-size:12px;}#license p{font-size:11px;}</style>
+</head>
+<body>
+<div class="container">
+    <div class="row m-b-md">
+           <div class="col-md-12"><img src="<?php echo$config["APPURL"];?>/app/assets/ut-logo.png"></div>
+           <div class="col-md-8">
+              <div class="border p-2">
+               <{if empty($do)}>
+               <form action="?m=ut-frame&do=db-save" method="post" name="form">
+               <div class="row">
+                  <div class="form-group col-md-6">
+                     <label for="email">应用域名/IP（请带HTTP）:</label>
+                     <input class="form-control" name="APPURL" id="APPURL">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="form-group col-md-6">
+                     <label for="email">数据库服务器:</label>
+                     <input class="form-control" name="MYSQL_HOST" id="MYSQL_HOST" value="localhost">
+                  </div>
+                  <div class="form-group col-md-6">
+                     <label for="email">端口:</label>
+                     <input class="form-control" name="MYSQL_PORT" id="MYSQL_PORT" value="3306">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="form-group col-md-6">
+                     <label for="email">数据库用户:</label>
+                     <input class="form-control" name="MYSQL_USER" id="MYSQL_USER">
+                  </div>
+                  <div class="form-group col-md-6">
+                     <label for="email">数据库密码:</label>
+                     <input class="form-control" name="MYSQL_PASS" id="MYSQL_PASS">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="form-group col-md-6">
+                     <label for="email">数据库名称:</label>
+                     <input class="form-control" name="MYSQL_DB" id="MYSQL_DB">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-6">
+                  <button type="submit" class="btn btn-success">保存设置</button>
+                  </div>
+               </div>
+               </form>
+               <{else if $do=="sql"}>
+                  <p>你即将导入SQL到数据库，请保持网络通畅。</p>
+                  <hr/>
+                  <{php=>
+                  if($_GET["t"]=="db-sql"){
+                     $sql=file_get_contents("./UTForum.sql");
+                     $arr=explode(';',$sql);
+                     $total=count($arr)-1;
+                     $c=0;
+                     for($i=0;$i<$total;$i++){
+                        $k=$i+1;
+                        $result=library\UsualToolData\UTData::RunSql($arr[$i]);
+                        if($result){
+                           echo"<p class='fontsmall'>第".$k."条SQL执行成功!</p>";
+                        }else{
+                           $c=$c+1;
+                           echo"<p class='fontsmall' style='color:red;'>第".$k."条SQL执行失败:".$arr[$i]."</p>";
+                        }
+                        if($k==$total && $c==0){
+                           library\UsualToolInc\UTInc::GoUrl("?m=forum","UTForum激活成功!");
+                        }
+                     }
+                  }
+                  }>
+                  <form action="?m=ut-frame&do=sql&t=db-sql" method="post" name="form">
+                  <button type="submit" class="btn btn-success">导入数据</button>
+                  </form>
+                  <{/if}>
+              </div>
+           </div>
+           <div class="col-md-4" id="license">
+              <div class="border-bottom mb-2">
+                  <strong>UTForum</strong>
+              </div>
+              <p>
+                  UTForum基于UT框架开发，请遵循其相应协议。<br/>
+                  UTForum基于Apache2.0开源，请遵循其公共开源协议。<br/>
+                  <a target="_blank" href="http://frame.usualtool.com/juan.php">支持开源，您可以捐赠UT。</a><br/>
+                  <a target="_blank" href="http://frame.usualtool.com/baike">UT开发手册</a><br/>
+                  <a href="#">互助QQ群583610949</a><br/>
+              </p>
+           </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     我的
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0">
+            <div class="row">
+                <div class="col-md-5">
+                <{loop=>$user as $row}>
+                        <div class="form-group">
+                         <img src="<{$row->avatar}>" style="width:60px;height:60px;">
+                        </div>
+                        <div class="form-group">
+                         积分：<{$row->money}>
+                        </div>
+                        <div class="form-group">
+                         发布主题：<{db=>QueryData("forum_post","","uid='".$row["id"]."'","","")["querynum"]}>个
+                        </div>
+                        <div class="form-group">
+                         回复主题：<{db=>QueryData("forum_reply","","uid='".$row["id"]."'","","")["querynum"]}>次
+                        </div>
+                <{/loop}>
+                </div>
+                <div class="col-md-1 border-left none"></div>
+                <div class="col-md-6">
+                  <form method="post" action="<{url=>Link("forum","my","do=payment")}>" class="form-validate">
+                        <div class="form-group border-bottom">
+                            <label><strong>充值积分</strong>（1元:<{$rate}>积分）</label>
+                        </div>
+                        <div class="form-inline">
+                            <input name="amount" id="amount" type="text" required class="ut-input mr-2">元即 <span id="jifen" style="color:red;" class="ml-1 mr-1">0</span> 积分
+                        </div>
+                        <div class="radio">
+                            <label><input name="paytype" value="1" type="radio" checked> 支付宝</label>
+                        </div>
+                        <div class="radio">
+                            <label><input name="paytype" value="2" type="radio"> 微信支付</label>
+                        </div>
+                        <div class="radio">
+                            <label><input name="paytype" value="3" type="radio"> 贝宝</label>
+                        </div>
+                        <button id="login" type="submit" class="btn btn-primary pl-3 pr-3">充值</button>
+                  </form>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("input[id^='amount']").change(function() {
+        var total = 0;
+        var r = /^-?\d+$/;
+        if($(this).val() != '' && !r.test($(this).val())) {
+            $(this).val("");
+        } else if($(this).val() != '') {
+            total = parseInt($(this).val())*10;
+        }
+        $("#jifen").html(total);
+    });
+</script>
+<{include "foot.cms"}>

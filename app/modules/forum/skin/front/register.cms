@@ -1,0 +1,35 @@
+<{include "head.cms"}>
+      <div class="container">
+          <div class="row ml-0 mr-0">
+            <div class="col-md-12 bg-light p-3">
+                  <form method="post" action="<{url=>Link("forum","register","do=register")}>" class="form-validate">
+                  <input type="hidden" name="salts" value="<{$salts}>">
+                    <div class="form-group">
+                     <label>Email</label>
+                     <input name="email" type="text" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                     <label>账户</label>
+                     <input name="username" type="text" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                     <label>密码</label>
+                     <input name="password" type="password" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                     <label>确认密码</label>
+                     <input name="passwords" type="password" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                     <label>性别</label><br>
+                     <label class="radio-inline"><input type="radio" name="sex" value="1" checked> 男</label>
+                     <label class="radio-inline"><input type="radio" name="sex" value="2"> 女</label>
+                    </div>
+                    <button id="login" type="submit" class="btn btn-primary pl-3 pr-3">登录</button>
+                  </form>
+                  <br />
+                  <small>已有账号?</small><a href="?m=forum&p=login" class="signup"><small>&nbsp;Sign in</small></a>
+            </div>
+          </div>
+      </div>
+    <{include "foot.cms"}>

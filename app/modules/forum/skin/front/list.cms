@@ -1,0 +1,81 @@
+<{include "head.cms"}>
+    <div class="container"> 
+        <div class="row">
+            <div class="col-md-8 mb-2">
+                <div class="panel-heading">
+                     <h5 class="media-heading">
+                         <{$webplace}>
+                     </h5>
+                </div>
+                <div class="border p-3 pb-0 mb-2">
+                <{if $total==0}>
+                    <p>暂无主题</p>
+                <{else}>
+                    <ul class="list-unstyled">
+                      <{loop=>$forum_post as $rows}>
+                          <li class="media mb-3">
+                          <figure class="figure mr-3">
+                            <img src="<{db=>QueryData("forum_member","avatar","id='".$rows["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                            <figcaption class="figure-caption text-center">
+                                <{db=>QueryData("forum_member","username","id='".$rows["uid"]."'","","")["querydata"][0]["username"]}>
+                            </figcaption>
+                          </figure>
+                          <div class="media-body">
+                              <a href="<{url=>Link("forum","post","id=".$rows["id"])}>">
+                              <h5 class="mt-0 mb-1 text-truncate-1">
+                              <{$rows->title}>
+                              <{if !empty($rows["files"])}><sup><i class="fa fa-paperclip" style="color:#999;" title="附件"></i></sup><{/if}>
+                              </h5>
+                              </a>
+                              <p class="text-truncate-2"><{inc=>DeleteHtml($rows["content"])}></p>
+                              <p class="mt-2" style="font-size:12px;">
+                              <span class="left">
+                                  <i class="fas fa-calendar" aria-hidden="true"></i> <{php=>echo date("Y-m-d",strtotime(return=>$rows["posttime"]))}> 
+                              </span>
+                              <span class="ml-3 mr-3">
+                                  <a href="<{url=>Link("forum","list","id=".$rows["fid"])}>"><{db=>QueryData("forum","forum_name","id='".$rows["fid"]."'","","")["querydata"][0]["forum_name"]}></a>
+                              </span>
+                              <span class="right">
+                                  <a href="<{url=>Link("forum","post","id=".$rows["id"])}>#reply">回复</a>(<{db=>QueryData("forum_reply","id","postid='".$rows["id"]."'","","")["querynum"]}>) | 浏览 <{$rows->hit}>
+                              </span>
+                              </p>
+                            </div>
+                            <{if $rows["ding"]==1}>
+                                <div style="position:absolute;right:5%;max-width:100%;">
+                                    <img src="<{$appurl}>/app/modules/forum/image/ding.png" class="rounded-circle" style="width:60px;height:60px;">
+                                </div>
+                            <{/if}>
+                          </li>
+                      <{/loop}>
+                    </ul>
+                <{/if}>
+                </div>
+                <{page=>total,curpage,listnum,pagelink}>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-12" id="col-right">
+                <div class="card" >
+                    <div class="card-header pb-0">
+                            <h5 class="card-title">版块</h5>
+                    </div>
+                    <div class="card-body pt-3">
+                        <figure class="figure mr-3">
+                            <h4><{db=>QueryData("forum_post","id","fid='".$id."'","","")["querynum"]}></h4>
+                            <figcaption class="figure-caption text-center display-1">
+                                主题                            
+                            </figcaption>
+                        </figure>
+                        <div class="col-md-12 pl-0 pr-0 mb-3">
+                            <a href="<{url=>Link("forum","my_post_creat","fid=".$id)}>" class="btn btn-info pl-3 pr-3 mr-3 text-white">撰写主题</a>
+                            <a href="<{url=>Link("forum","","")}>" class="btn btn-info pl-3 pr-3 text-white">返回首页</a>
+                        </div>
+                        <div class="col-md-12 pl-0 pr-0">
+                            <{pager=>total,curpage,listnum,pagelink,1}>
+                        </div>
+                    </div>
+	        </div>
+              </div>
+            </div>
+        </div>
+    </div>
+<{include "foot.cms"}>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><{$webplace}> - <{$appname}></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="<{$appurl}>/app/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<{$appurl}>/app/assets/css/buttons.min.css" rel="stylesheet"/>
+    <link href="<{$appurl}>/app/assets/css/fontawesome.min.css" rel="stylesheet">
+    <link href="<{$appurl}>/app/assets/css/default.css" rel="stylesheet">
+    <script src="<{$appurl}>/app/assets/js/jquery.min.js"></script>
+    <script src="<{$appurl}>/app/assets/js/popper.min.js"></script>
+    <script src="<{$appurl}>/app/assets/js/bootstrap.min.js"></script>
+    <style>
+    #col-right{position:fixed;padding-left:0;max-width:27%;}
+    .dropdown-toggle::after{display:none;}
+    .splitword{width:60px;word-break:break-all;word-wrap:break-word;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;}
+    #ut-table_wrapper{padding-left:0;padding-right:0;}
+    #ut-table_filter{float:right;}
+    #ut-table_filter input{display:inline;width:88%}
+    pre.prettyprint{border:0;border-left:3px solid rgb(204, 204, 204);margin-left:2em;padding:0.5em;font-size:110%;display:block;font-family:"Consolas", "Monaco", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;margin:1em 0px;white-space:pre;}
+    @media(max-width:640px){.itemblock{width:100%;display:block;}#col-right{position:inherit;padding-right:0;max-width:100%;}.dt-buttons{display:none;}#ut-table_filter{float:left;}}
+    </style>
+</head>
+<body>
+<div class="container-fluid bg-dark mb-2"> 
+    <div class="row">
+        <nav class="container navbar navbar-expand-md navbar-light">
+              <a href="<{url=>Link("forum","","")}>"><h3 class="mr-5 text-white"><{$appname}></h3></a>
+              <button class="navbar-toggler bg-white" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item mr-3">
+                        <a class="nav-link text-white" href="<{url=>Link("forum","","")}>">首页</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="right none">
+                <ul class="navbar-nav">
+                    <{if empty($uid)}>
+                        <li class="nav-item mr-4">
+                            <a href="<{url=>Link("forum","register","")}>" class="btn btn-secondary">注册</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<{url=>Link("forum","login","goto=".urlencode(base64_encode(library\UsualToolInc\UTInc::CurPageUrl())))}>" class="btn btn-danger">登陆</a>
+                        </li>
+                    <{else}>
+                        <li class="nav-item">
+                            <i class="fa fa-user-circle text-white" aria-hidden="true"></i> <a href="<{url=>Link("forum","my","")}>" class="text-white"><{$username}></a>
+                        </li>
+                    <{/if}>
+                </ul>
+            </div>  
+        </nav>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+            <div class="card mb-2 bg-light">
+              <div class="card-body">
+                <h5 class="card-title border-bottom pb-2">
+                <{if !empty($uid)}>
+                    <img src="<{db=>QueryData("forum_member","avatar","id='".$uid."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border img-responsive center-block" style="width:35px;height:35px;">
+                <{/if}> 我的
+                <{if !empty($uid)}>
+                    <span class="right"><i class="fa fa-power-off" aria-hidden="true"></i> <a href="<{url=>Link("forum","login","do=out")}>">退出</a></span>
+                <{/if}>
+                </h5>
+                <{if empty($uid)}>
+                    <p class="card-text mb-2">尚未具备相应权限，请选择注册或登陆</p>
+                    <a href="<{url=>Link("forum","register","")}>" class="card-link">Sign up</a>
+                    <a href="<{url=>Link("forum","login","")}>" class="card-link">Sign in</a> 
+                    <a href="<{url=>Link("authlogin","","state=forum__auth&auth=qq")}>" class="card-link mr-1"><img src="<{$appurl}>/app/modules/authlogin/image/qq.png"></a>
+                    <a href="<{url=>Link("authlogin","","state=forum__auth&auth=weibo")}>" class="mr-1"><img src="<{$appurl}>/app/modules/authlogin/image/weibo.png"></a>
+                    <a href="<{url=>Link("authlogin","","state=forum__auth&auth=wechat")}>"><img src="<{$appurl}>/app/modules/authlogin/image/wechat.png"></a>
+                <{else}>
+                    <p class="mb-2"><strong class="mr-2">账户:</strong> <a class="mr-2" href="<{url=>Link("forum","my_user","")}>">更新账户</a> <a href="<{url=>Link("forum","my_money","")}>">积分</a>（<{$money}>）</p>
+                    <p class="mb-2"><strong class="mr-2">主题:</strong> <a class="mr-2" href="<{url=>Link("forum","my_post_creat","")}>">撰写主题</a> <a href="<{url=>Link("forum","my_post_list","")}>">主题列表</a></p>
+                    <p><strong class="mr-2">信件:</strong> <a class="mr-2" href="<{url=>Link("forum","my_sendbox","")}>">发件箱</a> <a href="<{url=>Link("forum","my_revebox","")}>">收件箱</a></p>
+                    <{if $utype>0}>
+                    <p class="mt-2">
+                    <strong class="mr-2">黑屋:</strong> 
+                    <a href="<{url=>Link("forum","my_black","")}>">锁定/解除限制</a> 
+                    </p>
+                    <{/if}>
+                    <{if $utype==99999}>
+                        <p class="mt-2">
+                            <strong class="mr-2">管理:</strong> 
+                            <a class="mr-2" href="<{url=>Link("forum","my_admin_forum","")}>">版块</a> 
+                            <a class="mr-2" href="<{url=>Link("forum","my_admin_black","")}>">屏蔽</a>
+                            <a class="mr-2" href="<{url=>Link("forum","my_admin_team","")}>">用户</a>
+                            <a href="<{url=>Link("forum","my_admin_set","")}>">设置</a>
+                        </p>
+                    <{/if}>
+                <{/if}>
+              </div>
+            </div>

@@ -1,0 +1,192 @@
+<{include "$pubtemp/head.cms"}>
+        <div class="main-panel">
+			<div class="content">
+				<div class="page-inner">
+					<div class="page-header">
+						<h4 class="page-title"><{$title}></h4>
+						<ul class="breadcrumbs">
+                           <li class="nav-home">
+								<a href="./">
+									<i class="fa fa-home"></i>
+								</a>
+							</li>
+							<li class="separator">
+								<i class="fa fa-angle-double-right"></i>
+							</li>
+							<li class="nav-item">
+								<a href="?m=<{$module}>"><{$title}></a>
+							</li>
+							<li class="separator">
+								<i class="fa fa-angle-double-right"></i>
+							</li>
+							<li class="nav-item">
+								支付设置
+							</li>
+							<li class="nav-item pl-3 pr-3">
+                                <{item=>$module,$backitem}>
+                            </li>
+						</ul>
+					</div>
+							<div class="card">
+							    <div class="card-header">
+									<h4 class="card-title">支付设置</h4>
+								</div>
+                                <div class="card-body">
+									<ul class="nav nav-pills nav-secondary" id="pills-tab" role="tablist">
+										<li class="nav-item submenu">
+											<a class="nav-link <{if empty($l) || $l=="alipay"}>active show<{/if}>" href="?m=<{$module}>&l=alipay" role="tab" aria-controls="alipay" aria-selected="true">支付宝接口</a>
+										</li>
+                                        <li class="nav-item submenu">
+											<a class="nav-link <{if $l=="wechat"}>active show<{/if}>" href="?m=<{$module}>&l=wechat" role="tab" aria-controls="wechat" aria-selected="false">微信接口</a>
+										</li>
+                                        <li class="nav-item submenu">
+											<a class="nav-link <{if $l=="paypal"}>active show<{/if}>" href="?m=<{$module}>&l=paypal" role="tab" aria-controls="paypal" aria-selected="false">贝宝接口</a>
+										</li>
+                                        <li class="nav-item submenu">
+											<a class="nav-link <{if $l=="url"}>active show<{/if}>" href="?m=<{$module}>&l=url" role="tab" aria-controls="url" aria-selected="false">跳转地址</a>
+										</li>
+									</ul>
+							<{loop=>$data $row}>
+							<div class="tab-content mt-2 mb-3" id="pills-tabContent">
+								<{if empty($l) || $l=="alipay"}>
+								<div class="tab-pane fade active show" id="alipay" role="tabpanel" aria-labelledby="alipay-tab">
+								<form action="?m=payment&do=update&l=alipay" method="post" name="alipay">
+									<input type="hidden" name="id" value="<{$row->id}>">
+									<div class="row form-group">
+									    <div class="col-md-6 form-floating-label">
+                                        <label>应用APPID</label>
+										<input type="text" class="form-control input-square" name="ali_appid" value="<{$row->ali_appid}>">
+										</div>
+                                    </div>
+                                    <div class="row form-group">
+									    <div class="col-md-12 form-floating-label">
+                                        <label for="disableinput">商户私钥</label>
+										<textarea class="form-control" id="sql" name="ali_private_key" rows="3"><{$row->ali_private_key}></textarea>
+										</div>
+									</div>
+                                    <div class="row form-group">
+                                        <div class="col-md-12 form-floating-label">
+                                        <label for="disableinput">支付宝公钥</label>
+										<textarea class="form-control" id="sql" name="ali_public_key" rows="3"><{$row->ali_public_key}></textarea>
+										</div>
+									</div>
+									<div class="row form-group">
+									    <div class="col-md-6 form-floating-label">
+                                        <label>同步通知地址</label>
+										<input type="text" class="form-control input-square" name="ali_return_url" value="<{if empty($row["ali_return_url"])}><{$appurl}>/app/modules/payment/method/alipay/return_url.php<{else}><{$row->ali_return_url}><{/if}>">
+										</div>
+									    <div class="col-md-6 form-floating-label">
+                                        <label>异步通知地址</label>
+										<input type="text" class="form-control input-square" name="ali_notify_url" value="<{if empty($row["ali_notify_url"])}><{$appurl}>/app/modules/payment/method/alipay/notify_url.php<{else}><{$row->ali_notify_url}><{/if}>">
+										</div>
+                                    </div>
+                                    <div class="card-action p-2">
+									    <button class="btn btn-info">保存</button>
+								    </div>
+                                    </form>
+								</div>
+                                <{else if $l=="wechat"}>
+								<div class="tab-pane active show" id="wechat" role="tabpanel" aria-labelledby="wechat-tab">
+								<form action="?m=payment&do=update&l=wechat" method="post" name="wechat">
+									<input type="hidden" name="id" value="<{$row->id}>">
+                                    <div class="row form-group">
+									    <div class="col-md-6 form-floating-label">
+                                        <label>支付APPID</label>
+										<input type="text" class="form-control input-square" name="wx_appid" value="<{$row->wx_appid}>">
+										</div>
+                                    </div>
+                                    <div class="row form-group">
+									    <div class="col-md-6 form-floating-label">
+                                        <label>商户号</label>
+										<input type="text" class="form-control input-square" name="wx_mchid" value="<{$row->wx_mchid}>">
+										</div>
+                                        <div class="col-md-6 form-floating-label">
+                                        <label>商户支付密钥</label>
+										<input type="text" class="form-control input-square" name="wx_key" value="<{$row->wx_key}>">
+										</div>
+                                    </div>
+                                    <div class="row form-group">
+									    <div class="col-md-6 form-floating-label">
+                                        <label>公众号密钥</label>
+										<input type="text" class="form-control input-square" name="wx_secert" value="<{$row->wx_secert}>">
+										</div>
+                                        <div class="col-md-6 form-floating-label">
+                                        <label>异步通知地址</label>
+										<input type="text" class="form-control input-square" name="wx_notify_url" value="<{if empty($row["wx_notify_url"])}><{$appurl}>/app/modules/payment/method/wechat/notify.php<{else}><{$row->wx_notify_url}><{/if}>">
+										</div>
+                                    </div>
+                                    <div class="card-action p-2">
+									    <button class="btn btn-info">保存</button>
+								    </div>
+                                </form>                                           
+								</div>
+                                <{else if $l=="paypal"}>
+								<div class="tab-pane active show" id="paypal" role="tabpanel" aria-labelledby="paypal-tab">
+                                <form action="?m=payment&do=update&l=paypal" method="post" name="paypal">
+									<input type="hidden" name="id" value="<{$row->id}>">
+									<div class="row form-group">
+                                        <div class="col-md-6">
+										<label>支付模式</label><br>
+										<label class="form-radio-label">
+											<input class="form-radio-input" type="radio" name="pp_mod" value="sandbox" <{if $row["pp_mod"]=="sandbox"}>checked<{/if}>>
+											<span class="form-radio-sign">沙盒账户</span>
+										</label>
+                                        <label class="form-radio-label">
+											<input class="form-radio-input" type="radio" name="pp_mod" value="live" <{if $row["pp_mod"]=="live"}>checked<{/if}>>
+											<span class="form-radio-sign">标准账户</span>
+										</label>
+									    </div>
+                                    </div>
+                                    <div class="row form-group">
+									    <div class="col-md-6 form-floating-label">
+                                        <label>商户辨识码</label>
+										<input type="text" class="form-control input-square" name="pp_clientid" value="<{$row->pp_clientid}>">
+										</div>
+									    <div class="col-md-6 form-floating-label">
+                                        <label>商户密钥</label>
+										<input type="text" class="form-control input-square" name="pp_secret" value="<{$row->pp_secret}>">
+										</div>
+									</div>
+									<div class="row form-group">
+									    <div class="col-md-6 form-floating-label">
+                                        <label>同步通知地址</label>
+										<input type="text" class="form-control input-square" name="pp_return_url" value="<{if empty($row["pp_return_url"])}><{$appurl}>/app/modules/payment/method/paypal/return.php<{else}><{$row->pp_return_url}><{/if}>">
+										</div>
+									    <div class="col-md-6 form-floating-label">
+                                        <label>异步通知地址</label>
+										<input type="text" class="form-control input-square" name="pp_notify_url" value="<{if empty($row["pp_notify_url"])}><{$appurl}>/app/modules/payment/method/paypal/notify.php<{else}><{$row->pp_notify_url}><{/if}>">
+										</div>
+                                    </div>
+                                    <div class="card-action p-2">
+									    <button class="btn btn-info">保存</button>
+								    </div>
+                                    </form>            
+								</div>
+								<{else if $l=="url"}>
+								<div class="tab-pane active show" id="url" role="tabpanel" aria-labelledby="url-tab">
+                                <form action="?m=payment&do=update&l=url" method="post" name="url">
+									<input type="hidden" name="id" value="<{$row->id}>">
+									<div class="row form-group">
+									    <div class="col-md-6 form-floating-label">
+                                        <label>支付成功跳转地址</label>
+										<input type="text" class="form-control input-square" name="url_ok" value="<{$row->url_ok}>">
+										</div>
+									    <div class="col-md-6 form-floating-label">
+                                        <label>支付失败跳转地址</label>
+										<input type="text" class="form-control input-square" name="url_no" value="<{$row->url_no}>">
+										</div>
+                                    </div>
+                                    <div class="card-action p-2">
+									    <button class="btn btn-info">保存</button>
+								    </div>
+                                    </form>            
+								</div>
+                                <{/if}>
+							</div>
+							<{/loop}>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<{include "$pubtemp/foot.cms"}>
