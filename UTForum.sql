@@ -52,6 +52,18 @@ CREATE TABLE `cms_pay_log` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `cms_plugin`;
+CREATE TABLE `cms_plugin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pid` varchar(50) DEFAULT NULL,
+  `type` varchar(50) DEFAULT NULL,
+  `auther` varchar(50) DEFAULT NULL,
+  `title` varchar(50) DEFAULT NULL,
+  `ver` varchar(10) DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `cms_search`;
 CREATE TABLE `cms_search` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

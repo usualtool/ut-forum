@@ -1,0 +1,53 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     社区插件
+                 </h5>
+            </div>
+            <div class="border">
+								<div class="card-body">
+                                <div class="row">
+                                    <{loop=>$plugin $rows}>
+                                        <div class="col-sm-6 col-md-3">
+							                <div class="card card-stats card-round">
+								                <div class="card-body">
+									                <div class="row align-items-center">
+										                <div class="col-icon">
+											                <div class="icon-big text-center icon-primary bubble-shadow-small" style="font-size:12px;color:white;">
+												                <{$rows->pid}>									                
+															</div>
+										                </div>
+										            <div class="col col-stats ml-3 ml-sm-0">
+											            <div class="numbers">
+												            <h5 class="card-title" style="font-size:16px;font-weight:bold;"><{$rows->title}></h5>
+															<p class="card-category"><{$rows->auther}></p>
+															<p class="card-category">
+															<{php=>
+															if(library\UsualToolData\UTData::QueryData("cms_plugin","","pid='".return=>$rows["pid"]."'")["querynum"]>0):
+															}>
+															<a href="<{url=>Link("forum","my_admin_plugin_view","pid=".$rows["pid"])}>">使用</a> | 
+                                                            <a href="<{url=>Link("forum","my_admin_plugin","do=uninstall&pid=".$rows["pid"])}>">卸载</a>
+                                                            <{php=>else:}>
+                                                            <a href="<{url=>Link("forum","my_admin_plugin","do=install&pid=".$rows["pid"])}>">安装</a>
+                                                            <{php=>endif;}>
+															</p>
+											            </div>
+										            </div>
+									                </div>
+								                </div>
+							                </div>
+						                </div>
+                                    <{/loop}>
+                                </div>
+								</div>
+            </div>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

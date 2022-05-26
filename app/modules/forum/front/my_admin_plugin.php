@@ -1,0 +1,65 @@
+<?php
+require dirname(__FILE__).'/'.'power.php';
+require dirname(__FILE__).'/'.'session.php';
+use library\UsualToolInc\UTInc;
+use library\UsualToolData\UTData;
+use library\UsualToolRoute\UTRoute;
+$do=UTInc::SqlCheck($_GET["do"]);
+$app->Runin(array("webplace"),array("社区插件"));
+$app->Runin("plugin",UTInc::GetPlugin());
+$app->Open("my_admin_plugin.cms");
+if($do=="install"){
+    $t=$_GET["t"];
+    $pid=str_replace(".","",UTInc::SqlCheck($_GET["pid"]));   
+    $pconfig=APP_ROOT."/plugins/".$pid."/usualtool.config";
+    $plugins=file_get_contents($pconfig);
+    $type=UTInc::StrSubstr("<type>","</type>",$plugins);
+    $auther=UTInc::StrSubstr("<auther>","</auther>",$plugins);
+    $title=UTInc::StrSubstr("<title>","</title>",$plugins);
+    $ver=UTInc::StrSubstr("<ver>","</ver>",$plugins);
+    $description=UTInc::StrSubstr("<description>","</description>",$plugins);
+    $installsql=UTInc::StrSubstr("<installsql><![CDATA[","]]></installsql>",$plugins);
+    if(UTData::QueryData("cms_plugin","","pid='$pid'","","1")["querynum"]>0):
+        UTData::UpdateData("cms_plugin",array(
+            "type"=>$type,
+            "auther"=>$auther,
+            "title"=>$title,
+            "ver"=>$ver,
+            "description"=>$description),"pid='$pid'");
+    else:
+        UTData::InsertData("cms_plugin",array(
+            "pid"=>$pid,
+            "type"=>$type,
+            "auther"=>$auther,
+            "title"=>$title,
+            "ver"=>$ver,
+            "description"=>$description));
+    endif;
+    if($installsql=='0'):
+        UTInc::GoUrl(UTRoute::Link("forum","my_admin_plugin"),"成功安装插件!");
+    else:
+        if(UTData::RunSql($installsql)):
+            UTInc::GoUrl(UTRoute::Link("forum","my_admin_plugin"),"成功安装插件!");
+        else:
+            UTInc::GoUrl("-1","插件安装失败!");
+        endif;   
+    endif;
+}
+if($do=="uninstall"){
+    $pid=str_replace(".","",UTInc::SqlCheck($_GET["pid"]));
+    $pconfig=APP_ROOT."/plugins/".$pid."/usualtool.config";
+    $plugins=file_get_contents($pconfig);
+    $uninstallsql=UTInc::StrSubstr("<uninstallsql><![CDATA[","]]></uninstallsql>",$plugins);
+    UTData::DelData("cms_plugin","pid='$pid'");
+    if($uninstallsql=='0'):
+        UTInc::DelDir(APP_ROOT."/plugins/".$pid);
+        UTInc::GoUrl(UTRoute::Link("forum","my_admin_plugin"),"成功卸载插件!");
+    else:
+        if(UTData::RunSql($uninstallsql)):
+            UTInc::DelDir(APP_ROOT."/plugins/".$pid);
+            UTInc::GoUrl(UTRoute::Link("forum","my_admin_plugin"),"成功卸载插件!");
+        else:
+            UTInc::GoUrl("-1","插件卸载失败!");
+        endif;   
+    endif;
+}
