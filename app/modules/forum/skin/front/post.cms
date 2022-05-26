@@ -29,7 +29,7 @@
                         <{if $row["look"]==1 && empty($uid)}>
                             <p class="text-danger">
                                 阅读权限：
-                                <a href="?m=forum&p=login&goto=<{php=>echo urlencode(library\UsualToolInc\UTInc::CurPageUrl());}>">需登陆</a>
+                                <a href="<{url=>Link("forum","login","goto=".urlencode(base64_encode(library\UsualToolInc\UTInc::CurPageUrl())))}>">需登陆</a>
                             </p>
                         <{elseif $row["look"]==2 && $my_replynum==0}>
                             <p class="text-danger">
@@ -69,12 +69,12 @@
                                       <{if !empty($row["files"])}>
                                           <{if !empty($uid)}>
                                               <div class="mt-3 border-top text-secondary pt-2 pb-2" style="font-size:13px;">
-                                                  <strong>主题附件</strong> 
+                                                  <strong>主题附件</strong> | 已下载 <span style="color:red;"><{$row->downnum}></span> 次 
                                                   <{if $row["payfiles"]>0}>
                                                       <{php=>if(library\UsualToolData\UTData::QueryData("forum_payment","","uid='".return=>$uid."' and pid='".return=>$row["id"]."'","","")["querynum"]>0):}>
                                                           您已购买过本附件可直接下载附件
                                                       <{php=>else:}>
-                                                          下载本附件需要 <font color="red"><{$row->payfiles}></font> 积分 <a href="?m=forum&p=post&id=<{$row->id}>&do=payfiles">支付</a>
+                                                          下载本附件需要 <font color="red"><{$row->payfiles}></font> 积分 <a href="<{url=>Link("forum","post","id=".$row["id"]."&do=payfiles")}>">支付</a>
                                                       <{php=>endif;}>
                                                   <{/if}>
                                                   <{split=>$row->files,",",all}>
@@ -133,7 +133,6 @@
                     <{page=>total,curpage,listnum,pagelink}>
                     <a name="reply"></a>
                     <div class="mb-2">
-                    <{if !empty($uid)}>
                         <form method="post" action="?m=forum&p=post&id=<{$row->id}>&do=reply" class="form-validate">
                         <input type="hidden" name="postid" value="<{$row->id}>">
                         <input type="hidden" name="replyid" value="0">
@@ -149,11 +148,17 @@
                                    <{/if}>
                                    <{plugin=>kindeditor,simple.php}>
                                 </div>
-                                <button id="reply" type="submit" class="btn btn-primary pl-3 pr-3">回复</button>
+                                <{if !empty($uid)}>
+                                    <button id="reply" type="submit" class="btn btn-primary pl-3 pr-3">回复</button>
+                                <{else}>
+                                    <p>回复主题，请 <a href="<{url=>Link("forum","login","goto=".urlencode(base64_encode(library\UsualToolInc\UTInc::CurPageUrl())))}>">登陆</a></p>
+                                    <script type="text/javascript">
+                                        $(function () { 
+                                           KDEDITOR.readonly();  
+                                        });  
+                                    </script>
+                                <{/if}>
                         </form>
-                    <{else}>
-                    <p>回复主题，请 <a href="<{url=>Link("forum","login","goto=".urlencode(base64_encode(library\UsualToolInc\UTInc::CurPageUrl())))}>">登陆</a></p>
-                    <{/if}>
                     </div>
                 <{/if}>
             </div>

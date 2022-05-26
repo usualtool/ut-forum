@@ -16,7 +16,7 @@
                           <li class="media mb-3">
                           <figure class="figure mr-3">
                             <img src="<{db=>QueryData("forum_member","avatar","id='".$rows["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
-                            <figcaption class="figure-caption text-center">
+                            <figcaption class="figure-caption text-center splitword">
                                 <{db=>QueryData("forum_member","username","id='".$rows["uid"]."'","","")["querydata"][0]["username"]}>
                             </figcaption>
                           </figure>
