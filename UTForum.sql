@@ -82,17 +82,6 @@ CREATE TABLE IF NOT EXISTS `forum` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `forum_comment`;
-CREATE TABLE IF NOT EXISTS `forum_comment` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `types` int(11) NOT NULL DEFAULT '1',
-  `postid` int(11) NOT NULL DEFAULT '0',
-  `uid` int(11) NOT NULL DEFAULT '0',
-  `content` varchar(250) DEFAULT NULL,
-  `addtime` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `forum_member`;
 CREATE TABLE IF NOT EXISTS `forum_member` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
