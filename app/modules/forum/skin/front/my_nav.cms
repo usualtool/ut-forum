@@ -31,6 +31,7 @@
                             <a class="mr-2" href="<{url=>Link("forum","my_admin_forum","")}>">版块</a> 
                             <a class="mr-2" href="<{url=>Link("forum","my_admin_black","")}>">屏蔽</a>
                             <a class="mr-2" href="<{url=>Link("forum","my_admin_team","")}>">用户</a>
+                            <a class="mr-2" href="<{url=>Link("forum","my_admin_plugin","")}>">插件</a>
                             <a href="<{url=>Link("forum","my_admin_set","")}>">设置</a>
                         </p>
                     <{/if}>
