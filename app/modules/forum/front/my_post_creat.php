@@ -40,6 +40,7 @@ if($_GET["do"]=="creat"){
             "content"=>$content,
             "payfiles"=>$payfiles,
             "files"=>$files,
+            "ip"=>UTInc::GetIp(),
             "posttime"=>date('Y-m-d H:i:s',time())));
             if($pid):
                 UTInc::GoUrl(UTRoute::Link("forum","post","id=".$pid),"撰写成功!");    

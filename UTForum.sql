@@ -107,10 +107,12 @@ CREATE TABLE IF NOT EXISTS `forum_member` (
   `email` varchar(250) DEFAULT NULL,
   `fullname` varchar(150) DEFAULT NULL,
   `sex` int(11) DEFAULT '1',
+  `telephone` varchar(30) DEFAULT NULL,
   `cardnumber` varchar(100) DEFAULT NULL,
   `openid` varchar(200) DEFAULT NULL,
   `other` text,
   `creattime` datetime NOT NULL,
+  `lasttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
@@ -167,6 +169,7 @@ CREATE TABLE IF NOT EXISTS `forum_reply` (
   `replyid` int(11) DEFAULT '0',
   `content` longtext NOT NULL,
   `files` text,
+  `ip` varchar(30) DEFAULT NULL,
   `replytime` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)

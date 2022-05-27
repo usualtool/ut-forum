@@ -22,6 +22,7 @@ if($_GET["do"]=="login"){
                 $rows=$data["querydata"][0];
                 $shaupass=sha1($rows['salts'].$password);
                 if($shaupass==$rows['password']){
+                    UTData::UpdateData("forum_member",array("lasttime"=>date('Y-m-d H:i:s',time())),"id='".$rows["id"]."'");
                     $_SESSION[$cookname."uid"]=$rows["id"];
                     $_SESSION[$cookname."username"]=$rows["username"];
                     session_regenerate_id(TRUE);

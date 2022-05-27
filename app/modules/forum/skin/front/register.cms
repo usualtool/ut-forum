@@ -25,7 +25,7 @@
                      <label class="radio-inline"><input type="radio" name="sex" value="1" checked> 男</label>
                      <label class="radio-inline"><input type="radio" name="sex" value="2"> 女</label>
                     </div>
-                    <button id="login" type="submit" class="btn btn-primary pl-3 pr-3">登录</button>
+                    <button id="submit" type="submit" class="btn btn-primary pl-3 pr-3">登录</button>
                   </form>
                   <br />
                   <small>已有账号?</small><a href="?m=forum&p=login" class="signup"><small>&nbsp;Sign in</small></a>

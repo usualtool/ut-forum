@@ -48,6 +48,7 @@ if($_GET["do"]=="reply"){
             "postid"=>$postid,
             "replyid"=>$replyid,
             "content"=>$content,
+            "ip"=>UTInc::GetIp(),
             "replytime"=>date('Y-m-d H:i:s',time())));
             if($rid):
                 UTInc::GoUrl(UTRoute::Link("forum","post","id=".$postid."&page=".$page)."#end","回复主题成功!");
@@ -88,4 +89,18 @@ if($_GET["do"]=="payfiles"){
         endif;
         UTInc::GoUrl(UTRoute::Link("forum","post","id=".$id),"购买附件成功!"); 
      endif;
+}
+if($_GET["do"]=="file_comment"){
+    $content=UTInc::SqlCheck($_POST["file_content"]);
+    if(empty($content)):
+        UTInc::GoUrl("-1","评语不能为空!"); 
+    else:
+        UTData::InsertData("forum_comment",array(
+            "types"=>2,
+            "postid"=>$id,
+            "uid"=>$uid,
+            "content"=>$content,
+            "addtime"=>date('Y-m-d H:i:s',time())));
+        UTInc::GoUrl("?m=forum&p=post&id=".$id."&page=1#filecomment","附件评价成功!"); 
+    endif;
 }

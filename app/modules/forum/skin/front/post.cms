@@ -31,13 +31,16 @@
                          <ul class="list-unstyled">
                          <{if $curpage<2}>
                               <li class="media mb-3">
+                              <{php=>
+                                 $ti_user=library\UsualToolData\UTData::QueryData("forum_member","","id='".return=>$row["uid"]."'","","")["querydata"][0];
+                              }>
                               <figure class="figure mr-3 none">
-                                <img src="<{db=>QueryData("forum_member","avatar","id='".$row["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                                <img src="<{php=>echo$ti_user["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;" data-toggle="tooltip" data-html="true" data-placement="right" title="<p>注册：<{php=>echo$ti_user["creattime"]}></p><p>最近：<{php=>echo$ti_user["lasttime"]}></p><p><{$row->ip}></p>">
                                 <figcaption class="figure-caption text-center splitword">
-                                    <{db=>QueryData("forum_member","username","id='".$row["uid"]."'","","")["querydata"][0]["username"]}>
+                                    <{php=>echo$ti_user["username"]}>
                                 </figcaption>
                                 <{php=>
-                                $post_utype=library\UsualToolData\UTData::QueryData("forum_member","utype","id='".return=>$row["uid"]."'","","")["querydata"][0]["utype"];
+                                $post_utype=$ti_user["utype"];
                                 if($post_utype>0):
                                 }>
                                     <figcaption class="figure-caption text-center text-danger" style="font-size:9px;">
@@ -87,13 +90,16 @@
                           <{/if}>
                           <{loop=>$data_reply as $rows}>
                               <li class="media mb-3 border-top pt-3">
+                              <{php=>
+                                 $re_user=library\UsualToolData\UTData::QueryData("forum_member","","id='".return=>$rows["uid"]."'","","")["querydata"][0];
+                              }>
                               <figure class="figure mr-3">
-                                <img src="<{db=>QueryData("forum_member","avatar","id='".$rows["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                                <img src="<{php=>echo$re_user["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;" data-toggle="tooltip" data-html="true" data-placement="right" title="<p>注册：<{php=>echo$re_user["creattime"]}></p><p>最近：<{php=>echo$re_user["lasttime"]}></p><p><{$rows->ip}></p>">
                                 <figcaption class="figure-caption text-center splitword">
-                                    <{db=>QueryData("forum_member","username","id='".$rows["uid"]."'","","")["querydata"][0]["username"]}>
+                                    <{php=>echo$re_user["username"]}>
                                 </figcaption>
                                 <{php=>
-                                $reply_utype=library\UsualToolData\UTData::QueryData("forum_member","utype","id='".return=>$rows["uid"]."'","","")["querydata"][0]["utype"];
+                                $reply_utype=$re_user["utype"];
                                 if($reply_utype>0):
                                 }>
                                     <figcaption class="figure-caption text-center text-danger" style="font-size:9px;">
@@ -122,7 +128,9 @@
                         </ul>
                         <{/if}>
                     </div>
-                    <{page=>total,curpage,listnum,pagelink}>
+                    <div id="ut-auto">
+                        <{page=>total,curpage,listnum,pagelink}>
+                    </div>
                     <a name="reply"></a>
                     <div class="mb-2">
                         <form method="post" action="?m=forum&p=post&id=<{$row->id}>&do=reply" class="form-validate">
