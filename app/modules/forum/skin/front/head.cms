@@ -7,19 +7,10 @@
     <link href="<{$appurl}>/app/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<{$appurl}>/app/assets/css/buttons.min.css" rel="stylesheet"/>
     <link href="<{$appurl}>/app/assets/css/fontawesome.min.css" rel="stylesheet">
-    <link href="<{$appurl}>/app/assets/css/default.css" rel="stylesheet">
+    <link href="<{$appurl}>/app/assets/css/forum.css" rel="stylesheet">
     <script src="<{$appurl}>/app/assets/js/jquery.min.js"></script>
     <script src="<{$appurl}>/app/assets/js/popper.min.js"></script>
     <script src="<{$appurl}>/app/assets/js/bootstrap.min.js"></script>
-    <style>
-    #col-right{position:fixed;padding-left:0;max-width:27%;}
-    .dropdown-toggle::after{display:none;}
-    .splitword{width:60px;word-break:break-all;word-wrap:break-word;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;}
-    #ut-table_wrapper{padding-left:0;padding-right:0;}
-    #ut-table_filter{float:right;}
-    #ut-table_filter input{display:inline;width:88%}
-    @media(max-width:640px){.itemblock{width:100%;display:block;}#col-right{position:inherit;padding-right:0;max-width:100%;}.dt-buttons{display:none;}#ut-table_filter{float:left;}}
-    </style>
 </head>
 <body>
 <div class="container-fluid bg-dark mb-2"> 

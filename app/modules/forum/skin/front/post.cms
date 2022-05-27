@@ -1,13 +1,4 @@
 <{include "head.cms"}>
-<style>
-#content pre {
-    white-space: pre-wrap;
-    white-space: -moz-pre-wrap;
-    white-space:-pre-wrap;
-    white-space: -o-pre-wrap;
-    word-wrap:break-word;
-}
-</style>
 <{loop=>$data as $row}>
     <div class="container"> 
         <div class="row">

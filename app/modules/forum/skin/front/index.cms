@@ -103,6 +103,38 @@
                   </form>
                 </div>
 	        </div>
+	        <div class="card mb-2">
+								<div class="card-header pb-0">
+									<h5 class="card-title">发现</h5>
+								</div>
+								<div class="card-body">
+									<div class="mb-2 text-secondary">新成员</div>
+										<div class="avatar-group">
+										<{loop=>$users $rows}>
+											<div class="avatar rounded-circle border text-center bg-light text-dark" style="width:40px;height:40px;line-height:40px;">
+											<span title="<{$rows->username}>"><{inc=>CutSubstr($rows["username"],0,1)}></span>
+											</div>
+										<{/loop}>
+										</div>
+									<div class="mt-2 mb-2 text-secondary">新主题</div>
+									<div>
+									<ul class="pl-4">
+									<{loop=>$newtopic $rows}>
+									    <li><a href="<{url=>Link("forum","post","id=".$rows["id"])}>" class="text-truncate-1"><{$rows->title}></a></li>
+									<{/loop}>
+									</ul>
+									</div>
+									<div class="mt-2 mb-2 text-secondary">勤奋之星</div>
+									<div class="row">
+									<{loop=>$topstar $rows}>
+									    <div class="col-md-4 text-center">
+									        <img src="<{$rows->avatar}>" class="rounded-circle border" style="width:50px;height:50px;">
+									        <p style="font-size:12px;"><{$rows->username}></p>
+									    </div>
+									<{/loop}>
+									</div>
+								</div>
+							</div>
             <div class="card">
                 <div class="card-header pb-0">
                         <h5 class="card-title">版块</h5>
