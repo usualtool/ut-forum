@@ -1,0 +1,60 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     举报列表
+                 </h5>
+            </div>
+            <div id="ut-auto">
+            <table class="display table table-striped table-hover">
+                <thead>
+                        <tr>
+                                <th>类型</th>
+                                <th style="width:55%;">违规内容</th>
+                                <th>举报人</th>
+                                <th></th>
+                         </tr>
+                 </thead>
+                 <tbody>
+                    <{loop=>$data $rows}>
+                        <tr>
+                                <td>
+                                <{if $rows["ptype"]==0}>
+                                主题
+                                <{else if $rows["ptype"]==1}>
+                                回帖
+                                <{/if}>
+                                </td>
+                                <td class="br">
+                                <{if $rows["ptype"]==0}>
+                                <a target="_blank" href="<{url=>Link("forum","post","id=".$rows["postid"])}>" style="font-size:12px;"><{db=>QueryData("forum_post","","id='".$rows["postid"]."'")["querydata"][0]["title"]}></a>
+                                <{else if $rows["ptype"]==1}>
+                                <span style="font-size:12px;">
+                                    <{db=>QueryData("forum_reply","","id='".$rows["postid"]."'")["querydata"][0]["content"]}>
+                                </span>
+                                <{/if}>
+                                </td>
+                                <td><{db=>QueryData("forum_member","","id='".$rows["uid"]."'")["querydata"][0]["username"]}></td>
+                                <td>
+                                    <a href="<{url=>Link("forum","my_admin_report","do=del&id=".$rows["id"])}>">删举报</a> | 
+                                    <{if $rows["ptype"]==0}>
+                                    <a href="<{url=>Link("forum","my_admin_report","do=del_post&id=".$rows["id"]."&postid=".$rows["postid"])}>">同删主题</a>
+                                    <{else if $rows["ptype"]==1}>
+                                    <a href="<{url=>Link("forum","my_admin_report","do=del_reply&id=".$rows["id"]."&replyid=".$rows["postid"])}>">同删回复</a>
+                                    <{/if}>
+                                </td>
+                        </tr>
+                    <{/loop}>
+                </tbody>
+            </table>
+            </div>
+            <{page=>total,curpage,listnum,pagelink}>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

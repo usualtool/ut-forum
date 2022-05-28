@@ -49,7 +49,7 @@
                                 <{php=>endif;}>
                               </figure>
                                   <div class="media-body">
-                                      <p class="mb-3" style="font-size:12px;">
+                                      <p class="mb-3 border-dashed-bottom pb-2" style="font-size:12px;">
                                       <span>
                                           <font class="mr-2"><i class="fa fa-user-circle" aria-hidden="true"></i> <{db=>QueryData("forum_member","username","id='".$row["uid"]."'","","")["querydata"][0]["username"]}> </font>
                                           <font class="mr-2">发表于<{$row->posttime}> </font>
@@ -80,6 +80,11 @@
                                               <p class="text-secondary mt-3" style="font-size:13px;">该主题包含附件需登录下载</p>
                                            <{/if}>
                                       <{/if}>
+                                      <div class="mt-3 border-dashed-top pt-2" style="font-size:12px;color:#888;">
+                                        <span class="right">
+                                        <a data-toggle="modal" data-target="#report" onclick="Report('0','<{$row->id}>')">举报主题</a>
+                                        </span>
+                                      </div>
                                   </div>
                             <{if $row["ding"]==1}>
                                 <div style="position:absolute;right:5%;max-width:100%;">
@@ -108,7 +113,7 @@
                                 <{php=>endif;}>
                               </figure>
                                   <div class="media-body">
-                                      <p class="mb-3" style="font-size:12px;">
+                                      <p class="mb-3 border-dashed-bottom pb-2" style="font-size:12px;">
                                           <span>
                                               <font class="mr-2">发表于<{$rows->replytime}></font>
                                           </span>
@@ -120,7 +125,25 @@
                                               <{/if}>
                                           </span>
                                       </p>
-                                      <div id="content"><{inc=>DeSqlCheck($rows["content"])}></div>
+                                      <div class="mb-3" id="content">
+                                          <{inc=>DeSqlCheck($rows["content"])}>
+                                      </div>
+                                      <div class="mt-2 border-dashed-top pt-2" style="font-size:12px;color:#888;">
+                                        <span>
+                                          <{if $rows["xu"]==1 && $curpage==1}>
+                                              #床垫
+                                          <{else if $rows["xu"]==2 && $curpage==1}>
+                                              #沙发
+                                          <{else if $rows["xu"]==3 && $curpage==1}>
+                                              #地铺
+                                          <{else}>
+                                              #<{php=>echo((return=>$curpage-1)*return=>$listnum+return=>$rows["xu"])}>楼
+                                          <{/if}>
+                                        </span>
+                                        <span class="right">
+                                        <a data-toggle="modal" data-target="#report" onclick="Report('1','<{$rows->id}>')">举报</a>
+                                        </span>
+                                      </div>
                                   </div>
                               </li>
                           <{/loop}>
@@ -181,7 +204,7 @@
                                 回复                            
                             </figcaption>
                         </figure>
-                        <div class="col-md-12 pl-0 pr-0 mb-3">
+                        <div class="col-md-12 pl-0 pr-0 mt-3 mb-3">
                             <a href="#reply" class="btn btn-info pl-3 pr-3 mr-3 text-white">回复主题</a>
                             <{if $row["notice"]==0}>
                                 <a href="<{url=>Link("forum","list","id=".$row["fid"])}>" class="btn btn-info pl-3 pr-3 text-white">返回版块</a>
@@ -233,4 +256,50 @@
         </div>
     </div>
 <{/loop}>
+      <!--report-->
+      <div class="modal fade" id="report">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form method="post" action="<{url=>Link("forum","post","do=report")}>" class="form-validate">
+                <input type="hidden" id="ptype" name="ptype">
+                <input type="hidden" id="postid" name="postid">
+                <div class="modal-header">
+                  <h4 class="modal-title">举报</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="radio">
+                    <label>
+                        <input type="radio" name="content" value="垃圾广告" checked> 
+                        垃圾广告
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="content" value="恶意灌水"> 
+                        恶意灌水
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="content" value="违规内容"> 
+                        违规内容
+                    </label>
+                </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" id="report_btn" class="btn btn-primary">确定</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <script>
+          function Report(type,id){
+              $('#ptype').val(type);  
+              $('#postid').val(id);  
+              $('#report').modal('show');  
+          }
+      </script>
+      <!--report-->
 <{include "foot.cms"}>

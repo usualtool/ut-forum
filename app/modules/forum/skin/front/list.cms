@@ -65,7 +65,7 @@
                                 主题                            
                             </figcaption>
                         </figure>
-                        <div class="col-md-12 pl-0 pr-0 mb-3">
+                        <div class="col-md-12 pl-0 pr-0 mt-3 mb-3">
                             <a href="<{url=>Link("forum","my_post_creat","fid=".$id)}>" class="btn btn-info pl-3 pr-3 mr-3 text-white">撰写主题</a>
                             <a href="<{url=>Link("forum","","")}>" class="btn btn-info pl-3 pr-3 text-white">返回首页</a>
                         </div>

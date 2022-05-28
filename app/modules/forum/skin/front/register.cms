@@ -28,7 +28,7 @@
                     <button id="submit" type="submit" class="btn btn-primary pl-3 pr-3">登录</button>
                   </form>
                   <br />
-                  <small>已有账号?</small><a href="?m=forum&p=login" class="signup"><small>&nbsp;Sign in</small></a>
+                  <small>已有账号?</small><a href="<{url=>Link("forum","login")}>" class="signup"><small>&nbsp;Sign in</small></a>
             </div>
           </div>
       </div>

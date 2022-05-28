@@ -4,6 +4,9 @@ require dirname(__FILE__).'/'.'session.php';
 use library\UsualToolInc\UTInc;
 use library\UsualToolData\UTData;
 use library\UsualToolRoute\UTRoute;
+if($utype!=99999):
+    UTInc::GoUrl("-1","权限不足!"); 
+endif;
 $l=$_GET["l"];
 $c=$_GET["c"];
 $payment=UTData::QueryData("cms_pay","","","","1")["querydata"];

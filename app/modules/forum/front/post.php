@@ -104,3 +104,18 @@ if($_GET["do"]=="file_comment"){
         UTInc::GoUrl("?m=forum&p=post&id=".$id."&page=1#filecomment","附件评价成功!"); 
     endif;
 }
+if($_GET["do"]=="report"){
+    $ptype=UTInc::SqlCheck($_POST["ptype"]);
+    $postid=UTInc::SqlCheck($_POST["postid"]);
+    $content=UTInc::SqlCheck($_POST["file_content"]);
+    if(UTData::InsertData("forum_report",array(
+        "ptype"=>$ptype,
+        "postid"=>$postid,
+        "uid"=>$uid,
+        "content"=>$content,
+        "addtime"=>date('Y-m-d H:i:s',time())))):
+        UTInc::GoUrl("-1","举报完毕!");
+    else:
+        UTInc::GoUrl("-1","举报失败!");
+    endif;
+}

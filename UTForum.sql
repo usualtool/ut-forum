@@ -174,6 +174,17 @@ CREATE TABLE IF NOT EXISTS `forum_reply` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `forum_report`;
+CREATE TABLE `forum_report` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) DEFAULT '0',
+  `ptype` int(11) DEFAULT '0',
+  `postid` int(11) DEFAULT NULL,
+  `content` varchar(250) DEFAULT NULL,
+  `addtime` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `forum_set`;
 CREATE TABLE IF NOT EXISTS `forum_set` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
