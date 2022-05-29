@@ -7,7 +7,7 @@
                   <form method="post" action="<{url=>Link("forum","login","do=login")}>" class="form-validate">
                   <input name="goto" type="hidden" value="<{$goto}>">
                     <div class="form-group">
-                      <input name="username" type="text" required placeholder="账户" class="input-material col-md-6">
+                      <input name="username" type="text" required placeholder="账户/Email/手机号码" class="input-material col-md-6">
                     </div>
                     <div class="form-group">
                       <input name="password" type="password" required placeholder="密码" class="input-material col-md-6">

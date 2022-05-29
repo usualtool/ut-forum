@@ -17,7 +17,7 @@ foreach(UTData::QueryData("forum","","","forum_number desc","")["querydata"] as 
 }
 $pagelink="?m=".$m."&p=".$p;
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
-$pagenum=10;
+$pagenum=5;
 $minid=$pagenum*($page-1);
 $data=UTData::QueryData("forum_member","","","utype desc,creattime desc","$minid,$pagenum");
 $querynum=$data["querynum"];

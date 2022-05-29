@@ -115,7 +115,17 @@ CREATE TABLE IF NOT EXISTS `forum_member` (
   `lasttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `forum_member_log`;
+CREATE TABLE IF NOT EXISTS `forum_member_log` (
+  `id` int(11) NOT NULL,
+  `uid` int(11) DEFAULT '0',
+  `ip` varchar(30) DEFAULT NULL,
+  `content` text,
+  `addtime` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `forum_message`;
 CREATE TABLE IF NOT EXISTS `forum_message` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

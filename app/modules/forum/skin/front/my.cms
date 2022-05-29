@@ -4,7 +4,7 @@
         <div class="col-md-4 mb-2">
         <{include "my_nav.cms"}>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-8 mb-2">
             <div class="panel-heading">
                  <h5 class="media-heading">
                      我的
@@ -14,19 +14,45 @@
             <div class="row">
                 <div class="col-md-5">
                 <{loop=>$user as $row}>
-                        <div class="form-group">
-                         <img src="<{$row->avatar}>" style="width:60px;height:60px;">
+                        <div class="form-group mb-2 border-bottom pb-2">
+                        <div class="row">
+                          <div class="col-4">
+                            <img src="<{$row->avatar}>" class="border" style="width:70px;height:70px;">
+                          </div>
+                          <div class="col-8" style="font-size:13px;">
+                            <div class="row mb-1">
+                            <span class="col-5 right">手机号码</span> 
+                            <span class="col-7"><{if !empty($row["telephone"])}><font color="green">√</font><{else}><font color="red">×</font><{/if}></span>
+                            </div>
+                            <div class="row mb-1">
+                            <span class="col-5 right">身份证号</span>  
+                            <span class="col-7"><{if !empty($row["cardnumber"])}><font color="green">√</font><{else}><font color="red">×</font><{/if}></span>
+                            </div>
+                            <div class="row">
+                            <span class="col-5 right">电子邮件</span>  
+                            <span class="col-7"><{if !empty($row["email"])}><font color="green">√</font><{else}><font color="red">×</font><{/if}></span>
+                            </div>
+                          </div>
                         </div>
-                        <div class="form-group">
-                         积分：<{$row->money}>
                         </div>
-                        <div class="form-group">
-                         发布主题：<{db=>QueryData("forum_post","","uid='".$row["id"]."'","","")["querynum"]}>个
-                        </div>
-                        <div class="form-group">
-                         回复主题：<{db=>QueryData("forum_reply","","uid='".$row["id"]."'","","")["querynum"]}>次
-                        </div>
+                        <p>
+                         账户积分：<{$row->money}>
+                        </p>
+                        <p>
+                         发布主题：<{db=>QueryData("forum_post","","uid='".$row["id"]."'","","")["querynum"]}>
+                        </p>
+                        <p>
+                         回复主题：<{db=>QueryData("forum_reply","","uid='".$row["id"]."'","","")["querynum"]}>
+                        </p>
                 <{/loop}>
+                        <div class="form-group mt-2">
+                         <p class="bg-light text-center border-top pt-2 border-bottom pb-2 mb-2">最近活动</p>
+                         <{loop=>$loginlog $rows}>
+                             <p style="font-size:12px;">
+                                 ip：<{$rows->ip}><span class="right">时间：<{$rows->addtime}></span>
+                             </p>
+                         <{/loop}>
+                        </div>
                 </div>
                 <div class="col-md-1 border-left none"></div>
                 <div class="col-md-6">

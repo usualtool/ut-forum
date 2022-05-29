@@ -42,7 +42,7 @@
                             </div>
                             <{if $rows["ding"]==1}>
                                 <div style="position:absolute;right:5%;max-width:100%;">
-                                    <img src="<{$appurl}>/app/modules/forum/image/ding.png" class="rounded-circle" style="width:60px;height:60px;">
+                                    <img src="<{$appurl}>/app/modules/forum/assets/image/ding.png" class="rounded-circle" style="width:60px;height:60px;">
                                 </div>
                             <{/if}>
                           </li>

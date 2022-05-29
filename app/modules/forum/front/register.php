@@ -16,6 +16,7 @@ if($_GET["do"]=="register"){
     }
     $email=UTInc::SqlCheck($_POST["email"]);
     $fullname=UTInc::SqlCheck($_POST["fullname"]);
+    $telephone=UTInc::SqlCheck($_POST["telephone"]);
     $sex=UTInc::SqlCheck($_POST["sex"]);
     if($password!=$passwords):
         UTInc::GoUrl("-1","两次输入的密码不一致!");

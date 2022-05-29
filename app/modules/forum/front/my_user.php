@@ -11,6 +11,7 @@ if($_GET["do"]=="save"){
     $avatar=UTInc::SqlCheck($_POST["avatar"]);
     $fullname=UTInc::SqlCheck($_POST["fullname"]);
     $email=UTInc::SqlCheck($_POST["email"]);
+    $telephone=UTInc::SqlCheck($_POST["telephone"]);
     $sex=UTInc::SqlCheck($_POST["sex"]);
     $password=UTInc::SqlCheck($_POST["password"]);
     $passwords=UTInc::SqlCheck($_POST["passwords"]);
@@ -25,6 +26,7 @@ if($_GET["do"]=="save"){
                 "password"=>$passwordx,
                 "salts"=>$salts,
                 "fullname"=>$fullname,
+                "telephone"=>$telephone,
                 "email"=>$email,
                 "sex"=>$sex),"id='$id'"); 
         endif;
@@ -33,6 +35,7 @@ if($_GET["do"]=="save"){
             "avatar"=>$avatar,
             "fullname"=>$fullname,
             "email"=>$email,
+            "telephone"=>$telephone,
             "sex"=>$sex),"id='$id'");
     endif;
     if($sql):

@@ -17,12 +17,13 @@ if($_GET["do"]=="login"){
     $code=UTInc::SqlCheck(strtolower($_POST["code"]));
     if($_SESSION['authcode']==$code){
         if(!empty($username)&&!empty($password)){
-            $data=UTData::QueryData("forum_member","","username='$username' and black=0","","");
+            $data=UTData::QueryData("forum_member","","(username='$username' || email='$username' || telephone='$username') and black=0","","");
             if($data["querynum"]==1){
                 $rows=$data["querydata"][0];
                 $shaupass=sha1($rows['salts'].$password);
                 if($shaupass==$rows['password']){
                     UTData::UpdateData("forum_member",array("lasttime"=>date('Y-m-d H:i:s',time())),"id='".$rows["id"]."'");
+                    UTData::InsertData("forum_member_log",array("uid"=>$rows["id"],"ip"=>UTInc::GetIp(),"content"=>"login","addtime"=>date('Y-m-d H:i:s',time())));
                     $_SESSION[$cookname."uid"]=$rows["id"];
                     $_SESSION[$cookname."username"]=$rows["username"];
                     session_regenerate_id(TRUE);

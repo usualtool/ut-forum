@@ -4,7 +4,8 @@ require dirname(__FILE__).'/'.'session.php';
 use library\UsualToolInc\UTInc;
 use library\UsualToolData\UTData;
 use library\UsualToolRoute\UTRoute;
-$app->Runin(array("webplace"),array("我的"));
+$loginlog=UTData::QueryData("forum_member_log","","uid='$uid'","addtime desc","0,5")["querydata"];
+$app->Runin(array("webplace","loginlog"),array("我的",$loginlog));
 $app->Open("my.cms");
 if($_GET["do"]=="payment"){
     $paytype=UTInc::SqlCheck($_POST["paytype"]);

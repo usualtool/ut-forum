@@ -91,27 +91,36 @@ figure{
 	background: #eee;
 	border-radius: 50%;
 }
+.ut-form{
+    margin-bottom:1rem;
+}
 .ut-input {
-	border: 1px solid #DBDBDB;
-	background-color: #FFF;
-	padding: 4px 5px;
+	padding: .375rem .75rem;
 	color: #999;
-	font-size: 12px;
-	line-height: 20px;
+	font-size: 1rem;
+	background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+	margin-bottom:10px;
 	-webkit-appearance: none;
+	transition: border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
 }
 .ut-select {
 	border: 1px solid #DBDBDB;
 	background-color: #FFF;
-	padding: 4px 5px;
+	padding: .375rem .75rem;
 	color: #999;
-	font-size: 12px;
-	line-height: 20px;
+	font-size: 1rem;
 }
 .ut-button {
-	padding: 5px 10px;
-	background-color: #eee;
-	border: 1px solid #eee;
+    font-size: 1rem;
+    color: #fff;
+    background: #7d8588;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    padding: .375rem .45rem;
+    -webkit-appearance: none;
 }
 #ut-content {
 	display:none;

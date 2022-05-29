@@ -8,6 +8,7 @@
                      <label>Email</label>
                      <input name="email" type="text" required class="form-control">
                     </div>
+                    <{plugin=>sms}>
                     <div class="form-group">
                      <label>账户</label>
                      <input name="username" type="text" required class="form-control">

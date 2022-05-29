@@ -15,8 +15,16 @@
                   <form method="post" action="<{url=>Link("forum","my_user","do=save")}>" class="form-validate">
                   <input type="hidden" name="id" value="<{$row->id}>">
                     <div class="form-group">
-                     <label>头像地址</label>
-                     <input name="avatar" type="text" required class="form-control" value="<{$row->avatar}>">
+                     <label>原头像</label>
+                     <div class="row mb-3">
+                     <div class="col-3">
+                     <img src="<{$row->avatar}>" class="border" style="width:60px;height:60px;">
+                     </div>
+                     <div class="col-9">
+                     <input name="avatar" id="upload-avatar" type="text" class="mb-2 form-control" value="<{$row->avatar}>">
+                     <input type="file" class="mb-2 form-control-file mr-1" id="file0" style="max-width:25%;">
+                                <input type="button" class="ut-button bg-info text-white" value="上传头像" onclick="upload('file0','upload-avatar','','<{$appurl}>/')">
+                     </div>
                     </div>
                     <div class="form-group">
                      <label>Email</label>
@@ -39,7 +47,13 @@
                      <label class="radio-inline"><input type="radio" name="sex" value="1" <{if $row["sex"]==1}>checked<{/if}>> 男</label>
                      <label class="radio-inline"><input type="radio" name="sex" value="2" <{if $row["sex"]==2}>checked<{/if}>> 女</label>
                     </div>
-                    <button id="login" type="submit" class="btn btn-primary pl-3 pr-3">保存</button>
+                    <{if !empty($row["telephone"])}>
+                    <div style="font-size:12px;">
+                        请使用手机号码 <font color="red"><{$row->telephone}></font> 进行验证
+                    </div>
+                    <{/if}>
+                    <{plugin=>sms}>
+                    <button id="submit" type="submit" class="btn btn-primary pl-3 pr-3">保存</button>
                   </form>
             <{/loop}>
             </div>

@@ -3,7 +3,8 @@
                 <h5 class="card-title border-bottom pb-2">
                 <{if !empty($uid)}>
                     <img src="<{db=>QueryData("forum_member","avatar","id='".$uid."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border img-responsive center-block" style="width:35px;height:35px;">
-                <{/if}> 我的
+                <{/if}> 
+                <a href="<{url=>Link("forum","my")}>">我的</a>
                 <{if !empty($uid)}>
                     <span class="right"><i class="fa fa-power-off" aria-hidden="true"></i> <a href="<{url=>Link("forum","login","do=out")}>">退出</a></span>
                 <{/if}>
