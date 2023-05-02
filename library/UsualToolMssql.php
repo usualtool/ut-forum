@@ -11,9 +11,9 @@ use library\UsualToolInc;
        *  | WebSite:http://www.UsualTool.com                |            
        *  | UT Framework is suitable for Apache2 protocol.  |            
        * --------------------------------------------------------                
-*/
+ */
 /**
- * 以静态方法操作Sqlserver
+ * 以sqlsrv方法操作Sqlserver
  */
 class UTMssql{
     /**
@@ -105,6 +105,21 @@ class UTMssql{
         endif;
     }
     /**
+     * 执行SQL并返回结果集
+     * @param string $sql SQL语句
+     * @return array 返回数组，例：array("querydata"=>array(),"querynum"=>0)
+     */
+    public static function JoinQuery($sql){
+        $db=UTMssql::GetMssql();
+        $array = array();
+        $result = sqlsrv_query($db,$sql);
+		while($rows=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			$array[] = UTMssql::ObjectToArray($rows);
+		}
+	    $querynum=UTMssql::QueryNum($sql);
+        return array("querydata"=>$array,"querynum"=>$querynum);
+    }
+    /**
      * 新增数据
      * @param string $table 被表名
      * @param string $data 字段及值的数组，例：array("字段1"=>"值1","字段2"=>"值2")
@@ -112,12 +127,18 @@ class UTMssql{
      */
     public static function InsertData($table,$data){
         $db=UTMssql::GetMssql();
-        $sql="insert into ".$table." (".implode(',',array_keys($data)).") values ('".implode("','",array_values($data))."')";
-        $query=UTMssql::RunSql($sql);
-        if($query):
-            return true;
-        else:
+        $sql="insert into ".$table." (".implode(',',array_keys($data)).") values ('".implode("','",array_values($data))."');SELECT SCOPE_IDENTITY();";
+        $query=sqlsrv_query($db,$sql);
+        sqlsrv_next_result($query);
+        $result=sqlsrv_fetch_array($query);
+        if(!$query):
             return false;
+        else:
+            if($result[0]):
+                return $result[0];
+            else:
+                return true;
+            endif;
         endif;
     }
     /**
@@ -272,6 +293,38 @@ class UTMssql{
         $db=UTMssql::GetMssql();
         $query=sqlsrv_query($db,$sql,array(),array("Scrollable"=>'static'));
         return sqlsrv_num_rows($query);
+    }
+    /**
+     * 按字段及条件检索最小值
+     * @param string $table 表名
+     * @param string $field 检索字段，数字类型且只能为1个
+     * @param string $where 条件
+     */  
+	public static function Min($table,$field,$where=''){
+        $db=UTMssql::GetMssql();
+        $min="";
+        $where=empty($where) ? "" : "where ".$where;
+		$query=sqlsrv_query($db,"select min($field) as value from $table $where");
+		while($rows=UTMssql::FetchArray($query)):
+		     $min=$rows["value"];
+		endwhile;
+		return $min;
+    }
+    /**
+     * 按字段及条件检索最大值
+     * @param string $table 表名
+     * @param string $field 检索字段，数字类型且只能为1个
+     * @param string $where 条件
+     */  
+	public static function Max($table,$field,$where=''){
+        $db=UTMssql::GetMssql();
+        $max="";
+        $where=empty($where) ? "" : "where ".$where;
+		$query=sqlsrv_query($db,"select max($field) as value from $table $where");
+		while($rows=UTMssql::FetchArray($query)):
+		     $max=$rows["value"];
+		endwhile;
+		return $max;
     }
     /**
      * 将GBK转UTF-8

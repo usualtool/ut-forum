@@ -1,7 +1,6 @@
 <?php
 namespace library\UsualToolMysql;
 use library\UsualToolInc;
-use library\UsualToolRedis;
 /**
        * --------------------------------------------------------       
        *  |    ░░░░░░░░░     █   █░▀▀█▀▀░    ░░░░░░░░░      |           
@@ -12,9 +11,9 @@ use library\UsualToolRedis;
        *  | WebSite:http://www.UsualTool.com                |            
        *  | UT Framework is suitable for Apache2 protocol.  |            
        * --------------------------------------------------------                
-*/
+ */
 /**
- * 以静态方法操作Mysqli
+ * 以mysqli方法操作Mysql
  */
 class UTMysql{
     /**
@@ -149,11 +148,11 @@ class UTMysql{
         $updatestr='';
         if(!empty($data)):
             foreach($data as $k=>$v):
-			    if(preg_match('/\+\d/is',$v)):
-			        $updatestr.=$k."=".$v.",";
-			    else:
+                if(preg_match('/\+\d/is',$v)):
+                    $updatestr.=$k."=".$v.",";
+                else:
                     $updatestr.=$k."='".$v."',";
-		        endif;
+                endif;
             endforeach;
             $updatestr=rtrim($updatestr,',');
         endif;

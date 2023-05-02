@@ -11,10 +11,13 @@ use library\UsualToolInc;
        *  | WebSite:http://www.UsualTool.com                |            
        *  | UT Framework is suitable for Apache2 protocol.  |            
        * --------------------------------------------------------                
-*/
+ */
+/**
+* 以PDO方法操作数据库
+*/   
 class UTPdo{
   /**
-   * PDO连接
+   * PDO连接数据库
    */    
   public static function GetPdo(){
     $config=UsualToolInc\UTInc::GetConfig();
@@ -27,6 +30,34 @@ class UTPdo{
     }
     $db->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE,\PDO::FETCH_ASSOC);
     return $db;
+  }
+  /**
+   * 判断表是否存在
+   * @param string $table
+   * @return bool
+   */
+  public static function ModTable($table){
+    $db=UTPdo::GetPdo();
+    try{
+        $query=$db->query("SELECT 1 FROM $table LIMIT 1");
+    }catch(Exception $e){
+        return false;
+    }
+    return true;
+  }
+  /**
+   * 执行语句
+     * @param string $sql SQL语句
+     * @return bool
+   */    
+  public static function RunSql($sql){
+    $db=UTPdo::GetPdo();
+    $query=$db->exec($sql);
+    if($query):
+        return true;
+    else:
+        return false;
+    endif;
   }
   /**
    * 查询数据
@@ -138,7 +169,9 @@ class UTPdo{
    */
   public static function QueryNum($sql){
       $db=UTPdo::GetPdo();
-      $query=$db->query($sql);
-      return $query->fetchColumn();
+      $query=$db->prepare($sql);
+      $query->execute();
+      $querynum=$query->fetchColumn();
+      return $querynum;
   }
 }

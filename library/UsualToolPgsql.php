@@ -11,9 +11,9 @@ use library\UsualToolInc;
        *  | WebSite:http://www.UsualTool.com                |            
        *  | UT Framework is suitable for Apache2 protocol.  |            
        * --------------------------------------------------------                
-*/
+ */
 /**
- * 以静态方法操作PostgreSQL
+ * 操作PostgreSQL
  */
 class UTPgsql{   
     static $cursor=0;
@@ -119,11 +119,11 @@ class UTPgsql{
         $updatestr='';
         if(!empty($data)):
             foreach($data as $k=>$v):
-			    if(preg_match('/\+\d/is',$v)):
-			        $updatestr.=$k."=".$v.",";
-			    else:
+                if(preg_match('/\+\d/is',$v)):
+                    $updatestr.=$k."=".$v.",";
+                else:
                     $updatestr.=$k."='".$v."',";
-		        endif;
+                endif;
             endforeach;
             $updatestr=rtrim($updatestr,',');
         endif;

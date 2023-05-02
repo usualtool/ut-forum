@@ -11,17 +11,36 @@ use library\UsualToolInc;
        *  | WebSite:http://www.UsualTool.com                |            
        *  | UT Framework is suitable for Apache2 protocol.  |            
        * --------------------------------------------------------                
-*/
+ */
 /**
- * 以静态方法操作路由
+ * 操作路由
  */
 class UTRoute{
+    /**
+     * URL易错特殊参数转义
+     * @param string $url
+     * @return array
+     */
+    public static function ConverUrl($url){
+        $o=array(
+            "&times","&cent","&pound","&yen","&shy",
+            "&thorn","&sect","&micro","&uml","&reg",
+            "&laquo","&para","&acute","&deg","&eth",
+            "&raquo","&copy","&aquo","&not","&curren");
+        $n=array(
+            "&amp;times","&amp;cent","&amp;pound","&amp;yen","&amp;shy",
+            "&amp;thorn","&amp;sect","&amp;micro","&amp;uml","&amp;reg",
+            "&amp;laquo","&amp;para","&amp;acute","&amp;deg","&amp;eth",
+            "&amp;raquo","&amp;copy","&amp;aquo","&amp;not","&amp;curren");
+        $url=str_replace($o,$n,$url);
+        return $url;
+    }
     /**
      * 解析路由
      * @param string $url
      * @return array
      */
-    static function Analy($url){
+    public static function Analy($url){
         $config=UsualToolInc\UTInc::GetConfig();
         $rule=$config["REWRITE"];
         if($rule==0){
@@ -33,10 +52,10 @@ class UTRoute{
                 $url=$url;
             }
         }
+        $url=UTRoute::ConverUrl($url);
         $url=str_replace("//","/",str_replace("app/dev","",str_replace($config["APPURL"],"",$url)));
         $url=substr($url,1);
         $param=array();
-        print_r(UsualToolInc\UTInc::Contain($url,array("m=","p=")));
         if(!UsualToolInc\UTInc::Contain("m=",$url) && !UsualToolInc\UTInc::Contain("p=",$url) && $rule==1){
             $urls=explode("/",$url);
             $param["m"]=$urls[0];
@@ -60,13 +79,10 @@ class UTRoute{
             }
         }else{
             $urls=explode("?",$url);
-            $param["m"]=UsualToolInc\UTInc::Contain("m=",$url) ? UTRoute::GetUrlVal($url,"m") : $config["DEFAULT_MOD"];
-            $param["p"]=UsualToolInc\UTInc::Contain("p=",$url) ? UTRoute::GetUrlVal($url,"p") : $config["DEFAULT_PAGE"];
-            $surl=preg_replace("/p=([a-zA-Z0-9_]*)/","",preg_replace("/m=([a-zA-Z0-9_]*)/","",$urls[1]));
-            $surl=substr(str_replace("&&","&",$surl),1);
+            $surl=$urls[1];
             $qs= explode("&",$surl);
             for($i=0;$i<count($qs);$i++){
-                $qx=explode("=",$qs[$i]);
+                $qx=explode("=",str_replace("amp;","",$qs[$i]));
                 $param[$qx[0]]=$qx[1];
             }
         }
@@ -80,7 +96,7 @@ class UTRoute{
      * @param string $param
      * @return string
      */
-    static function Link($module="",$page="",$param=""){
+    public static function Link($module="",$page="",$param=""){
         $config=UsualToolInc\UTInc::GetConfig();
         $rule=$config["REWRITE"];
         if($rule==0){
@@ -133,7 +149,7 @@ class UTRoute{
      * @param string $url
      * @return array
      */
-    static function UrlToArray($url){
+    public static function UrlToArray($url){
       $query = explode('&',$url);
       $params = array();
       foreach ($query as $param) {
@@ -148,7 +164,7 @@ class UTRoute{
      * @param string $key
      * @return string
      */
-    static function GetUrlVal($url,$key){
+    public static function GetUrlVal($url,$key){
         $res = '';
         $a = strpos($url,'?');
         if($a!==false){

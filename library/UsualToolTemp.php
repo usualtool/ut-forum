@@ -12,12 +12,12 @@ use library\UsualToolDebug\UTDebug;
        *  |                                                 |            
        *  | Author:HuangDou   Email:292951110@qq.com        |            
        *  | QQ-Group:583610949                              |           
-       *  | WebSite:http://www.UsualToolInc.com             |            
+       *  | WebSite:http://www.UsualTool.com             |            
        *  | UT Framework is suitable for Apache2 protocol.  |            
        * --------------------------------------------------------                
-*/
+ */
 /**
- * 以实例方法操作模板
+ * 实例化模板引擎
  */
 class UTTemp{
     var $mode;
@@ -117,7 +117,7 @@ class UTTemp{
 		'<?php echo library\UsualToolInc\UTInc::CutSubstr(library\UsualToolInc\UTInc::DeleteHtml($this->tplvars["${1}"]),${2},${3}); ?>',
 		'<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"]) { ?>${5}<?php }}?>',
         '<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"] => $this->tplvars["${5}"]) { ?>${6}<?php }}?>', 
-		'<?php $tree=new library\UsualToolTree\UTTree();$tree->Init($this->tplvars["${2}"]);if(${1}==0):echo$tree->SubClass(${3},${4});elseif(${1}==1):$string="<option value=\\\$id \\\$selected>\\\$spacer\\\$name</option>";echo$tree->GetTree(0,$string,${3});elseif(${1}==2):$url=library\UsualToolInc\UTInc::ClearParam("id",library\UsualToolInc\UTInc::ClearParam("do",$_SERVER["QUERY_STRING"]));$string="<div class=row style=margin-bottom:15px;font-size:14px;><div class=col-9 data-id=\\\$id data-name=\\\$name>\\\$spacer\\\$name</div><div class=col-3><a id=\'tree-mod\' class=\'mr-2\' href=?".$url."&id=\\\$id&do=mon>编辑</a> <a id=\'tree-del\' href=?".$url."&id=\\\$id&do=del>删除</a></div></div>";echo$tree->GetTree(0,$string,${3});endif;?>',
+		'<?php $tree=new library\UsualToolTree\UTTree();$tree->Init($this->tplvars["${2}"]);if(${1}==0):echo$tree->SubClass(${3},${4});elseif(${1}==1):$string="<option value=\\\$id \\\$selected \\\$disabled>\\\$spacer\\\$name</option>";echo$tree->GetTree(0,$string,${3},${4});elseif(${1}==2):$url=library\UsualToolInc\UTInc::ClearParam("id",library\UsualToolInc\UTInc::ClearParam("do",$_SERVER["QUERY_STRING"]));$string="<div class=row style=margin-bottom:15px;font-size:14px;><div class=col-9 data-id=\\\$id data-name=\\\$name>\\\$spacer\\\$name</div><div class=col-3><a id=\'tree-mod\' class=\'mr-2\' href=?".$url."&id=\\\$id&do=mon>编辑</a> <a id=\'tree-del\' href=?".$url."&id=\\\$id&do=del>删除</a></div></div>";echo$tree->GetTree(0,$string,${3});endif;?>',
         '<?php echo library\UsualToolLang\UTLang::LangSet("${1}",${2});?>',
         '<?php echo library\UsualToolLang\UTLang::LangData("${1}");?>',
 		'<?php echo library\UsualToolLang\UTLang::LangData($this->tplvars["${1}"]["${2}"]);?>',
@@ -189,13 +189,12 @@ class UTTemp{
      */
     function Hstring($repcontent){
         $hex="3c2f626f64793e";
-        $hel="3c646976207374796c653d22646973706";
-        $hel.="c61793a6e6f6e653b223ee5ba94e794a";
-        $hel.="8e794b1203c61207461726765743d225";
-        $hel.="f626c616e6b2220687265663d2268747";
-        $hel.="4703a2f2f7777772e757375616c746f6";
-        $hel.="f6c2e636f6d223e5554e6a186e69eb63";
-        $hel.="c2f613e20e69eb6e69e843c2f6469763e";
+        $hel ="3c61207461726765743d275f626c616e";
+        $hel.="6b2720687265663d27687474703a2f2f";
+        $hel.="6672616d652e757375616c746f6f6c2e";
+        $hel.="636f6d27207374796c653d2764697370";
+        $hel.="6c61793a6e6f6e653b273e557375616c54";
+        $hel.="6f6f6c204672616d65776f726b3c2f613e";
         $string="";
         $strings="";
         for($i=0; $i < strlen($hel)-1; $i+=2):
