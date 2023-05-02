@@ -4,20 +4,70 @@
     <title>UTForum安装</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo$config["APPURL"];?>/app/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<?php echo$config["APPURL"];?>/app/assets/css/fontawesome.min.css">
-    <script src="<?php echo$config["APPURL"];?>/app/assets/js/jquery.min.js"></script>
-    <script src="<?php echo$config["APPURL"];?>/app/assets/js/bootstrap.min.js"></script>
-    <style>p{margin-bottom:0rem;font-size:14px;}.fontsmall{font-size:12px;}#license p{font-size:11px;}</style>
+    <link rel="stylesheet" href="<{$appurl}>/app/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<{$appurl}>/app/assets/css/fontawesome.min.css">
+    <script src="<{$appurl}>/app/assets/js/jquery.min.js"></script>
+    <script src="<{$appurl}>/app/assets/js/bootstrap.min.js"></script>
+    <style>
+    body{font-size:0.8rem;}
+    a{color:black;text-decoration:underline;}
+    p{margin-bottom:0rem;font-size:14px;}
+    .fontsmall{font-size:12px;}
+    #license p{font-size:11px;
+    }
+    </style>
 </head>
 <body>
 <div class="container">
     <div class="row m-b-md">
-           <div class="col-md-12"><img src="<?php echo$config["APPURL"];?>/app/assets/ut-logo.png"></div>
-           <div class="col-md-8">
-              <div class="border p-2">
-               <{if empty($do)}>
+           <div class="col-md-12 mt-3 mb-3"><img src="<{$appurl}>/app/assets/logo.png"></div>
+           <div class="col-md-12">
+              <div class="border p-4">
+                <{if empty($do)}>
+                    <div>
+                    <form name="license" action="?do=config" method="post">
+                    <p class="mb-2">
+                        <b>基于以下协议，本软件是免费且开源的软件。所有自然人或团体组织请在所在国法律允许范围内合法使用本软件。</b>
+                    </p>
+                    <p class="mb-2">
+                        文书1：<a target="_blank" href="//www.apache.org/licenses/LICENSE-2.0">UTForum基于Apache2.0授权，可以通过//www.apache.org/licenses/LICENSE-2.0了解或下载到详尽的协议内容。</a>
+                    </p>
+                    <p class="mb-2">
+                        文书2：<a target="_blank" href="//frame.usualtool.com/baike#license">UTForum遵循UT开源与免费协议，任何自然人与团体组织在协议约定的范围内均可免费使用。使用人应当阅读UT序言中关于文书的部分，往此去：//frame.usualtool.com/baike#license。</a>
+                    </p>
+                    <p class="mb-3">
+                        <b>你需要仔细阅读以上2份文书，在理解和同意的前提下，方可使用本软件。</b><br/><br/>
+                        <b>Made in China , usualtool.com , HuangDou</b>
+                    </p>
+                    <p class="mb-2">
+                        <input type="submit" class="btn btn-info" value="请查阅以上文书（90）" id="btn"/> 
+                    </p>
+                    </form>
+                    </div>
+                    <script>
+                        $(function(){
+                            $("#btn").prop('disabled',true);
+                            var time = 90;
+                            timer = setInterval(function(){
+                                time--;
+                                if(time>=0){
+                                    $("#btn").val("请查阅以上文书（"+time+"）")
+                                }else{
+                                    clearInterval(timer);
+                                    $("#btn").prop('disabled',false);
+                                    $("#btn").val("我已阅读相关文书");
+                                    $("#btn").addClass('dd');
+                                }
+                            },1000);
+                        })
+                    </script>
+               <{else if $do=="config"}>
                <form action="?m=ut-frame&do=db-save" method="post" name="form">
+               <div class="row">
+                  <div class="form-group col-md-12">
+                     安装前请将.ut.config与网络断开，否则无法正常安装。设置方法见：<a target="_blank" href="https://frame.usualtool.com/baike/config.php?do=%E7%A6%81%E6%AD%A2%E8%AE%BF%E9%97%AE">禁止访问.ut.config文件</a>
+                  </div>
+               </div>
                <div class="row">
                   <div class="form-group col-md-6">
                      <label for="email">应用域名/IP（请带HTTP）:</label>
@@ -57,7 +107,7 @@
                </div>
                </form>
                <{else if $do=="sql"}>
-                  <p>你即将导入SQL到数据库，请保持网络通畅。</p>
+                  <p>导入UTForum初始数据结构，请保持网络通畅。</p>
                   <hr/>
                   <{php=>
                   if($_GET["t"]=="db-sql"){
@@ -75,7 +125,7 @@
                            echo"<p class='fontsmall' style='color:red;'>第".$k."条SQL执行失败:".$arr[$i]."</p>";
                         }
                         if($k==$total && $c==0){
-                           library\UsualToolInc\UTInc::GoUrl("?m=forum","UTForum激活成功!");
+                           library\UsualToolInc\UTInc::GoUrl("?m=forum","UTForum安装成功!");
                         }
                      }
                   }
@@ -85,18 +135,6 @@
                   </form>
                   <{/if}>
               </div>
-           </div>
-           <div class="col-md-4" id="license">
-              <div class="border-bottom mb-2">
-                  <strong>UTForum</strong>
-              </div>
-              <p>
-                  UTForum基于UT框架开发，请遵循其相应协议。<br/>
-                  UTForum基于Apache2.0开源，请遵循其公共开源协议。<br/>
-                  <a target="_blank" href="http://frame.usualtool.com/juan.php">支持开源，您可以捐赠UT。</a><br/>
-                  <a target="_blank" href="http://frame.usualtool.com/baike">UT开发手册</a><br/>
-                  <a href="#">互助QQ群583610949</a><br/>
-              </p>
            </div>
     </div>
 </div>
