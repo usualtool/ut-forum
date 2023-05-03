@@ -23,4 +23,4 @@ Order allow,deny
 Deny from all
 </Files>
 ```
-#### [演示](http://forum.frame.usualtool.com/test/)
+#### [演示](http://forum.frame.usualtool.com/example/)
