@@ -70,6 +70,37 @@ function checkform(){
 	  return false;
 	}
 };
+//time
+function getnowdate() {
+    var thedate = new Date;
+    var year = thedate.getFullYear();
+    var mon = thedate.getMonth() + 1;
+    if(mon<10){
+        mon="0"+mon;
+    }
+    var date = thedate.getDate();
+    if(date<10){
+        date="0"+date;
+    }
+    var hours = thedate.getHours();
+    if(hours<10){
+        hours="0"+hours;
+    }
+    var minutes = thedate.getMinutes();
+    if(minutes<10){
+        minutes="0"+minutes;
+    }
+    var seconds = thedate.getSeconds();
+    if(seconds<10){
+        seconds="0"+seconds;
+    }
+    var now = year + "-" + mon + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
+    return now;
+}
+//timestamp
+function gettimestamp() {
+    return Math.round(new Date(getnowdate()).getTime()/1000).toString();
+}
 //UT-Navclick
 function clicknav(module){
 	setcookie("Nav",module);
@@ -149,7 +180,7 @@ function upload(fileid,inputid,folder='',posturl=''){
 	})  
 };
 //多传
-function uploads(number,folder,posturl,inputtype='radio'){
+function uploads(number,folder,posturl,inputtype='radio',inputfield='indexpic'){
     var uploader = new plupload.Uploader({ 
         runtimes: 'html5,flash,silverlight,html4', 
         browse_button: 'btn', 		
@@ -186,9 +217,9 @@ function uploads(number,folder,posturl,inputtype='radio'){
             FileUploaded: function(up, file, info){  
                 var data = eval("("+info.response+")");
 				if(inputtype=="radio"){
-                    $("#" + file.id).html("<img src='"+ data.pic + "' appurl='"+ data.post + "'><i onclick='delimg(this)'>-</i><br><input type='radio' name='indexpic' value='"+ data.pic +"' checked>Selected");
+                    $("#" + file.id).html("<img src='"+ data.pic + "' appurl='"+ data.post + "'><i onclick='delimg(this)'>-</i><br><input type='radio' name='"+inputfield+"' value='"+ data.pic +"' checked>Selected");
 				}else if(inputtype=="checkbox"){
-                    $("#" + file.id).html("<img src='"+ data.pic + "' appurl='"+ data.post + "'><i onclick='delimg(this)'>-</i><br><input type='checkbox' name='indexpic[]' value='"+ data.pic +"' checked>Selected");
+                    $("#" + file.id).html("<img src='"+ data.pic + "' appurl='"+ data.post + "'><i onclick='delimg(this)'>-</i><br><input type='checkbox' name='"+inputfield+"[]' value='"+ data.pic +"' checked>Selected");
 				} 
             },  
             Error: function(up,err){
