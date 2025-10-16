@@ -121,6 +121,30 @@ class UTMysql{
         endif;
     }
     /**
+     * 执行SQL并返回结果集
+     * @param string $sql SQL语句
+     * @return array 返回数组，例：array("querydata"=>array(),"querynum"=>0)
+     */
+    public static function JoinQuery($sql){
+        $db=UTMysql::GetMysql();
+        $query=$db->query($sql);
+        $curnum=mysqli_num_rows($query);
+        $querynum=UTMysql::QueryNum($sql);
+        $querydata=array(); 
+        $xu=0;
+        while($rows=mysqli_fetch_array($query,MYSQLI_ASSOC)):
+            $xu=$xu+1;
+            $count=count($rows);
+            for($i=0;$i<$count;$i++):
+                unset($rows[$i]);
+            endfor;
+            $rows['xu']=$xu;
+            array_push($querydata,$rows);
+        endwhile;
+        return array("querydata"=>$querydata,"curnum"=>$curnum,"querynum"=>$querynum);
+        $db->close();
+    }
+    /**
      * 添加数据
      * @param string $table 表名
      * @param array $data 字段及值的数组，例：array("字段1"=>"值1","字段2"=>"值2")
@@ -179,6 +203,28 @@ class UTMysql{
         else:
             return false;
         endif;
+    }
+    /**
+     * 复制数据
+     * @param string $table 表名
+     * @param string $where 条件
+     * @param string $autokey 自动编号字段
+     * @return bool
+     */
+    public static function CopyData($table,$where,$autokey='id'){
+        $db=UTMysql::GetMysql();
+        $sql = "SELECT * FROM `".$table."` where ".$where;
+        $query=$db->query($sql);
+        $rows=mysqli_fetch_array($query,MYSQLI_ASSOC);
+        unset($rows[$autokey]);
+        $csql="insert into `".$table."` (".implode(',',array_keys($rows)).") values ('".implode("','",array_values($rows))."')";
+        $cquery=$db->query($csql);
+        if($cquery):
+            return mysqli_insert_id($db);
+        else:
+            return false;
+        endif;
+        $db->close();
     }
     /**
      * 获取数据标签

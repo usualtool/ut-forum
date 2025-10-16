@@ -30,14 +30,14 @@ class UTWechat{
      * @return string 有效期90分钟
      */
     public function GetToken(){
-        $file = file_get_contents(APP_ROOT."/log/wechat.token.json",true);
+        $file = file_get_contents(UTF_ROOT."/log/wechat.token.json",true);
         $result = json_decode($file,true);
         if(time() > $result['expires']):
             $data = array();
             $data['access_token'] = $this->GetNewToken();
             $data['expires']=time()+5400;
             $jsonStr =  json_encode($data);
-            file_put_contents(APP_ROOT."/log/wechat.token.json",$jsonStr);
+            file_put_contents(UTF_ROOT."/log/wechat.token.json",$jsonStr);
             return $data['access_token'];
         else:
             return $result['access_token'];
@@ -129,7 +129,7 @@ class UTWechat{
      * @return array
      */
     public function SendMsg($openid,$text){
-        $jsonurl=APP_ROOT."/log/wechat/".$openid.".json";
+        $jsonurl=UTF_ROOT."/log/wechat/".$openid.".json";
         //存放事件日志
         //重复消息过滤
         $msg=array("type"=>$type,"openid"=>"admin","content"=>$text,"time"=>time());
@@ -216,8 +216,8 @@ class UTWechat{
             if($obj->Ticket){
                 $ticket=$obj->Ticket;
                 $eventkey=$obj->EventKey;
-                UTInc::MakeDir(APP_ROOT."/log/wechat/ticket/");
-                $jsonurl=APP_ROOT."/log/wechat/ticket/".$ticket.".json";
+                UTInc::MakeDir(UTF_ROOT."/log/wechat/ticket/");
+                $jsonurl=UTF_ROOT."/log/wechat/ticket/".$ticket.".json";
                 $data=json_encode(array("openid"=>$openid,"eventkey"=>$eventkey));
                 file_put_contents($jsonurl,$data);
             }else{
@@ -242,8 +242,8 @@ class UTWechat{
                     $content="<a href='".$obj->Url."'><b>".$obj->Title."</b><br>".$obj->Description."</a>";
                 endif;
                 $time=$obj->CreateTime;
-                UTInc::MakeDir(APP_ROOT."/log/wechat/");
-                $jsonurl=APP_ROOT."/log/wechat/".$openid.".json";
+                UTInc::MakeDir(UTF_ROOT."/log/wechat/");
+                $jsonurl=UTF_ROOT."/log/wechat/".$openid.".json";
                 //存放事件日志
                 //重复消息过滤
                 if(!empty($content) && $content!="null"){

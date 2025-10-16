@@ -4,10 +4,10 @@
     <title>UTForum安装</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<{$appurl}>/app/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<{$appurl}>/app/assets/css/fontawesome.min.css">
-    <script src="<{$appurl}>/app/assets/js/jquery.min.js"></script>
-    <script src="<{$appurl}>/app/assets/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="<{$appurl}>/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<{$appurl}>/assets/css/fontawesome.min.css">
+    <script src="<{$appurl}>/assets/js/jquery.min.js"></script>
+    <script src="<{$appurl}>/assets/js/bootstrap.min.js"></script>
     <style>
     body{font-size:0.8rem;}
     a{color:black;text-decoration:underline;}
@@ -20,7 +20,7 @@
 <body>
 <div class="container">
     <div class="row m-b-md">
-           <div class="col-md-12 mt-3 mb-3"><img src="<{$appurl}>/app/assets/logo.png"></div>
+           <div class="col-md-12 mt-3 mb-3"><img src="<{$appurl}>/assets/logo.png"></div>
            <div class="col-md-12">
               <div class="border p-4">
                 <{if empty($do)}>
@@ -40,14 +40,14 @@
                         <b>Made in China , usualtool.com , HuangDou</b>
                     </p>
                     <p class="mb-2">
-                        <input type="submit" class="btn btn-info" value="请查阅以上文书（90）" id="btn"/> 
+                        <input type="submit" class="btn btn-info" value="请查阅以上文书（60）" id="btn"/> 
                     </p>
                     </form>
                     </div>
                     <script>
                         $(function(){
                             $("#btn").prop('disabled',true);
-                            var time = 90;
+                            var time = 60;
                             timer = setInterval(function(){
                                 time--;
                                 if(time>=0){
@@ -111,7 +111,7 @@
                   <hr/>
                   <{php=>
                   if($_GET["t"]=="db-sql"){
-                     $sql=file_get_contents("./UTForum.sql");
+                     $sql=file_get_contents("../UTForum.sql");
                      $arr=explode(';',$sql);
                      $total=count($arr)-1;
                      $c=0;

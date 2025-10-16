@@ -10,7 +10,7 @@
        *  | UT Framework is suitable for Apache2 protocol.  |            
        * --------------------------------------------------------                
 */
-require_once dirname(__FILE__).'/'.'autoload.php';
+require_once dirname(dirname(__FILE__)).'/'.'autoload.php';
 /**
  * 写入前端公共模板路径
  */

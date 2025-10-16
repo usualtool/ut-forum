@@ -57,7 +57,6 @@ class UTTemp{
         $comfilename=$this->cachedir."cache_".basename($tplfile);
         if($this->mode==1){
             $repcontent=$this->TempReplace(file_get_contents($tplfile));
-            $repcontent=$this->Hstring($repcontent);
             $handle=fopen($comfilename, 'w+');
             fwrite($handle,$repcontent);
             fclose($handle);
@@ -107,7 +106,7 @@ class UTTemp{
         );
         $replacement=array(
         '<?php if("${1}"=="null"):if(rtrim(library\UsualToolInc\UTInc::CurPageUrl(),"/")==rtrim($GLOBALS["config"]["APPURL"],"/")):echo"${2}";endif;else:if(library\UsualToolInc\UTInc::Contain("${1}",library\UsualToolInc\UTInc::CurPageUrl())):echo"${2}";endif;endif;?>',
-        '<?php echo"<div class=\"nav-item dropdown\"><a class=\"nav-link dropdown-toggle\" data-toggle=dropdown><i class=\"fa fa-link\"></i> 子栏目</a><div class=\"dropdown-menu\">";$item=explode(",",$this->tplvars["${2}"]);for($i=0;$i<count($item);$i++):echo"<a class=\"dropdown-item\" href=?m=".$this->tplvars["${1}"]."&p=".explode(":",$item[$i])[1].">".explode(":",$item[$i])[0]."</a>";endfor;echo"</div></div>";?>',
+        '<?php echo"<div class=\"nav-item dropdown\"><a class=\"nav-link dropdown-toggle\" data-toggle=dropdown><i class=\"fa fa-link\"></i> Column</a><div class=\"dropdown-menu\">";$item=explode(",",$this->tplvars["${2}"]);for($i=0;$i<count($item);$i++):echo"<a class=\"dropdown-item\" href=?m=".$this->tplvars["${1}"]."&p=".explode(":",$item[$i])[1].">".explode(":",$item[$i])[0]."</a>";endfor;echo"</div></div>";?>',
 		'<?php if(library\UsualToolInc\UTInc::Contain(",","${1}")):$pluginfile=explode(",","${1}");$HOOKPATH=APP_ROOT."/plugins/$pluginfile[0]/";if(is_dir($HOOKPATH)):if(library\UsualToolInc\UTInc::Contain(".php","$pluginfile[1]")):include_once $HOOKPATH.$pluginfile[1];else:echo"<iframe src=$HOOKPATH.$pluginfile[1] frameborder=0 id=external-frame></iframe><style>iframe{width:100%;margin:0 0 1em;border:0;}</style><script src=assets/js/autoheight.js></script>";endif;endif;else:$HOOKPATH=APP_ROOT."/plugins/${1}/";if(is_dir($HOOKPATH)):include_once $HOOKPATH."index.php";endif;endif;?>',
 		'<?php $split=explode("${2}",$this->tplvars["${1}"]);echo $split[${3}];?>',
 		'<?php $${1}=explode("${2}",$this->tplvars["${1}"]);for($i=0;$i<count($${1});$i++){?>${3}<?php }?>',
@@ -117,7 +116,7 @@ class UTTemp{
 		'<?php echo library\UsualToolInc\UTInc::CutSubstr(library\UsualToolInc\UTInc::DeleteHtml($this->tplvars["${1}"]),${2},${3}); ?>',
 		'<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"]) { ?>${5}<?php }}?>',
         '<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"] => $this->tplvars["${5}"]) { ?>${6}<?php }}?>', 
-		'<?php $tree=new library\UsualToolTree\UTTree();$tree->Init($this->tplvars["${2}"]);if(${1}==0):echo$tree->SubClass(${3},${4});elseif(${1}==1):$string="<option value=\\\$id \\\$selected \\\$disabled>\\\$spacer\\\$name</option>";echo$tree->GetTree(0,$string,${3},${4});elseif(${1}==2):$url=library\UsualToolInc\UTInc::ClearParam("id",library\UsualToolInc\UTInc::ClearParam("do",$_SERVER["QUERY_STRING"]));$string="<div class=row style=margin-bottom:15px;font-size:14px;><div class=col-9 data-id=\\\$id data-name=\\\$name>\\\$spacer\\\$name</div><div class=col-3><a id=\'tree-mod\' class=\'mr-2\' href=?".$url."&id=\\\$id&do=mon>编辑</a> <a id=\'tree-del\' href=?".$url."&id=\\\$id&do=del>删除</a></div></div>";echo$tree->GetTree(0,$string,${3});endif;?>',
+		'<?php $tree=new library\UsualToolTree\UTTree();$tree->Init($this->tplvars["${2}"]);if(${1}==0):echo$tree->SubClass(${3},${4});elseif(${1}==1):$string="<option value=\\\$id \\\$selected \\\$disabled>\\\$spacer\\\$name</option>";echo$tree->GetTree(0,$string,${3},${4});elseif(${1}==2):$url=library\UsualToolInc\UTInc::ClearParam("id",library\UsualToolInc\UTInc::ClearParam("do",$_SERVER["QUERY_STRING"]));$string="<div class=row style=margin-bottom:15px;font-size:14px;><div class=col-9 data-id=\\\$id data-name=\\\$name>\\\$spacer\\\$name</div><div class=col-3><a id=\'tree-mod\' class=\'mr-2\' href=?".$url."&id=\\\$id&do=mon>Edit</a> <a id=\'tree-del\' href=?".$url."&id=\\\$id&do=del>Del</a></div></div>";echo$tree->GetTree(0,$string,${3});endif;?>',
         '<?php echo library\UsualToolLang\UTLang::LangSet("${1}",${2});?>',
         '<?php echo library\UsualToolLang\UTLang::LangData("${1}");?>',
 		'<?php echo library\UsualToolLang\UTLang::LangData($this->tplvars["${1}"]["${2}"]);?>',
@@ -184,29 +183,6 @@ class UTTemp{
         return $repcontent;
     }
     /**
-     * 内容转换
-     * @param string $repcontent 转换内容
-     */
-    function Hstring($repcontent){
-        $hex="3c2f626f64793e";
-        $hel ="3c61207461726765743d275f626c616e";
-        $hel.="6b2720687265663d27687474703a2f2f";
-        $hel.="6672616d652e757375616c746f6f6c2e";
-        $hel.="636f6d27207374796c653d2764697370";
-        $hel.="6c61793a6e6f6e653b273e557375616c54";
-        $hel.="6f6f6c204672616d65776f726b3c2f613e";
-        $string="";
-        $strings="";
-        for($i=0; $i < strlen($hel)-1; $i+=2):
-            $string .= chr(hexdec($hel[$i].$hel[$i+1]));
-        endfor;
-        for($c=0; $c < strlen($hex)-1; $c+=2):
-            $strings .= chr(hexdec($hex[$c].$hex[$c+1]));
-        endfor;
-        $repcontent=str_replace($strings,$string."\r\n".$strings,$repcontent);
-        return $repcontent;
-    }
-    /**
      * 标签转换
      * @param string $expr 转换标签
      */
@@ -270,7 +246,6 @@ class UTTemp{
         if($this->mode==1){
             if(!file_exists($filename) || filemtime($comfilename) < filetime($tplfile)){
                 $repcontent=$this->TempReplace(file_get_contents($tplfile));
-                $repcontent=$this->Hstring($repcontent);
             }
             $handle=fopen($comfilename, 'w+');
             fwrite($handle, $repcontent);

@@ -102,12 +102,32 @@ class UTRedis{
         $db->del($key);
     }
     /**
-     * 查询所有键
+     * 批量删除指定前缀的键
+     * @param string $pix 前缀
+     */
+    public static function DelKeys($pix){
+        $db=UTRedis::GetRedis();
+        $keys=$db->keys($pix.'*');
+        if(!empty($keys)):
+            foreach($keys as $key):
+                $db->del($key);
+            endforeach;
+            return true;
+        else:
+            return false;
+        endif;
+    }
+    /**
+     * 查询所有键及键前缀模糊查询
      * @return array
      */
-    public static function QueryKey(){
+    public static function QueryKey($key=''){
         $db=UTRedis::GetRedis();
-        return $db->keys("*");
+        if(!empty($key)){
+            return $db->keys($key."*");
+        }else{
+            return $db->keys("*");
+        }
     }
     /**
      * 创建队列任务

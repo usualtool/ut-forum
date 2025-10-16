@@ -1,7 +1,7 @@
 <?php
 use library\UsualToolInc\UTInc;
 use library\UsualToolData\UTData;
-$payurl=$config["APPURL"]."/app/modules/payment/method";
+$payurl=$config["APPURL"]."/modules/payment/method";
 $uid=empty($_POST["uid"]) ? 0 : UTInc::SqlCheck($_POST["uid"]);
 $form=empty($_POST["form"]) ? 1 : UTInc::SqlCheck($_POST["form"]);
 $posnum=empty($_POST["posnum"]) ? UTInc::GetRandomString(14,"0123456789") : UTInc::SqlCheck($_POST["posnum"]);

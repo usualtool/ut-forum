@@ -49,7 +49,7 @@ class UTDebug{
             "file"=>$file,
             "line"=>$line,
             "message"=>$message);
-        $old=file_get_contents(APP_ROOT."/log/debug.log");
+        $old=file_get_contents(UTF_ROOT."/log/debug.log");
         if(!empty($old)){
             $arr[]=$thisbug;
             $old_data=json_decode($old,true);
@@ -60,7 +60,7 @@ class UTDebug{
         }else{
             $string=json_encode(array($thisbug),JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
         }
-        file_put_contents(APP_ROOT."/log/debug.log",$string);
+        file_put_contents(UTF_ROOT."/log/debug.log",$string);
     }
     public static function Error($type='',$path=''){
         echo"<p style='margin-top:5%;'>";
@@ -76,7 +76,7 @@ class UTDebug{
             echo"<strong>Message :</strong> Unknown error.<br/>";
         endif;
         echo$path."<br/>";
-        echo"<span style='font-size:11px;'>This is an error report on UT Framework.</span>";
+        echo"<span style='font-size:11px;'>This is an error report on UsualTool Framework.</span>";
         echo"</p>";
         exit();
     }

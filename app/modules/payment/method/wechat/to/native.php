@@ -33,7 +33,7 @@ else:
     <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1" /> 
     <title><?php echo LangData('payment');?></title>
-    <script src="<?php echo$config["APPURL"];?>/app/assets/js/jquery.min.js"></script>
+    <script src="<?php echo$config["APPURL"];?>/assets/js/jquery.min.js"></script>
     <script>
     $(function(){setInterval(function(){check()}, 5000);})
         function check(){

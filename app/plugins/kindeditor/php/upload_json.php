@@ -5,7 +5,7 @@ $dir_name="image";
 //根目录路径，可以指定绝对路径，比如 /var/www/attached/
 $save_path = APP_ROOT.'/assets/upload/';
 //根目录URL，可以指定绝对路径，比如 http://www.yoursite.com/attached/
-$save_url = $config["APPURL"].'/app/assets/upload/';
+$save_url = $config["APPURL"].'/assets/upload/';
 //定义允许上传的文件扩展名
 $ext_arr = array(
 	'image' => array('gif', 'jpg', 'jpeg', 'png', 'bmp'),

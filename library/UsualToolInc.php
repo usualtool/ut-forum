@@ -42,7 +42,7 @@ class UTInc{
     public static function GoUrl($url,$text=''){
         if(!empty($text)){
             if(!empty($url)){
-                if(is_numeric(str_replace("+","",str_replace("-","",$url)))){
+                if(is_numeric($url)){
                     echo'<script>alert("'.$text.'");window.history.go('.$url.');</script>';
                     exit();
                 }else{
@@ -54,8 +54,13 @@ class UTInc{
                 exit();
             }
         }else{
-            echo'<script>window.location.href="'.$url.'"</script>';
-            exit();
+            if(is_numeric($url) || $url===0):
+                echo'<script>window.location.reload();</script>';
+                exit();
+            else:
+                echo'<script>window.location.href="'.$url.'"</script>';
+                exit();
+            endif;
         }
     }
     /**
@@ -180,9 +185,13 @@ class UTInc{
      * @return array
      */
     public static function FindImage($str){
-        $pattern="/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.bmp|\.png]))[\'|\"].*?[\/]?>/";
-        preg_match_all($pattern,$str,$match);
-        return $match[1];
+        $pattern='/<img\s+[^>]*src=["\']([^"\']+)["\'][^>]*>/i';
+        $matches=array();
+        if(preg_match_all($pattern,$str,$matches)){
+            return $matches[1];
+        }else{
+            return array();
+        }
     }
     /**
      * 去除URL中的指定参数
@@ -450,7 +459,7 @@ class UTInc{
      */
     public static function InstallDev(){
         if(is_dir('install-dev')){
-            if(file_exists(UTF_ROOT."/install-dev/usualtool.lock")){
+            if(file_exists(APP_ROOT."/install-dev/usualtool.lock")){
                 return true;
             }else{
                 return false;
@@ -532,10 +541,10 @@ class UTInc{
             return stristr($_SERVER['HTTP_VIA'], "wap") ? true : false;
         }
         if(isset($_SERVER['HTTP_USER_AGENT'])){
-            $clientkeywords = array('nokia','sony','ericsson','mot','samsung','htc','sgh','lg','sharp','sie-','philips','panasonic','alcatel','lenovo','iphone','ipod','blackberry','meizu','android','netfront','symbian','ucweb','windowsce','palm','operamini','operamobi','openwave','nexusone','cldc','midp','wap','mobile','MicroMessenger'); 
-            if(preg_match("/(".implode('|', $clientkeywords).")/i",strtolower($_SERVER['HTTP_USER_AGENT']))){
+            $keywords = array('nokia','sony','ericsson','mot','samsung','htc','sgh','lg','sharp','sie-','philips','panasonic','alcatel','lenovo','iphone','ipod','blackberry','meizu','android','netfront','symbian','ucweb','windowsce','palm','operamini','operamobi','openwave','nexusone','cldc','midp','wap','mobile','micromessenger','miuibrowser'); 
+            if(preg_match("/(".implode('|', $keywords).")/i",strtolower($_SERVER['HTTP_USER_AGENT']))){
                 return true;
-            } 
+            }
         }
         if(isset ($_SERVER['HTTP_ACCEPT'])) {
             if((strpos($_SERVER['HTTP_ACCEPT'],'vnd.wap.wml')!== false) && (strpos($_SERVER['HTTP_ACCEPT'],'text/html') === false || (strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') < strpos($_SERVER['HTTP_ACCEPT'], 'text/html')))){
@@ -741,7 +750,8 @@ class UTInc{
      */
     public static function TempEndPath(){
         $thispage=UTInc::CurPageUrl();
-        if(strpos($thispage,'/app/')!==false){
+        $manage=UTInc::GetConfig()["MANAGE"];
+        if(strpos($thispage,$manage)!==false){
             return "admin/";
         }else{
             return "front/";

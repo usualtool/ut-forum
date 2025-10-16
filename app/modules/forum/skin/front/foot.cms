@@ -3,16 +3,16 @@
             <p>&copy;<{$appname}></p>
         </div>
     </div>
-    <script src="<{$appurl}>/app/assets/js/plugin/plupload/plupload.min.js"></script>
-    <script src="<{$appurl}>/app/assets/js/plugin/jquery-qrcode/qrcode.min.js"></script>
+    <script src="<{$appurl}>/assets/js/plugin/plupload/plupload.min.js"></script>
+    <script src="<{$appurl}>/assets/js/plugin/jquery-qrcode/qrcode.min.js"></script>
     <!-- Datatables -->
-    <script src="<{$appurl}>/app/assets/js/plugin/datatables/datatables.min.js"></script>
-    <script src="<{$appurl}>/app/assets/js/plugin/datatables/datatables.buttons.min.js"></script>
-    <script src="<{$appurl}>/app/assets/js/plugin/datatables/buttons.html5.min.js "></script> 
-    <script src="<{$appurl}>/app/assets/js/plugin/datatables/jszip.min.js"></script> 
-    <script src="<{$appurl}>/app/assets/js/plugin/datatables/buttons.print.min.js"></script> 
-    <script src="<{$appurl}>/app/assets/js/jquery.localize.js"></script>
-    <script src="<{$appurl}>/app/assets/js/language.cookie.js"></script>
-    <script src="<{$appurl}>/app/assets/js/jquery.ready.js"></script>    
+    <script src="<{$appurl}>/assets/js/plugin/datatables/datatables.min.js"></script>
+    <script src="<{$appurl}>/assets/js/plugin/datatables/datatables.buttons.min.js"></script>
+    <script src="<{$appurl}>/assets/js/plugin/datatables/buttons.html5.min.js "></script> 
+    <script src="<{$appurl}>/assets/js/plugin/datatables/jszip.min.js"></script> 
+    <script src="<{$appurl}>/assets/js/plugin/datatables/buttons.print.min.js"></script> 
+    <script src="<{$appurl}>/assets/js/jquery.localize.js"></script>
+    <script src="<{$appurl}>/assets/js/language.cookie.js"></script>
+    <script src="<{$appurl}>/assets/js/jquery.ready.js"></script>    
 </body>
 </html>

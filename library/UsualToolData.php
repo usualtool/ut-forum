@@ -82,9 +82,9 @@ class UTData{
         }elseif(UTData::GetDb()=="mssql"){
             return UsualToolMysql\UTMssql::RunSql($sql);
         }elseif(UTData::GetDb()=="pgsql"){
-            return UsualToolPgsql\UTPgsql::RunSql($table);
+            return UsualToolPgsql\UTPgsql::RunSql($sql);
         }elseif(UTData::GetDb()=="sqlite"){
-            return UsualToolSqlite\UTSqlite::RunSql($table);
+            return UsualToolSqlite\UTSqlite::RunSql($sql);
         }else{
             return false;
         }
@@ -118,6 +118,26 @@ class UTData{
             return $data;
         }else{
             UTData::GetCache($table,$field,$where,$order,$limit,$lang,$cache);
+        }
+    }
+    /**
+     * 执行SQL并返回数据集
+     * @param string $sql SQL语句/命令
+     * @return bool
+     */
+    public static function JoinQuery($sql){
+        if(UTData::GetDb()=="pdo"){
+            return UsualToolPdo\UTPdo::JoinQuery($sql);
+        }elseif(UTData::GetDb()=="mysql"){
+            return UsualToolMysql\UTMysql::JoinQuery($sql);
+        }elseif(UTData::GetDb()=="mssql"){
+            return UsualToolMysql\UTMssql::JoinQuery($sql);
+        }elseif(UTData::GetDb()=="pgsql"){
+            return UsualToolPgsql\UTPgsql::JoinQuery($sql);
+        }elseif(UTData::GetDb()=="sqlite"){
+            return UsualToolSqlite\UTSqlite::JoinQuery($sql);
+        }else{
+            return false;
         }
     }
     /**
@@ -180,6 +200,20 @@ class UTData{
             return UsualToolPgsql\UTPgsql::DelData($table,$where);
         }elseif(UTData::GetDb()=="sqlite"){
             return UsualToolSqlite\UTSqlite::DelData($table,$where);
+        }else{
+            return false;
+        }
+    }
+    /**
+     * 复制数据
+     * @param string $table 表名
+     * @param array $where 条件
+	 * @param string autokey 自动编号字段
+     * @return bool 当结果为真时返回最新添加的记录id
+     */
+    public static function CopyData($table,$where,$autokey='id'){
+        if(UTData::GetDb()=="mysql"){
+            return UsualToolMysql\UTMysql::CopyData($table,$where,$autokey);
         }else{
             return false;
         }

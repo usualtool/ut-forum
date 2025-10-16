@@ -76,17 +76,17 @@ $endpath=UTInc::TempEndPath();
  */ 
 $frontwork=APP_ROOT."/template/".$config["TEMPFRONT"];
 $adminwork=APP_ROOT."/template/".$config["TEMPADMIN"];
-$isdevelop=UTInc::Contain("app/dev",UTInc::CurPageUrl());
+$ismanage=UTInc::Contain(UTInc::GetConfig()["MANAGE"],UTInc::CurPageUrl());
 /**
  * 开发端
  */
-if($config["TEMPADMIN"]!='0' && $isdevelop):
+if($config["TEMPADMIN"]!='0' && $ismanage):
     $skin=$adminwork."/skin/".$m;
     $cache=$skin."/cache";
 /**
  * 客户端
  */
-elseif($config["TEMPFRONT"]!='0' && !$isdevelop):
+elseif($config["TEMPFRONT"]!='0' && !$ismanage):
     $skin=$frontwork."/skin/".$m;
     $cache=$skin."/cache";
 /**

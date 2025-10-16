@@ -12,7 +12,7 @@ if($_GET["do"]=="register"){
     if(!empty($_POST["avatar"])){
         $avatar=UTInc::SqlCheck($_POST["avatar"]);
     }else{
-        $avatar=$config["APPURL"]."/app/assets/images/noimage.png";
+        $avatar=$config["APPURL"]."/assets/images/noimage.png";
     }
     $email=UTInc::SqlCheck($_POST["email"]);
     $fullname=UTInc::SqlCheck($_POST["fullname"]);

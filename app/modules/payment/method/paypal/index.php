@@ -35,8 +35,8 @@ $transaction->setAmount($amount)
     ->setDescription("Pay ".$pay["posnum"]."")
     ->setInvoiceNumber($pay["posnum"]);
 $redirectUrls = new RedirectUrls();
-$redirectUrls->setReturnUrl(SITE_URL.'/app/modules/payment/method/paypal/return.php?success=true')
-             ->setCancelUrl(SITE_URL.'/app/modules/payment/method/paypal/return.php?success=false');
+$redirectUrls->setReturnUrl(SITE_URL.'/modules/payment/method/paypal/return.php?success=true')
+             ->setCancelUrl(SITE_URL.'/modules/payment/method/paypal/return.php?success=false');
 $payment = new Payment();
 $payment->setIntent('sale')
     ->setPayer($payer)

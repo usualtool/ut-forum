@@ -4,18 +4,18 @@
     <title><{$webplace}> - <{$appname}></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="<{$appurl}>/app/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<{$appurl}>/app/assets/css/fontawesome.min.css" rel="stylesheet">
-    <link href="<{$appurl}>/app/assets/css/default.css" rel="stylesheet">
-    <script src="<{$appurl}>/app/assets/js/jquery.min.js"></script>
-    <script src="<{$appurl}>/app/assets/js/popper.min.js"></script>
-    <script src="<{$appurl}>/app/assets/js/bootstrap.min.js"></script>
+    <link href="<{$appurl}>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<{$appurl}>/assets/css/fontawesome.min.css" rel="stylesheet">
+    <link href="<{$appurl}>/assets/css/default.css" rel="stylesheet">
+    <script src="<{$appurl}>/assets/js/jquery.min.js"></script>
+    <script src="<{$appurl}>/assets/js/popper.min.js"></script>
+    <script src="<{$appurl}>/assets/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div class="container-fluid bg-light mb-2"> 
     <div class="row">
         <nav class="container navbar navbar-expand-md navbar-light">
-              <a class="navbar-brand" href="#"><img src="<{$appurl}>/app/assets/logo.png"></a>
+              <a class="navbar-brand" href="#"><img src="<{$appurl}>/assets/logo.png"></a>
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
                   <span class="navbar-toggler-icon"></span>
               </button>

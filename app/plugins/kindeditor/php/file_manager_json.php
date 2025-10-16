@@ -4,7 +4,7 @@ require_once 'JSON.php';
 //根目录路径，可以指定绝对路径，比如 /var/www/attached/
 $root_path = APP_ROOT.'/assets/upload/';
 //根目录URL，可以指定绝对路径，比如 http://www.yoursite.com/attached/
-$root_url = $config["APPURL"].'/app/assets/upload/';
+$root_url = $config["APPURL"].'/assets/upload/';
 //图片扩展名
 $ext_arr = array('gif', 'jpg', 'jpeg', 'png', 'bmp');
 //目录名

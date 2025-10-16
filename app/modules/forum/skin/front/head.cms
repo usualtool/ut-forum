@@ -4,13 +4,13 @@
     <title><{$webplace}> - <{$appname}></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="<{$appurl}>/app/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<{$appurl}>/app/assets/css/buttons.min.css" rel="stylesheet"/>
-    <link href="<{$appurl}>/app/assets/css/fontawesome.min.css" rel="stylesheet">
-    <link href="<{$appurl}>/app/modules/forum/assets/css/forum.css" rel="stylesheet">
-    <script src="<{$appurl}>/app/assets/js/jquery.min.js"></script>
-    <script src="<{$appurl}>/app/assets/js/popper.min.js"></script>
-    <script src="<{$appurl}>/app/assets/js/bootstrap.min.js"></script>
+    <link href="<{$appurl}>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<{$appurl}>/assets/css/buttons.min.css" rel="stylesheet"/>
+    <link href="<{$appurl}>/assets/css/fontawesome.min.css" rel="stylesheet">
+    <link href="<{$appurl}>/modules/forum/assets/css/forum.css" rel="stylesheet">
+    <script src="<{$appurl}>/assets/js/jquery.min.js"></script>
+    <script src="<{$appurl}>/assets/js/popper.min.js"></script>
+    <script src="<{$appurl}>/assets/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div class="container-fluid bg-dark mb-2"> 

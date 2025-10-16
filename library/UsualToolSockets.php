@@ -280,7 +280,7 @@ class UTSockets{
         $time = date('Y-m-d H:i:s');
         array_unshift($info, $time);
         $info = array_map('json_encode', $info);
-        file_put_contents(APP_ROOT.'/log/socket.log', implode(' | ', $info) . "\r\n", FILE_APPEND);
+        file_put_contents(UTF_ROOT.'/log/socket.log', implode(' | ', $info) . "\r\n", FILE_APPEND);
     }
     /*
      * 记录错误信息
@@ -289,6 +289,6 @@ class UTSockets{
         $time = date('Y-m-d H:i:s');
         array_unshift($info, $time);
         $info = array_map('json_encode', $info);
-        file_put_contents(APP_ROOT.'/log/socket.log', implode(' | ', $info) . "\r\n", FILE_APPEND);
+        file_put_contents(UTF_ROOT.'/log/socket.log', implode(' | ', $info) . "\r\n", FILE_APPEND);
     }
 }

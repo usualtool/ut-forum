@@ -13,9 +13,9 @@
                     <p class="card-text mb-2">尚未具备相应权限，请选择注册或登陆</p>
                     <a href="<{url=>Link("forum","register","")}>" class="card-link">Sign up</a>
                     <a href="<{url=>Link("forum","login","")}>" class="card-link">Sign in</a> 
-                    <a href="<{url=>Link("authlogin","","state=forum__auth&auth=qq")}>" class="card-link mr-1"><img src="<{$appurl}>/app/modules/authlogin/image/qq.png"></a>
-                    <a href="<{url=>Link("authlogin","","state=forum__auth&auth=weibo")}>" class="mr-1"><img src="<{$appurl}>/app/modules/authlogin/image/weibo.png"></a>
-                    <a href="<{url=>Link("authlogin","","state=forum__auth&auth=wechat")}>"><img src="<{$appurl}>/app/modules/authlogin/image/wechat.png"></a>
+                    <a href="<{url=>Link("authlogin","","state=forum__auth&auth=qq")}>" class="card-link mr-1"><img src="<{$appurl}>/modules/authlogin/image/qq.png"></a>
+                    <a href="<{url=>Link("authlogin","","state=forum__auth&auth=weibo")}>" class="mr-1"><img src="<{$appurl}>/modules/authlogin/image/weibo.png"></a>
+                    <a href="<{url=>Link("authlogin","","state=forum__auth&auth=wechat")}>"><img src="<{$appurl}>/modules/authlogin/image/wechat.png"></a>
                 <{else}>
                     <p class="mb-2"><strong class="mr-2">账户:</strong> <a class="mr-2" href="<{url=>Link("forum","my_user","")}>">更新账户</a> <a href="<{url=>Link("forum","my_money","")}>">积分</a>（<{$money}>）</p>
                     <p class="mb-2"><strong class="mr-2">主题:</strong> <a class="mr-2" href="<{url=>Link("forum","my_post_creat","")}>">撰写主题</a> <a href="<{url=>Link("forum","my_post_list","")}>">主题列表</a></p>
