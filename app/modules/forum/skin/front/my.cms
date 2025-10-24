@@ -82,12 +82,13 @@
 </div>
 <script>
     $("input[id^='amount']").change(function() {
+        var lv=parseInt("<{$rate}>");
         var total = 0;
         var r = /^-?\d+$/;
         if($(this).val() != '' && !r.test($(this).val())) {
             $(this).val("");
         } else if($(this).val() != '') {
-            total = parseInt($(this).val())*10;
+            total = parseInt($(this).val()) * lv;
         }
         $("#jifen").html(total);
     });
