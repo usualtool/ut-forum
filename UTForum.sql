@@ -207,5 +207,5 @@ INSERT INTO `cms_connect` VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 INSERT INTO `cms_pay` VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'sandbox', NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `cms_search_set` VALUES (1, 'forum_post', 'title,content', 'title like [keyword] or content like [keyword]', 'm=forum&p=post');
 INSERT INTO `forum_member` (`id`, `utype`, `black`, `username`, `password`, `salts`, `avatar`, `email`, `fullname`, `sex`, `cardnumber`, `openid`, `other`, `creattime`) VALUES 
-(1, 99999, 0, 'admin', '41635f645e9194175528278374b272f9d2ad5ba9', '2R6HY7', '/app/assets/images/noimage.png', 'test#test.com', 'Admin', 1, NULL, NULL, NULL, '2021-11-25 00:00:00');
+(1, 99999, 0, 'admin', '41635f645e9194175528278374b272f9d2ad5ba9', '2R6HY7', '/assets/images/noimage.png', 'test#test.com', 'Admin', 1, NULL, NULL, NULL, '2021-11-25 00:00:00');
 INSERT INTO `forum_set` VALUES (1,10,'usualtool_');
