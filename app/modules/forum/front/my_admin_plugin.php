@@ -7,38 +7,46 @@ use library\UsualToolRoute\UTRoute;
 if($utype!=99999):
     UTInc::GoUrl("-1","权限不足!"); 
 endif;
-$t=UTInc::SqlCheck($_GET["t"]);
-$do=UTInc::SqlCheck($_GET["do"]);
+$t=$_GET["t"];
+$do=$_GET["do"];
 $app->Runin(array("webplace"),array("插件"));
+$data=UTInc::GetPlugin(1);
 if(empty($t)):
-    $app->Runin("plugin",UTInc::GetPlugin());
-elseif($t=="usualtool"):
-    $app->Runin("plugin",UTInc::GetPlugin(1));
+    $plugin = array_filter($data, function($item) {
+        $pid = (string)($item['pid'] ?? '');
+        return substr($pid, 0, 2) === 'f_';
+    });
+    $plugin = array_values($plugin);
+else:
+    $plugin = array_filter($data, function($item) {
+        $pid = (string)($item['pid'] ?? '');
+        return substr($pid, 0, 2) !== 'f_';
+    });
+    $plugin = array_values($plugin);
 endif;
+$app->Runin("plugin",$plugin);
 $app->Runin("t",$t);
 $app->Open("my_admin_plugin.cms");
 if($do=="install"){
     $d=$_GET["d"];
-    $pid=str_replace(".","",UTInc::SqlCheck($_GET["pid"]));  
-    if($d=="usualtool"):
-        $down=UTInc::Auth($config["UTCODE"],$config["UTFURL"],"plugin-".$pid);
-        $downurl=UTInc::StrSubstr("<downurl>","</downurl>",$down);
-        $filename=basename($downurl);
-        $res=UTInc::SaveFile($downurl,APP_ROOT."/plugins",$filename,1);
-        if(!empty($res)):
-            UTInc::Auth($config["UTCODE"],$config["UTFURL"],"plugindel-".str_replace(".zip","",$filename)."");
-            $zip=new ZipArchive;
-            if($zip->open(APP_ROOT."/plugins/".$filename)===TRUE): 
-                $zip->extractTo(APP_ROOT."/plugins/");
-                $zip->close();
-                unlink(APP_ROOT."/plugins/".$filename);
-            else:
-               UTInc::GoUrl("-1","plugins目录775权限不足!");
-            endif;
+    $pid=str_replace(".","",UTInc::SqlCheck($_GET["pid"]));
+    $down=UTInc::Auth($config["UTCODE"],$config["UTFURL"],"plugin-".$pid);
+    $downurl=UTInc::StrSubstr("<downurl>","</downurl>",$down);
+    $filename=basename($downurl);
+    $res=UTInc::SaveFile($downurl,APP_ROOT."/plugins",$filename,1);
+    if(!empty($res)):
+        UTInc::Auth($config["UTCODE"],$config["UTFURL"],"plugindel-".str_replace(".zip","",$filename)."");
+        $zip=new ZipArchive;
+        if($zip->open(APP_ROOT."/plugins/".$filename)===TRUE): 
+            $zip->extractTo(APP_ROOT."/plugins/");
+            $zip->close();
+            unlink(APP_ROOT."/plugins/".$filename);
         else:
-            UTInc::GoUrl("-1","安装权限不足!");
+           UTInc::GoUrl("-1","plugins目录775权限不足!");
         endif;
-    endif; 
+    else:
+        UTInc::GoUrl("-1","安装权限不足!");
+    endif;
     $pconfig=APP_ROOT."/plugins/".$pid."/usualtool.config";
     $plugins=file_get_contents($pconfig);
     $type=UTInc::StrSubstr("<type>","</type>",$plugins);

@@ -15,37 +15,6 @@
 								<div class="card-body">
                                 <div class="row">
                                     <{loop=>$plugin $rows}>
-                                    <{if empty($t)}>
-                                    <{php=>
-                                        if(substr(return=>$rows["pid"],0,2)=="f_"):
-                                    }>
-                                        <div class="col-sm-6 col-md-3 mb-3">
-							                <div class="card card-stats card-round">
-								                <div class="card-body">
-									                <div class="row align-items-center">
-										            <div class="col col-stats ml-3 ml-sm-0">
-											            <div class="numbers">
-												            <h5 class="card-title text-truncate-1" style="font-size:14px;font-weight:bold;margin-bottom:0.3rem;"><{$rows->title}></h5>
-															<p class="card-category"><{$rows->pid}></p>
-															<p class="card-category mb-2">作者：<{$rows->auther}></p>
-															<p class="card-category border-top pt-2">
-															<{php=>
-															if(library\UsualToolData\UTData::QueryData("cms_plugin","","pid='".return=>$rows["pid"]."'")["querynum"]>0):
-															}>
-															<a href="<{url=>Link("forum","my_admin_plugin_view","pid=".$rows["pid"])}>">使用</a> | 
-                                                            <a href="<{url=>Link("forum","my_admin_plugin","do=uninstall&pid=".$rows["pid"])}>">卸载</a>
-                                                            <{php=>else:}>
-                                                            <a href="<{url=>Link("forum","my_admin_plugin","do=install&pid=".$rows["pid"])}>" class="text-danger">安装</a>
-                                                            <{php=>endif;}>
-															</p>
-											            </div>
-										            </div>
-									                </div>
-								                </div>
-							                </div>
-						                </div>
-						            <{php=>endif;}>
-						            <{else}>
                                         <div class="col-sm-6 col-md-3 mb-3">
 							                <div class="card card-stats card-round">
 								                <div class="card-body">
@@ -63,9 +32,9 @@
 															if(library\UsualToolInc\UTInc::SearchDir(APP_ROOT."/plugins/".return=>$rows["pid"])):
 															}>
 															<a href="<{url=>Link("forum","my_admin_plugin_view","pid=".$rows["pid"])}>">使用</a> | 
-                                                            <a href="<{url=>Link("forum","my_admin_plugin","do=uninstall&d=usualtool&pid=".$rows["pid"])}>">卸载</a>
+                                                            <a href="<{url=>Link("forum","my_admin_plugin","do=uninstall&d=".$t."&pid=".$rows["pid"])}>">卸载</a>
                                                             <{php=>else:}>
-                                                            <a href="<{url=>Link("forum","my_admin_plugin","do=install&d=usualtool&pid=".$rows["pid"])}>" class="text-danger">安装</a>
+                                                            <a href="<{url=>Link("forum","my_admin_plugin","do=install&d=".$t."&pid=".$rows["pid"])}>" class="text-danger">安装</a>
                                                             <{php=>endif;}>
 															</p>
 											            </div>
@@ -74,7 +43,6 @@
 								                </div>
 							                </div>
 						                </div>
-						            <{/if}>
                                     <{/loop}>
                                 </div>
 								</div>
