@@ -39,6 +39,9 @@ $app->Runin(array("total","curpage","listnum","pagelink"),array($totalpage,$page
 $app->Runin(array("webplace","data","rid","my_replynum"),array($title,$data,$rid,$my_replynum));
 $app->Open("post.cms");
 if($_GET["do"]=="reply"){
+    if(empty($_POST["ut-editor"])):
+        UTInc::GoUrl("-1","内容不能为空!"); 
+    endif;
     $page=UTInc::SqlCheck($_POST["page"]);
     $postid=UTInc::SqlCheck($_POST["postid"]);
     $replyid=UTInc::SqlCheck($_POST["replyid"]);

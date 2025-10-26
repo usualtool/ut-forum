@@ -62,7 +62,7 @@
                                       <div id="content"><{inc=>DeSqlCheck($row["content"])}></div>
                                       <{if !empty($row["files"])}>
                                           <{if !empty($uid)}>
-                                              <div class="mt-3 border-top text-secondary pt-2 pb-2" style="font-size:13px;">
+                                              <div class="mt-3 border-top text-secondary pt-2 pb-2" id="annex" style="font-size:13px;">
                                                   <strong>主题附件</strong> | 已下载 <span style="color:red;"><{$row->downnum}></span> 次
                                                   <{if $row["payfiles"]>0}>
                                                       <{php=>if(library\UsualToolData\UTData::QueryData("forum_payment","","uid='".return=>$uid."' and pid='".return=>$row["id"]."'","","")["querynum"]>0):}>
@@ -74,15 +74,14 @@
                                                   <{split=>$row->files,",",all}>
                                                       <p><{php=>echo ($i+1).". <a class='text-secondary' href='".library\UsualToolRoute\UTRoute::Link("forum","download","pid=".return=>$row["id"]."&did=".$i)."'>**".substr(basename($row[$i]),-7)."</a>"}></p>
                                                   <{/split}>
-                                                  <{plugin=>f_annex_comment}>
                                               </div>
                                            <{else}>
                                               <p class="text-secondary mt-3" style="font-size:13px;">该主题包含附件需登录下载</p>
                                            <{/if}>
                                       <{/if}>
-                                      <div class="mt-3 border-dashed-top pt-2" style="font-size:12px;color:#888;">
+                                      <div class="mt-3 border-dashed-top pt-2" id="attic" style="font-size:12px;color:#888;">
                                         <span class="right">
-                                        <a data-toggle="modal" data-target="#report" onclick="Report('0','<{$row->id}>')">举报主题</a>
+                                            <a data-toggle="modal" data-target="#report" onclick="Report('0','<{$row->id}>')">举报主题</a>
                                         </span>
                                       </div>
                                   </div>

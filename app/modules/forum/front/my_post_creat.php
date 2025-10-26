@@ -20,6 +20,9 @@ foreach(UTData::QueryData("forum","","","forum_number desc","")["querydata"] as 
 $app->Runin(array("webplace","datatree"),array("撰写主题",$datatree));
 $app->Open("my_post_creat.cms");
 if($_GET["do"]=="creat"){
+    if(empty($_POST["ut-editor"])):
+        UTInc::GoUrl("-1","内容不能为空!"); 
+    endif;
     $fid=UTInc::SqlCheck($_POST["fid"]);
     if(!empty($_POST["notice"])):
         $notice=UTInc::SqlCheck($_POST["notice"]);
