@@ -12,7 +12,7 @@
     <script src="<{$appurl}>/assets/js/plugin/datatables/jszip.min.js"></script> 
     <script src="<{$appurl}>/assets/js/plugin/datatables/buttons.print.min.js"></script> 
     <script src="<{$appurl}>/assets/js/jquery.localize.js"></script>
-    <script src="<{$appurl}>/assets/js/language.cookie.js"></script>
+    <script src="<{$appurl}>/assets/js/jquery.lang.js"></script>
     <script src="<{$appurl}>/assets/js/jquery.ready.js"></script>    
 </body>
 </html>

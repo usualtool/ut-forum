@@ -6,7 +6,7 @@
     <script src="<{$appurl}>/assets/js/plugin/plupload/plupload.min.js"></script>
     <script src="<{$appurl}>/assets/js/plugin/jquery-qrcode/qrcode.min.js"></script>
     <script src="<{$appurl}>/assets/js/jquery.localize.js"></script>
-    <script src="<{$appurl}>/assets/js/language.cookie.js"></script>
+    <script src="<{$appurl}>/assets/js/jquery.lang.js"></script>
     <script src="<{$appurl}>/assets/js/md5.js"></script>
     <script src="<{$appurl}>/assets/js/jquery.ready.js"></script>    
 </body>
