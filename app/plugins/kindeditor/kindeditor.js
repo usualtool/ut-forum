@@ -279,9 +279,11 @@ K.options = {
 	],
 	fontSizeTable : ['9px', '10px', '12px', '14px', '16px', '18px', '24px', '32px'],
 	htmlTags : {
+	    input: ['id', 'type', 'value', 'data-id', 'data-text', 'data-src', 'name'],
 		font : ['id', 'class', 'color', 'size', 'face', '.background-color'],
+		lable: ['id', 'for', 'class'],
 		span : [
-			'id', 'class', '.color', '.background-color', '.font-size', '.font-family', '.background',
+			'id', 'class','onclick', '.color', '.background-color', '.font-size', '.font-family', '.background',
 			'.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.line-height'
 		],
 		div : [
