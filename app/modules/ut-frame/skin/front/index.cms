@@ -33,11 +33,11 @@
                         文书1：<a target="_blank" href="//www.apache.org/licenses/LICENSE-2.0">UTForum基于Apache2.0授权，可以通过//www.apache.org/licenses/LICENSE-2.0了解或下载到详尽的协议内容。</a>
                     </p>
                     <p class="mb-2">
-                        文书2：<a target="_blank" href="//frame.usualtool.com/baike#license">UTForum遵循UT开源与免费协议，任何自然人与团体组织在协议约定的范围内均可免费使用。使用人应当阅读UT序言中关于文书的部分，往此去：//frame.usualtool.com/baike#license。</a>
+                        文书2：<a target="_blank" href="//github.com/usualtool/ut-cms/blob/master/LICENSE.ADD">UTForum遵循UT开源与免费协议，任何自然人与团体组织在协议约定的范围内均可免费使用。使用人应当阅读UT序言中关于文书的部分，往此去：//github.com/usualtool/ut-cms/blob/master/LICENSE.ADD。</a>
                     </p>
                     <p class="mb-3">
                         <b>你需要仔细阅读以上2份文书，在理解和同意的前提下，方可使用本软件。</b><br/><br/>
-                        <b>Made in China , usualtool.com , HuangDou</b>
+                        <b>Made in China , github.com/usualtool/ut-forum , HuangDou</b>
                     </p>
                     <p class="mb-2">
                         <input type="submit" class="btn btn-info" value="请查阅以上文书（60）" id="btn"/> 
@@ -63,11 +63,6 @@
                     </script>
                <{else if $do=="config"}>
                <form action="?m=ut-frame&do=db-save" method="post" name="form">
-               <div class="row">
-                  <div class="form-group col-md-12">
-                     安装前请将.ut.config与网络断开，否则无法正常安装。设置方法见：<a target="_blank" href="https://frame.usualtool.com/baike/config.php?do=%E7%A6%81%E6%AD%A2%E8%AE%BF%E9%97%AE">禁止访问.ut.config文件</a>
-                  </div>
-               </div>
                <div class="row">
                   <div class="form-group col-md-6">
                      <label for="email">应用域名/IP（请带HTTP）:</label>
