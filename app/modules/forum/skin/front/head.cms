@@ -16,14 +16,14 @@
 <div class="container-fluid bg-dark mb-2"> 
     <div class="row">
         <nav class="container navbar navbar-expand-md navbar-light">
-              <a href="<{url=>Link("forum","","")}>"><h3 class="mr-5 text-white"><{$appname}></h3></a>
+              <a href="<{$appurl}>"><h3 class="mr-5 text-white"><{$appname}></h3></a>
               <button class="navbar-toggler bg-white" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
                   <span class="navbar-toggler-icon"></span>
               </button>
             <div class="collapse navbar-collapse" id="collapsibleNavbar">
                 <ul class="navbar-nav">
                     <li class="nav-item mr-3">
-                        <a class="nav-link text-white" href="<{url=>Link("forum")}>">首页</a>
+                        <a class="nav-link text-white" href="<{$appurl}>">首页</a>
                     </li>
                     <li class="nav-item mr-3">
                         <a class="nav-link text-white" href="<{url=>Link("forum","black")}>">小黑屋</a>

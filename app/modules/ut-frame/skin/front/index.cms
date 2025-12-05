@@ -1,137 +1,153 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>UTForum安装</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<{$appurl}>/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<{$appurl}>/assets/css/fontawesome.min.css">
-    <script src="<{$appurl}>/assets/js/jquery.min.js"></script>
-    <script src="<{$appurl}>/assets/js/bootstrap.min.js"></script>
-    <style>
-    body{font-size:0.8rem;}
-    a{color:black;text-decoration:underline;}
-    p{margin-bottom:0rem;font-size:14px;}
-    .fontsmall{font-size:12px;}
-    #license p{font-size:11px;
-    }
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="row m-b-md">
-           <div class="col-md-12 mt-3 mb-3"><img src="<{$appurl}>/assets/logo.png"></div>
-           <div class="col-md-12">
-              <div class="border p-4">
-                <{if empty($do)}>
-                    <div>
-                    <form name="license" action="?do=config" method="post">
-                    <p class="mb-2">
-                        <b>基于以下协议，本软件是免费且开源的软件。所有自然人或团体组织请在所在国法律允许范围内合法使用本软件。</b>
-                    </p>
-                    <p class="mb-2">
-                        文书1：<a target="_blank" href="//www.apache.org/licenses/LICENSE-2.0">UTForum基于Apache2.0授权，可以通过//www.apache.org/licenses/LICENSE-2.0了解或下载到详尽的协议内容。</a>
-                    </p>
-                    <p class="mb-2">
-                        文书2：<a target="_blank" href="//github.com/usualtool/ut-cms/blob/master/LICENSE.ADD">UTForum遵循UT开源与免费协议，任何自然人与团体组织在协议约定的范围内均可免费使用。使用人应当阅读UT序言中关于文书的部分，往此去：//github.com/usualtool/ut-cms/blob/master/LICENSE.ADD。</a>
-                    </p>
-                    <p class="mb-3">
-                        <b>你需要仔细阅读以上2份文书，在理解和同意的前提下，方可使用本软件。</b><br/><br/>
-                        <b>Made in China , github.com/usualtool/ut-forum , HuangDou</b>
-                    </p>
-                    <p class="mb-2">
-                        <input type="submit" class="btn btn-info" value="请查阅以上文书（60）" id="btn"/> 
-                    </p>
-                    </form>
-                    </div>
-                    <script>
-                        $(function(){
-                            $("#btn").prop('disabled',true);
-                            var time = 60;
-                            timer = setInterval(function(){
-                                time--;
-                                if(time>=0){
-                                    $("#btn").val("请查阅以上文书（"+time+"）")
-                                }else{
-                                    clearInterval(timer);
-                                    $("#btn").prop('disabled',false);
-                                    $("#btn").val("我已阅读相关文书");
-                                    $("#btn").addClass('dd');
-                                }
-                            },1000);
-                        })
-                    </script>
-               <{else if $do=="config"}>
-               <form action="?m=ut-frame&do=db-save" method="post" name="form">
-               <div class="row">
-                  <div class="form-group col-md-6">
-                     <label for="email">应用域名/IP（请带HTTP）:</label>
-                     <input class="form-control" name="APPURL" id="APPURL">
-                  </div>
-               </div>
-               <div class="row">
-                  <div class="form-group col-md-6">
-                     <label for="email">数据库服务器:</label>
-                     <input class="form-control" name="MYSQL_HOST" id="MYSQL_HOST" value="localhost">
-                  </div>
-                  <div class="form-group col-md-6">
-                     <label for="email">端口:</label>
-                     <input class="form-control" name="MYSQL_PORT" id="MYSQL_PORT" value="3306">
-                  </div>
-               </div>
-               <div class="row">
-                  <div class="form-group col-md-6">
-                     <label for="email">数据库用户:</label>
-                     <input class="form-control" name="MYSQL_USER" id="MYSQL_USER">
-                  </div>
-                  <div class="form-group col-md-6">
-                     <label for="email">数据库密码:</label>
-                     <input class="form-control" name="MYSQL_PASS" id="MYSQL_PASS">
-                  </div>
-               </div>
-               <div class="row">
-                  <div class="form-group col-md-6">
-                     <label for="email">数据库名称:</label>
-                     <input class="form-control" name="MYSQL_DB" id="MYSQL_DB">
-                  </div>
-               </div>
-               <div class="row">
-                  <div class="col-md-6">
-                  <button type="submit" class="btn btn-success">保存设置</button>
-                  </div>
-               </div>
-               </form>
-               <{else if $do=="sql"}>
-                  <p>导入UTForum初始数据结构，请保持网络通畅。</p>
-                  <hr/>
-                  <{php=>
-                  if($_GET["t"]=="db-sql"){
-                     $sql=file_get_contents("../UTForum.sql");
-                     $arr=explode(';',$sql);
-                     $total=count($arr)-1;
-                     $c=0;
-                     for($i=0;$i<$total;$i++){
-                        $k=$i+1;
-                        $result=library\UsualToolData\UTData::RunSql($arr[$i]);
-                        if($result){
-                           echo"<p class='fontsmall'>第".$k."条SQL执行成功!</p>";
-                        }else{
-                           $c=$c+1;
-                           echo"<p class='fontsmall' style='color:red;'>第".$k."条SQL执行失败:".$arr[$i]."</p>";
-                        }
-                        if($k==$total && $c==0){
-                           library\UsualToolInc\UTInc::GoUrl("?m=forum","UTForum安装成功!");
-                        }
-                     }
-                  }
-                  }>
-                  <form action="?m=ut-frame&do=sql&t=db-sql" method="post" name="form">
-                  <button type="submit" class="btn btn-success">导入数据</button>
-                  </form>
-                  <{/if}>
+<{include "$forum_temp/head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-8 mb-2">
+            <div class="carousel slide mb-2" data-ride="carousel">
+              <ul class="carousel-indicators">
+                <li data-target="#demo" data-slide-to="0" class="active"></li>
+              </ul>
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img src="https://www.usualtool.com/blog/assets/images/ad/2020082173265.jpg" style="width:100%;height:100px;">
+                </div>
               </div>
-           </div>
+              <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </a>
+              <a class="carousel-control-next" href="#demo" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </a>
+            </div>
+            <div class="panel-heading">
+                <h5 class="media-heading">
+                    最新主题
+                </h5>
+            </div>
+            <div class="border p-3 pb-0 mb-2">
+                <ul class="list-unstyled">
+                  <{loop=>$notice as $rows}>
+                      <li class="media mb-3">
+                      <figure class="figure mr-3">
+                        <img src="<{db=>QueryData("forum_member","avatar","id='".$rows["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                        <figcaption class="figure-caption text-center">
+                            <{db=>QueryData("forum_member","username","id='".$rows["uid"]."'","","")["querydata"][0]["username"]}>
+                        </figcaption>
+                      </figure>
+                      <div class="media-body">
+                          <a href="<{url=>Link("forum","post","id=".$rows["id"])}>"><h5 class="mt-0 mb-1 text-truncate-1 text-danger"><{$rows->title}></h5></a>
+                          <p class="text-truncate-2"><{inc=>DeleteHtml($rows["content"])}></p>
+                          <p class="mt-2" style="font-size:12px;">
+                          <span class="left">
+                              <i class="fas fa-calendar" aria-hidden="true"></i> <{php=>echo date("Y-m-d",strtotime(return=>$rows["posttime"]))}> 
+                          </span>
+                          <span class="right">
+                              <a href="<{url=>Link("forum","post","id=".$rows["id"])}>#reply">回复</a>(<{db=>QueryData("forum_reply","id","postid='".$rows["id"]."'","","")["querynum"]}>) | 浏览 <{$rows->hit}>
+                          </span>
+                          </p>
+                        </div>
+                        <{if $rows["ding"]==1}>
+                            <div style="position:absolute;right:5%;max-width:100%;">
+                                <img src="<{$appurl}>/modules/forum/assets/image/ding.png" class="rounded-circle" style="width:60px;height:60px;">
+                            </div>
+                        <{/if}>
+                      </li>
+                  <{/loop}>
+                  <{loop=>$forum_post as $rows}>
+                      <li class="media mb-3">
+                      <figure class="figure mr-3">
+                        <img src="<{db=>QueryData("forum_member","avatar","id='".$rows["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                        <figcaption class="figure-caption text-center splitword" style="line-height:15px;">
+                            <{db=>QueryData("forum_member","username","id='".$rows["uid"]."'","","")["querydata"][0]["username"]}>
+                        </figcaption>
+                      </figure>
+                      <div class="media-body">
+                          <a href="<{url=>Link("forum","post","id=".$rows["id"])}>">
+                          <h5 class="mt-0 mb-1 text-truncate-1">
+                          <{$rows->title}>
+                          <{if !empty($rows["files"])}><sup><i class="fa fa-paperclip" style="color:#999;" title="附件"></i></sup><{/if}>
+                          </h5>
+                          </a>
+                          <p class="text-truncate-2"><{inc=>DeleteHtml($rows["content"])}></p>
+                          <p class="mt-2" style="font-size:12px;">
+                          <span class="left">
+                              <i class="fas fa-calendar" aria-hidden="true"></i> <{php=>echo date("Y-m-d",strtotime(return=>$rows["posttime"]))}> 
+                          </span>
+                          <span class="ml-3 mr-3">
+                              <a href="<{url=>Link("forum","list","id=".$rows["fid"])}>"><{db=>QueryData("forum","forum_name","id='".$rows["fid"]."'","","")["querydata"][0]["forum_name"]}></a>
+                          </span>
+                          <span class="right">
+                              <a href="<{url=>Link("forum","post","id=".$rows["id"])}>#reply">回复</a>(<{db=>QueryData("forum_reply","id","postid='".$rows["id"]."'","","")["querynum"]}>) | 浏览 <{$rows->hit}>
+                          </span>
+                          </p>
+                        </div>
+                        <{if $rows["ding"]==1}>
+                            <div style="position:absolute;right:5%;max-width:100%;">
+                                <img src="<{$appurl}>/modules/forum/assets/image/ding.png" class="rounded-circle" style="width:60px;height:60px;">
+                            </div>
+                        <{/if}>
+                      </li>
+                  <{/loop}>
+                </ul>
+            </div>
+            <{page=>total,curpage,listnum,pagelink}>
+        </div>
+        <div class="col-md-4">
+        <{include "$forum_temp/my_nav.cms"}>
+            <div class="border mb-2">
+                <div class="card-body pt-3">
+                  <form method="get" class="form-validate">
+                    <input type="hidden" name="m" value="forum">
+                    <input type="hidden" name="p" value="search">
+                    <input type="text" name="key" class="form-control mb-2">
+                    <input type="submit" class="btn btn-primary" value="搜索主题">
+                  </form>
+                </div>
+	        </div>
+	        <div class="card mb-2">
+								<div class="card-header pb-0">
+									<h5 class="card-title">发现</h5>
+								</div>
+								<div class="card-body">
+									<div class="mb-2 text-secondary">新成员</div>
+										<div class="avatar-group">
+										<{loop=>$users $rows}>
+											<div class="avatar rounded-circle border text-center bg-light text-dark" style="width:40px;height:40px;line-height:40px;">
+											<span title="<{$rows->username}>"><{inc=>CutSubstr($rows["username"],0,1)}></span>
+											</div>
+										<{/loop}>
+										</div>
+									<div class="mt-2 mb-2 text-secondary">新主题</div>
+									<div>
+									<ul class="pl-4">
+									<{loop=>$newtopic $rows}>
+									    <li><a href="<{url=>Link("forum","post","id=".$rows["id"])}>" class="text-truncate-1"><{$rows->title}></a></li>
+									<{/loop}>
+									</ul>
+									</div>
+									<div class="mt-2 mb-2 text-secondary">勤奋之星</div>
+									<div class="row">
+									<{loop=>$topstar $rows}>
+									    <div class="col-4 text-center">
+									        <img src="<{$rows->avatar}>" class="rounded-circle border" style="width:50px;height:50px;">
+									        <p style="font-size:12px;"><{$rows->username}></p>
+									    </div>
+									<{/loop}>
+									</div>
+								</div>
+							</div>
+            <div class="card">
+                <div class="card-header pb-0">
+                        <h5 class="card-title">版块</h5>
+                </div>
+                <div class="card-body pt-3">
+                    <{loop=>$forum as $rows}>
+                    <p class="mb-2">
+                    <a class="text-dark" href="<{url=>Link("forum","list","id=".$rows["id"])}>"><{$rows->forum_name}></a>
+                    </p>
+                    <{/loop}>
+                </div>
+	        </div>
+        </div>
     </div>
 </div>
-</body>
-</html>
+<{include "$forum_temp/foot.cms"}>
