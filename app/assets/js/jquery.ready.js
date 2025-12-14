@@ -59,7 +59,7 @@ function highlightmatch(sentence, targetText) {
 function checkbox(form){
     for (var i = 0; i < form.elements.length; i++) {
         var e = form.elements[i];
-        if (e.name != 'checkall' && e.disabled != true) e.checked = form.checkall.checked;
+        if (e.name != 'checkall' && e.disabled != true && form.elements[i].type == 'checkbox') e.checked = form.checkall.checked;
     }
 }
 //风险提示
@@ -180,55 +180,62 @@ function upload(fileid,inputid,folder='',posturl=''){
 	})  
 };
 //多传
-function uploads(number,folder,posturl,inputtype='radio',inputfield='indexpic'){
-    var uploader = new plupload.Uploader({ 
-        runtimes: 'html5,flash,silverlight,html4', 
-        browse_button: 'btn', 		
-        url: posturl+"/?m=ut-frame&p=upload", 	
-		multipart_params : {
-        "l" : folder
-		},
-        filters:{		
-            mime_types:[{						
-                title: "files",				
-                extensions: "jpg,png,gif"					
-            }]				
-        },			
-        multi_selection: false,				
+function uploads(number, folder, posturl, inputtype = 'radio', inputfield = 'indexpic') {
+    var box = document.getElementsByClassName("moxie-shim");
+    if(box.length>1) {
+        for(let i = 1; i < box.length; i++){
+            if (box[i] != null)
+            box[i].parentNode.removeChild(box[i]);
+        }
+    }
+    var uploader = new plupload.Uploader({
+        runtimes: 'html5,flash,silverlight,html4',
+        browse_button: 'btn',
+        url: posturl + "/?m=ut-frame&p=upload",
+        multipart_params: {
+            "l": folder
+        },
+        filters: {
+            mime_types: [{
+                title: "files",
+                extensions: "jpg,png,gif"
+            }]
+        },
+        multi_selection: false,
         init: {
-            FilesAdded: function(up,files){ 
-                var picnum=uploader.files.length;
-                if(picnum>parseInt(number)){				
-                    alert("最多可上传"+parseInt(number)+"张图片!");
-                }else{							
-                    var li = '';						
-                    plupload.each(files,function(file){								
-                    li += "<li id='" + file['id'] + "'><div class='progress'><span class='bar'></span><span class='percent'>0%</span></div></li>";		
-                    });							
-                    $("#ul_pics").append(li);
-                    uploader.start();											
+            FilesAdded: function(up, files) {
+                var picnum = uploader.files.length;
+                if (picnum > parseInt(number)) {
+                    alert("最多可上传" + parseInt(number) + "张图片!");
+                } else {
+                    var li = '';
+                    plupload.each(files, function(file) {
+                        li += "<li id='" + file['id'] + "'><div class='progress'><span class='bar'></span><span class='percent'>0%</span></div></li>";
+                    });
+                    $(".upload_list").append(li);
+                    uploader.start();
                 }
             },
-            UploadProgress: function(up,file){
-                var percent = file.percent;  
-                $("#" + file.id).find('.bar').css({"width": percent + "%"});  
-                $("#" + file.id).find(".percent").text("上传中 "+percent + "%");  
-            },  
-            FileUploaded: function(up, file, info){  
-                var data = eval("("+info.response+")");
-				if(inputtype=="radio"){
-                    $("#" + file.id).html("<img src='"+ data.pic + "' appurl='"+ data.post + "'><i onclick='delimg(this)'>-</i><br><input type='radio' name='"+inputfield+"' value='"+ data.pic +"' checked>Selected");
-				}else if(inputtype=="checkbox"){
-                    $("#" + file.id).html("<img src='"+ data.pic + "' appurl='"+ data.post + "'><i onclick='delimg(this)'>-</i><br><input type='checkbox' name='"+inputfield+"[]' value='"+ data.pic +"' checked>Selected");
-				} 
-            },  
-            Error: function(up,err){
-                alert("上传错误!");  
-            }  
-        }  
+            UploadProgress: function(up, file) {
+                var percent = file.percent;
+                $("#" + file.id).find('.bar').css({ "width": percent + "%" });
+                $("#" + file.id).find(".percent").text("上传中 " + percent + "%");
+            },
+            FileUploaded: function(up, file, info) {
+                var data = eval("(" + info.response + ")");
+                if (inputtype == "radio") {
+                    $("#" + file.id).html("<img src='" + data.pic + "' appurl='" + data.post + "'><i onclick='delimg(this)'>-</i><label><span id='break'></span><input type='radio' name='" + inputfield + "' value='" + data.pic + "' checked> Selected</label>");
+                } else if (inputtype == "checkbox") {
+                    $("#" + file.id).html("<img src='" + data.pic + "' appurl='" + data.post + "'><i onclick='delimg(this)'>-</i><label><span id='break'></span><input type='checkbox' name='" + inputfield + "[]' value='" + data.pic + "' checked> Selected</label>");
+                }
+            },
+            Error: function(up, err) {
+                alert("上传错误!");
+            }
+        }
     });
     uploader.init();
-};
+}
 function delimg(o,url=""){
   var src = $(o).prev().attr("src");
   var url = $(o).prev().attr("appurl");
