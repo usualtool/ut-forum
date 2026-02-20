@@ -38,7 +38,7 @@
                 <div class="form-group">
                  <label>内容</label>
                  <textarea id="ut-content"><{inc=>DeSqlCheck($row["content"])}></textarea>
-                 <{plugin=>kindeditor,simple.php}>
+                 <{plugin=>kindeditor,simple}>
                 </div>
                 <div class="form-group mb-2 border-bottom pb-2">
                      <label>

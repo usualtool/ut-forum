@@ -21,9 +21,9 @@
                   <br />
                   <small>没有账号?</small>
                   <a href="<{url=>Link("forum","register")}>" class="signup"><small>&nbsp;Sign up</small></a> 或 
-                  <a href="<{url=>Link("authlogin","","state=forum__auth&auth=qq")}>" class="card-link mr-1"><img src="<{$appurl}>/modules/authlogin/image/qq.png"></a>
-                  <a href="<{url=>Link("authlogin","","state=forum__auth&auth=weibo")}>" class="mr-1"><img src="<{$appurl}>/modules/authlogin/image/weibo.png"></a>
-                  <a href="<{url=>Link("authlogin","","state=forum__auth&auth=wechat")}>"><img src="<{$appurl}>/modules/authlogin/image/wechat.png"></a>
+                  <a href="<{url=>Link("authlogin","","state=forum__auth&auth=qq")}>" class="card-link mr-1"><img src="/assets/modules/authlogin/qq.png"></a>
+                  <a href="<{url=>Link("authlogin","","state=forum__auth&auth=weibo")}>" class="mr-1"><img src="/assets/modules/authlogin/weibo.png"></a>
+                  <a href="<{url=>Link("authlogin","","state=forum__auth&auth=wechat")}>"><img src="/assets/modules/authlogin/wechat.png"></a>
             </div>
           </div>
       </div>

@@ -73,11 +73,11 @@
 									<div class="row form-group">
 									    <div class="col-md-6 form-floating-label">
                                         <label>同步通知地址</label>
-										<input type="text" class="form-control input-square" name="ali_return_url" value="<{if empty($row["ali_return_url"])}><{$appurl}>/modules/payment/method/alipay/return_url.php<{else}><{$row->ali_return_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="ali_return_url" value="<{if empty($row["ali_return_url"])}><{$appurl}>/?m=payment&p=return&lb=alipay<{else}><{$row->ali_return_url}><{/if}>">
 										</div>
 									    <div class="col-md-6 form-floating-label">
                                         <label>异步通知地址</label>
-										<input type="text" class="form-control input-square" name="ali_notify_url" value="<{if empty($row["ali_notify_url"])}><{$appurl}>/modules/payment/method/alipay/notify_url.php<{else}><{$row->ali_notify_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="ali_notify_url" value="<{if empty($row["ali_notify_url"])}><{$appurl}>/?m=payment&p=notify&lb=alipay<{else}><{$row->ali_notify_url}><{/if}>">
 										</div>
                                     </div>
                                     <div class="card-action p-2">
@@ -112,7 +112,7 @@
 										</div>
                                         <div class="col-md-6 form-floating-label">
                                         <label>异步通知地址</label>
-										<input type="text" class="form-control input-square" name="wx_notify_url" value="<{if empty($row["wx_notify_url"])}><{$appurl}>/modules/payment/method/wechat/notify.php<{else}><{$row->wx_notify_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="wx_notify_url" value="<{if empty($row["wx_notify_url"])}><{$appurl}>/?m=payment&p=notify&lb=wechat<{else}><{$row->wx_notify_url}><{/if}>">
 										</div>
                                     </div>
                                     <div class="card-action p-2">
@@ -150,11 +150,11 @@
 									<div class="row form-group">
 									    <div class="col-md-6 form-floating-label">
                                         <label>同步通知地址</label>
-										<input type="text" class="form-control input-square" name="pp_return_url" value="<{if empty($row["pp_return_url"])}><{$appurl}>/modules/payment/method/paypal/return.php<{else}><{$row->pp_return_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="pp_return_url" value="<{if empty($row["pp_return_url"])}><{$appurl}>/?m=payment&p=return&lb=paypal<{else}><{$row->pp_return_url}><{/if}>">
 										</div>
 									    <div class="col-md-6 form-floating-label">
                                         <label>异步通知地址</label>
-										<input type="text" class="form-control input-square" name="pp_notify_url" value="<{if empty($row["pp_notify_url"])}><{$appurl}>/modules/payment/method/paypal/notify.php<{else}><{$row->pp_notify_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="pp_notify_url" value="<{if empty($row["pp_notify_url"])}><{$appurl}>/?m=payment&p=notify&lb=paypal<{else}><{$row->pp_notify_url}><{/if}>">
 										</div>
                                     </div>
                                     <div class="card-action p-2">

@@ -7,7 +7,7 @@
     <link href="<{$appurl}>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<{$appurl}>/assets/css/buttons.min.css" rel="stylesheet"/>
     <link href="<{$appurl}>/assets/css/fontawesome.min.css" rel="stylesheet">
-    <link href="<{$appurl}>/modules/forum/assets/css/forum.css" rel="stylesheet">
+    <link href="<{$appurl}>/assets/modules/forum/css/forum.css" rel="stylesheet">
     <script src="<{$appurl}>/assets/js/jquery.min.js"></script>
     <script src="<{$appurl}>/assets/js/popper.min.js"></script>
     <script src="<{$appurl}>/assets/js/bootstrap.min.js"></script>

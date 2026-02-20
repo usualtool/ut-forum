@@ -111,7 +111,7 @@
                   <hr/>
                   <{php=>
                   if($_GET["t"]=="db-sql"){
-                     $sql=file_get_contents("../UTForum.sql");
+                     $sql=file_get_contents("../forum.sql");
                      $arr=explode(';',$sql);
                      $total=count($arr)-1;
                      $c=0;
