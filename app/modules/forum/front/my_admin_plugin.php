@@ -47,6 +47,14 @@ if($do=="install"){
     else:
         UTInc::GoUrl("-1","安装权限不足!");
     endif;
+    if(is_dir(APP_ROOT."/plugins/".$pid."/assets")):
+		    $assets_dir=OPEN_ROOT."/assets/plugins/".$pid;
+        if(!is_dir($assets_dir)):
+			      UTInc::MakeDir($assets_dir);
+		    endif;
+		    UTInc::MoveDir(APP_ROOT."/plugins/".$pid."/assets",$assets_dir);
+				UTInc::DelDir(APP_ROOT."/plugins/".$pid."/assets");
+    endif;
     $pconfig=APP_ROOT."/plugins/".$pid."/usualtool.config";
     $plugins=file_get_contents($pconfig);
     $type=UTInc::StrSubstr("<type>","</type>",$plugins);
@@ -90,10 +98,16 @@ if($do=="uninstall"){
     UTData::DelData("cms_plugin","pid='$pid'");
     if($uninstallsql=='0'):
         UTInc::DelDir(APP_ROOT."/plugins/".$pid);
+		    if(is_dir(OPEN_ROOT."/assets/plugins/".$pid)):
+            UTInc::DelDir(OPEN_ROOT."/assets/plugins/".$pid);
+				endif;
         UTInc::GoUrl(UTRoute::Link("forum","my_admin_plugin","t=".$d),"成功卸载插件!");
     else:
         if(UTData::RunSql($uninstallsql)):
             UTInc::DelDir(APP_ROOT."/plugins/".$pid);
+		        if(is_dir(OPEN_ROOT."/assets/plugins/".$pid)):
+                UTInc::DelDir(OPEN_ROOT."/assets/plugins/".$pid);
+				    endif;
             UTInc::GoUrl(UTRoute::Link("forum","my_admin_plugin","t=".$d),"成功卸载插件!");
         else:
             UTInc::GoUrl("-1","插件卸载失败!");
