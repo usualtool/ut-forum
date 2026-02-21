@@ -168,7 +168,7 @@
                                    }>
                                        <textarea id="ut-content"><blockquote class="blockquote p-3" style="background-color:#f5f5f5;">引用<{php=>echo$re_name;}>回复: <br><{php=>echo library\UsualToolInc\UTInc::DeSqlCheck($re_data["content"]);}></blockquote><br></textarea>
                                    <{/if}>
-                                   <{plugin=>kindeditor,simple.php}>
+                                   <{plugin=>kindeditor,simple}>
                                 </div>
                                 <{if !empty($uid)}>
                                     <button id="reply" type="submit" class="btn btn-primary pl-3 pr-3">回复</button>
