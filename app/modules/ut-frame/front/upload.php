@@ -3,7 +3,7 @@ use library\UsualToolInc\UTInc;
 if(UTInc::SqlCheck($_GET['do'])=="del"){
     $img=UTInc::SqlCheck(str_replace("..","",$_GET['img']));
     if(in_array(substr($img,-4),array(".jpg",".png",".gif"))):
-        $img=str_replace($config["APPURL"],APP_ROOT,$img);
+        $img=str_replace($config["APPURL"],OPEN_ROOT,$img);
         UTInc::UnlinkFile($img);
         echo json_encode(array("error"=>0));
     else:
@@ -15,7 +15,7 @@ if(UTInc::SqlCheck($_GET['do'])=="del"){
     }else{
         $l="upload";
     }
-    $path = APP_ROOT."/assets/".$l."/";
+    $path = OPEN_ROOT."/assets/".$l."/";
     $file = $_FILES['file'];
     $name = $file['name'];
     $type = strtolower(substr($name,strrpos($name,'.')+1));
@@ -28,7 +28,7 @@ if(UTInc::SqlCheck($_GET['do'])=="del"){
         echo json_encode(array("error"=>"Illegal source of documents!<br>|-|Illegal source of documents!"));
     }else{
         if(move_uploaded_file($file['tmp_name'],$picurl)){
-            echo json_encode(array("error"=>"0","pic"=>str_replace(APP_ROOT,$config["APPURL"],$picurl),"name"=>$fname,"post"=>$config["APPURL"]));
+            echo json_encode(array("error"=>"0","pic"=>str_replace(OPEN_ROOT,$config["APPURL"],$picurl),"name"=>$fname,"post"=>$config["APPURL"]));
         }else{
             echo json_encode(array("error"=>"File upload failed!"));
         }

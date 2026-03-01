@@ -12,6 +12,8 @@ $lb=UTInc::SqlCheck($_GET["lb"]);
  * /?m=payment&p=notify&lb=alipay
  * /?m=payment&p=notify&lb=wechat
  * /?m=payment&p=notify&lb=paypal
+ * notify需要重写为不带参数的伪静态地址
+ * 如 /payment/notify/alipay
 */
 if($lb=="alipay"):
 		require_once MODULE_PATH.'/payment/alipay/Config.php';

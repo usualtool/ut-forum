@@ -1,6 +1,6 @@
 <?php
 
-require_once 'AopEncrypt.php';
+require_once dirname(__FILE__)."/AopEncrypt.php";
 
 class AopClient {
 	//应用ID

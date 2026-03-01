@@ -7,10 +7,7 @@
  */
 
 //namespace alipay\api ;
-
-include("AlipayMobilePublicMultiMediaExecute.php");
-
-
+require_once dirname(__FILE__)."/AlipayMobilePublicMultiMediaExecute.php");
 class AlipayMobilePublicMultiMediaClient{
 
     private				$DEFAULT_CHARSET = 'UTF-8';
