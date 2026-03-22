@@ -71,10 +71,13 @@ UTInc::HasComposer($modpath);
  */
 $endpath=UTInc::TempEndPath();
 /**
- * 配置模块化模板及模板工程模板
- */ 
+ * 配置模板
+ */
 $frontwork=APP_ROOT."/template/".$config["TEMPFRONT"];
 $adminwork=APP_ROOT."/template/".$config["TEMPADMIN"];
+/**
+ * 开发路径
+ */
 $develop=UTInc::Contain(UTInc::GetConfig()["MANAGE"],UTInc::CurPageUrl());
 /**
  * 开发端
@@ -100,8 +103,8 @@ $app=new UTTemp($config["TEMPCACHE"],$skin."/".$endpath,$cache."/".$endpath);
  * 基础绑定
  */
 $app->Runin(
-    array("appname","appurl","module","page","editor"),
-    array($config["APPNAME"],$config["APPURL"],$m,$p,$config["EDITOR"])
+    array("appname","appurl","module","page"),
+    array($config["APPNAME"],$config["APPURL"],$m,$p)
 );
 /**
  * 语言配置
@@ -110,16 +113,16 @@ $app->Runin(
     array("lang","thelang"),
 		array(explode(",",$config["LANG_OPTION"]),$config["LANG"])
 );
-if(!empty($_COOKIE["language"])):
-    $language=UTInc::SqlCheck($_COOKIE["language"]);
+if(!empty($_COOKIE["lang"])):
+    $lang=UTInc::SqlCheck($_COOKIE["lang"]);
 else:
     if($config["LANG"]=="big5"):
-        $language="zh";
-        $chinaspeak="big5";
+        $lang="zh";
+        $speak="big5";
     else:
-        $language=$config["LANG"];
-        $chinaspeak="";
+        $lang=$config["LANG"];
+        $speak="";
     endif;
-    setcookie("language", $language);
-    setcookie("chinaspeak", $chinaspeak);
+    setcookie("lang",$lang);
+    setcookie("speak",$speak);
 endif;
