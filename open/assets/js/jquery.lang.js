@@ -13,10 +13,10 @@ function changelang(){
 	var value = $("#language").children('option:selected').val();
 	if(value=="big5"){
 		setcookie(cookiename,"zh");
-		setcookie("chinaspeak","big5");
+		setcookie("speak","big5");
 	}else{
 		setcookie(cookiename,value);
-		setcookie("chinaspeak","");
+		setcookie("speak","");
 	}
 	location.reload();
 }
@@ -24,10 +24,10 @@ function clicklang(lang){
 	var lang = lang;
 	if(lang=="big5"){
 		setcookie(cookiename,"zh");
-		setcookie("chinaspeak","big5");
+		setcookie("speak","big5");
 	}else{
 		setcookie(cookiename,lang);
-		setcookie("chinaspeak","");
+		setcookie("speak","");
 	}
 	location.reload();
 }
@@ -43,7 +43,7 @@ function transbig(){
 function jsonstr(word){
 	var word;
 	$.ajax({
-		url:jsonweb+"lang/lg-"+getcookie(""+cookiename+"")+".json",
+		url:jsonweb+"/lang/lg-"+getcookie(""+cookiename+"")+".json",
 		success:function(jsondata){
 			var data = eval(jsondata);
 			alert(data["l"][word]);
@@ -56,14 +56,14 @@ function getcookie(cookiename){
 }
 (function($,undefined){
 	$(document).ready(function(){
-		var cookiename = "Language";
+		var cookiename = "lang";
 		if(window.ROOTPATH=='' || window.ROOTPATH==undefined || window.ROOTPATH==null){
 			var jsonweb="http://"+document.domain+":"+location.port+"/";
 		}else{
 			var jsonweb=""+window.ROOTPATH+"/";
 		}
 		String.prototype.transbig=function(){
-			htmlobj=$.ajax({url:jsonweb+"lang/lg-"+getcookie("chinaspeak")+".json",async:false});
+			htmlobj=$.ajax({url:jsonweb+"lang/lg-"+getcookie("speak")+".json",async:false});
 			var zhjsondata=(htmlobj.responseText);
 			var obj = eval("("+zhjsondata+")");
 			var s=obj["l"]["simplified"];
@@ -74,7 +74,7 @@ function getcookie(cookiename){
 		}
 		var mylanguage = (navigator.language || navigator.browserLanguage).toLowerCase();
 		if (getcookie(cookiename) != ""){
-			if (getcookie(cookiename) == "zh" && getcookie("chinaspeak") == "big5"){$("[data-localize]").localize("lg", {pathPrefix: "lang", language: "zh"});transbig();}
+			if (getcookie(cookiename) == "zh" && getcookie("speak") == "big5"){$("[data-localize]").localize("lg", {pathPrefix: "lang", language: "zh"});transbig();}
 			else if(getcookie(cookiename) == "ja"){$("[data-localize]").localize("lg", {pathPrefix: "lang", language: "ja"});}
 			else if(getcookie(cookiename) == "en"){$("[data-localize]").localize("lg", {pathPrefix: "lang", language: "en"});}
 			else if(getcookie(cookiename) == "ko"){$("[data-localize]").localize("lg", {pathPrefix: "lang", language: "ko"});}
