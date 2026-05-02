@@ -13,7 +13,7 @@ $app->Runin(array("data","total","curpage","listnum","pagelink"),array($querydat
 $app->Open("log.cms");
 if($_GET["do"]=="del"){
     if(!empty($_GET["id"])):
-        $ids=implode("','",UTInc::SqlChecks($_GET["id"]));
+        $ids=implode("','",UTInc::SqlCheck($_GET["id"]));
         $result=UTData::DelData("cms_pay_log","id in ('$ids')");
         if(!$result):
             UTInc::GoUrl("?m=payment&p=log","删除失败!");

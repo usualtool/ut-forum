@@ -1,50 +1,52 @@
 <?php
+use library\UsualToolInc\UTInc;
+use library\UsualToolData\UTData;
 $l=$_GET["l"];
 $do=$_GET["do"];
 if($do=="update"){
-    $id=UsualToolCMS::sqlcheckx($_POST["id"]);
-    $qq_appid=UsualToolCMS::sqlcheck($_POST["qq_appid"]);
-    $qq_appkey=UsualToolCMS::sqlcheck($_POST["qq_appkey"]);
-    $qq_reurl=UsualToolCMS::sqlcheck($_POST["qq_reurl"]);
-    $wb_appid=UsualToolCMS::sqlcheck($_POST["wb_appid"]);
-    $wb_appkey=UsualToolCMS::sqlcheck($_POST["wb_appkey"]);
-    $wb_reurl=UsualToolCMS::sqlcheck($_POST["wb_reurl"]);
-    $ww_appid=UsualToolCMS::sqlcheck($_POST["ww_appid"]);
-    $ww_appkey=UsualToolCMS::sqlcheck($_POST["ww_appkey"]);
-    $ww_reurl=UsualToolCMS::sqlcheck($_POST["ww_reurl"]);
-    $qr_appid=UsualToolCMS::sqlcheck($_POST["qr_appid"]);
-    $qr_appkey=UsualToolCMS::sqlcheck($_POST["qr_appkey"]);
-    $qr_reurl=UsualToolCMS::sqlcheck($_POST["qr_reurl"]);
+    $id=UTInc::SqlCheck($_POST["id"]);
+    $qq_appid=UTInc::SqlCheck($_POST["qq_appid"]);
+    $qq_appkey=UTInc::SqlCheck($_POST["qq_appkey"]);
+    $qq_reurl=UTInc::SqlCheck($_POST["qq_reurl"]);
+    $wb_appid=UTInc::SqlCheck($_POST["wb_appid"]);
+    $wb_appkey=UTInc::SqlCheck($_POST["wb_appkey"]);
+    $wb_reurl=UTInc::SqlCheck($_POST["wb_reurl"]);
+    $ww_appid=UTInc::SqlCheck($_POST["ww_appid"]);
+    $ww_appkey=UTInc::SqlCheck($_POST["ww_appkey"]);
+    $ww_reurl=UTInc::SqlCheck($_POST["ww_reurl"]);
+    $qr_appid=UTInc::SqlCheck($_POST["qr_appid"]);
+    $qr_appkey=UTInc::SqlCheck($_POST["qr_appkey"]);
+    $qr_reurl=UTInc::SqlCheck($_POST["qr_reurl"]);
     if(!empty($id)){
         if($l=="qq"):
-            UsualToolCMSDB::updateData("cms_connect",array("qq_appid"=>$qq_appid,"qq_appkey"=>$qq_appkey,"qq_reurl"=>$qq_reurl),"id='$id'");
+            UTData::UpdateData("cms_connect",array("qq_appid"=>$qq_appid,"qq_appkey"=>$qq_appkey,"qq_reurl"=>$qq_reurl),"id='$id'");
         endif;
         if($l=="wb"):
-            UsualToolCMSDB::updateData("cms_connect",array("wb_appid"=>$wb_appid,"wb_appkey"=>$wb_appkey,"wb_reurl"=>$wb_reurl),"id='$id'");
+            UTData::UpdateData("cms_connect",array("wb_appid"=>$wb_appid,"wb_appkey"=>$wb_appkey,"wb_reurl"=>$wb_reurl),"id='$id'");
         endif;
         if($l=="ww"):
-            UsualToolCMSDB::updateData("cms_connect",array("ww_appid"=>$ww_appid,"ww_appkey"=>$ww_appkey,"ww_reurl"=>$ww_reurl),"id='$id'");
+            UTData::UpdateData("cms_connect",array("ww_appid"=>$ww_appid,"ww_appkey"=>$ww_appkey,"ww_reurl"=>$ww_reurl),"id='$id'");
         endif;
         if($l=="sm"):
-            UsualToolCMSDB::updateData("cms_connect",array("qr_appid"=>$qr_appid,"qr_appkey"=>$qr_appkey,"qr_reurl"=>$qr_reurl),"id='$id'");
+            UTData::UpdateData("cms_connect",array("qr_appid"=>$qr_appid,"qr_appkey"=>$qr_appkey,"qr_reurl"=>$qr_reurl),"id='$id'");
         endif;
     }else{
         if($l=="qq"):
-            UsualToolCMSDB::insertData("cms_connect",array("qq_appid"=>$qq_appid,"qq_appkey"=>$qq_appkey,"qq_reurl"=>$qq_reurl));
+            UTData::InsertData("cms_connect",array("qq_appid"=>$qq_appid,"qq_appkey"=>$qq_appkey,"qq_reurl"=>$qq_reurl));
         endif;
         if($l=="wb"):
-            UsualToolCMSDB::insertData("cms_connect",array("wb_appid"=>$wb_appid,"wb_appkey"=>$wb_appkey,"wb_reurl"=>$wb_reurl));
+            UTData::InsertData("cms_connect",array("wb_appid"=>$wb_appid,"wb_appkey"=>$wb_appkey,"wb_reurl"=>$wb_reurl));
         endif;
         if($l=="ww"):
-            UsualToolCMSDB::insertData("cms_connect",array("ww_appid"=>$ww_appid,"ww_appkey"=>$ww_appkey,"ww_reurl"=>$ww_reurl));
+            UTData::InsertData("cms_connect",array("ww_appid"=>$ww_appid,"ww_appkey"=>$ww_appkey,"ww_reurl"=>$ww_reurl));
         endif;
         if($l=="sm"):
-            UsualToolCMSDB::insertData("cms_connect",array("qr_appid"=>$qr_appid,"qr_appkey"=>$qr_appkey,"qr_reurl"=>$qr_reurl));
+            UTData::InsertData("cms_connect",array("qr_appid"=>$qr_appid,"qr_appkey"=>$qr_appkey,"qr_reurl"=>$qr_reurl));
         endif;
     }
         echo "<script>window.location.href='?m=authlogin&u=a_auth.php&l=$l'</script>";
 }
-$row=UsualToolCMSDB::queryData("cms_connect","","","","1","0")["querydata"][0];
+$row=UTData::QueryData("cms_connect","","","","1","0")["querydata"][0];
     $id=$row["id"];
     $qq_appid=$row["qq_appid"];
     $qq_appkey=$row["qq_appkey"];

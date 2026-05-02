@@ -1,6 +1,6 @@
 <?php
 use library\UsualToolInc\UTInc;
-if(UTInc::SqlCheck($_GET['do'])=="del"){
+if($_GET['do']=="del"){
     $img=UTInc::SqlCheck(str_replace("..","",$_GET['img']));
     if(in_array(substr($img,-4),array(".jpg",".png",".gif"))):
         $img=str_replace($config["APPURL"],OPEN_ROOT,$img);
