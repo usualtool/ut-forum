@@ -1,0 +1,40 @@
+<{include "head.cms"}>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mb-2">
+            <div class="border p-4">
+            <p><b><i class="fa fa-search" aria-hidden="true"></i> 搜索:<{$key}></b></p>
+            <{loop=>$data $rows}>
+            <div class='border-top pt-2'>
+                <a target='_blank' href='<{url=>Link("forum","post","id=".$rows["id"])}>'>
+                    <{php=>echo str_ireplace(return=>$key,"<font color=red><b>".return=>$key."</b></font>",return=>$rows["title"]);}></a>
+                    <br>
+                    <span style='color:#999999;font-size:12px;'><{php=>echo library\UsualToolInc\UTInc::SubKey(library\UsualToolInc\UTInc::DeleteHtml(return=>$rows["content"]),return=>$key);}>...</span></div>
+            <{/loop}>
+        </div>
+            <div class="pt-2"><{page=>total,curpage,listnum,pagelink}></div>
+    </div>
+    <div class="col-md-4 pl-0 pr-0">
+        <div class="ut-background p-4">
+            <form form="search" action="<{$appurl}>" method="get">
+            <input type="hidden" name="m"" value="forum">
+            <input type="hidden" name="p"" value="search">
+                <div class="form-group row">
+                    <div class="col-sm-8 pb-2">
+                        <input type=text name="key" class="form-control">
+                    </div>
+                    <div class="col-sm-4 pb-2">
+                        <input type=submit value="搜索" class="btn btn-info">
+                    </div>
+                </div>
+            </form>
+            <div class="bg-info text-center text-light">排行</div>
+            <{loop=>$tags $rows}>
+                <div class='pt-2'><{$rows->xu}> <a href='<{url=>Link("forum","search","key=".$rows["keyword"])}>'><{$rows->keyword}></a></div>
+            <{/loop}>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<{include "foot.cms"}>

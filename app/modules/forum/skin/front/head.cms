@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><{$webplace}> - <{$appname}></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="<{$appurl}>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<{$appurl}>/assets/css/buttons.min.css" rel="stylesheet"/>
+    <link href="<{$appurl}>/assets/css/fontawesome.min.css" rel="stylesheet">
+    <link href="<{$appurl}>/assets/modules/forum/css/forum.css" rel="stylesheet">
+    <script src="<{$appurl}>/assets/js/jquery.min.js"></script>
+    <script src="<{$appurl}>/assets/js/popper.min.js"></script>
+    <script src="<{$appurl}>/assets/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container-fluid bg-dark mb-2"> 
+    <div class="row">
+        <nav class="container navbar navbar-expand-md navbar-light">
+              <a href="<{$appurl}>"><h3 class="mr-5 text-white"><{$appname}></h3></a>
+              <button class="navbar-toggler bg-white" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item mr-3">
+                        <a class="nav-link text-white" href="<{$appurl}>">首页</a>
+                    </li>
+                    <li class="nav-item mr-3">
+                        <a class="nav-link text-white" href="<{url=>Link("forum","black")}>">小黑屋</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="right none">
+                <ul class="navbar-nav">
+                    <{if empty($uid)}>
+                        <li class="nav-item mr-4">
+                            <a href="<{url=>Link("forum","register","")}>" class="btn btn-secondary">注册</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<{url=>Link("forum","login","goto=".urlencode(base64_encode(library\UsualToolInc\UTInc::CurPageUrl())))}>" class="btn btn-danger">登陆</a>
+                        </li>
+                    <{else}>
+                        <li class="nav-item">
+                            <i class="fa fa-user-circle text-white" aria-hidden="true"></i> <a href="<{url=>Link("forum","my","")}>" class="text-white"><{$username}></a>
+                        </li>
+                    <{/if}>
+                </ul>
+            </div>  
+        </nav>
+    </div>
+</div>

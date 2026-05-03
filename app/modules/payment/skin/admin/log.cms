@@ -1,0 +1,107 @@
+<{include "$pubtemp/head.cms"}> 
+        <div class="main-panel">
+			<div class="content">
+				<div class="page-inner">
+					<div class="page-header">
+						<h4 class="page-title"><{$title}></h4>
+						<ul class="breadcrumbs">
+							<li class="nav-home">
+								<a href="./">
+									<i class="fa fa-home"></i>
+								</a>
+							</li>
+							<li class="separator">
+								<i class="fa fa-angle-double-right"></i>
+							</li>
+							<li class="nav-item">
+								<a href="?m=<{$module}>"><{$title}></a>
+							</li>
+							<li class="separator">
+								<i class="fa fa-angle-double-right"></i>
+							</li>
+							<li class="nav-item">
+								支付日志
+							</li>
+							<li class="nav-item pl-3 pr-3">
+                                                            <{item=>$module,$backitem}>
+                                                        </li>
+						</ul>
+					</div>
+							<div class="card">
+                                <div class="card-header">
+									<div class="d-flex align-items-center">
+										<h4 class="card-title">支付日志</h4>
+									</div>
+								</div>
+								<div class="card-body">
+								<form name="action" method="get" action="?">
+	                                <input type=hidden name="m" value="<{$module}>">
+	                                <input type=hidden name="p" value="log">
+                                    <div class="table-responsive" id="ut-auto">
+                                    <table class="display table table-striped table-hover" id="ut-table">
+										<thead>
+											<tr>
+												<th>
+												<input name='checkall' type='checkbox' id='checkall' onclick='checkbox(this.form)'>
+												</th>
+												<th>平台</th>
+												<th>状态</th>
+												<th>商家单号</th>
+												<th>金额</th>
+												<th>平台单号</th>
+												<th>备注</th>
+											</tr>
+										</thead>
+										<tbody>
+										    <{loop=>$data $rows}>
+											<tr>
+												<td><input type="checkbox" name="id[]" value="<{$rows->id}>"></td>
+												<td>
+												<{if $rows["form"]==1}>
+												    支付宝
+												<{elseif $rows["form"]==2}>
+												    微信
+												<{elseif $rows["form"]==3}>
+												    贝宝
+												<{/if}>
+												</td>
+												<td>
+												<{if $rows["state"]==0}>
+												    待付<br>
+												    <{$rows->postime}>
+												<{elseif $rows["state"]==1}>
+												    <font color=green>已付</font><br>
+												    <{$rows->paytime}>
+												<{/if}>
+												</td>
+												<td><{$rows->posnum}></td>
+												<td><{$rows->amount}>(<{$rows->unit}>)</td>
+												<td><{$rows->paynum}></td>
+												<td><{$rows->remark}></td>
+											</tr>
+											<{/loop}>
+										</tbody>
+									</table>
+									</div>
+									<div class="row mb-2">
+									    <div class="col-sm-12 col-md-6 left">
+									        <div class="dataTables_info form-inline">
+									        <select class="form-control input-solid form-inline mr-2 mb-2" name="do" id="do" onchange="changeaction('catid')">
+											    <option value="0">请选择</option>
+											    <option value="del">删除</option>
+										    </select>
+											<input class="btn btn-danger form-inline mb-2" type="submit" value="操作" />
+											</div>
+									    </div>
+										<div class="col-sm-12 col-md-6 right">
+										    <{page=>total,curpage,listnum,pagelink}>
+										</div>
+									</div>
+								</form>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<{include "$pubtemp/foot.cms"}>
