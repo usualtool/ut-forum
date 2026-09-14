@@ -1,0 +1,91 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-3">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     <{if empty($do) || $do=="add"}>
+                         创建版块
+                     <{else}>
+                         编辑版块
+                     <{/if}>
+                     <span class="right"><a href="<{url=>Link("forum","my_admin_forum")}>">新建</a></span>
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0">
+                <{if empty($do) || $do=="add"}>
+                        <form action="<{url=>Link("forum","my_admin_forum","do=a")}>" method="post" name="form" id="add">
+                        <div class="form-group form-group-default">
+                                <label>上级版块</label>
+                                <select class="form-control" name="bid">
+                                        <option value="0" selected>一级版块</option>
+                                        <{datatree=>1,$datatree,0}>
+                                </select>
+                        </div>
+                        <div class="form-group form-group-default">
+                                <label>版块名称</label>
+                                <input name="forum_name" type="text" class="form-control">
+                        </div>
+                        <div class="form-group form-group-default">
+                                <label>简介</label>
+                                <textarea class="form-control" name="forum_content" rows="2"></textarea>
+                        </div>
+                        <div class="form-group form-group-default">
+                                <label>排序（越大靠前）</label>
+                                <input name="forum_number" type="text" class="form-control">
+                        </div>
+                        <button class="btn btn-success">创建</button>
+                <{else}>
+                        <form action="?m=forum&p=my_admin_forum&do=m" method="post" name="form" id="mon">
+                    <{loop=>$data $rows}>
+                        <input type="hidden" name="id" value="<{$rows->id}>">
+                        <div class="form-group form-group-default">
+                                <label>上级版块</label>
+                                <select class="form-control" name="bid">
+                                        <option value="0" selected>一级版块</option>
+                                        <{datatree=>1,$datatree,return=>$rows->bid}>
+                                </select>
+                        </div>
+                        <div class="form-group form-group-default">
+                                <label>版块名称</label>
+                                <input name="forum_name" type="text" class="form-control" value="<{$rows->forum_name}>">
+                        </div>
+                        <div class="form-group form-group-default">
+                                <label>简介</label>
+                                <textarea class="form-control" name="forum_content" rows="2"><{$rows->forum_content}></textarea>
+                        </div>
+                        <div class="form-group form-group-default">
+                                <label>排序（越大靠前）</label>
+                                <input name="forum_number" type="text" class="form-control" value="<{$rows->forum_number}>">
+                        </div>
+                        <button class="btn btn-success">编辑</button>
+                        <{/loop}>
+                </form>
+                <{/if}>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     版块管理
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0">
+                <div style="border-bottom:1px dashed #ddd;" class="row pb-2 mb-2">
+                        <div class="col-9"><strong>名称</strong></div>
+                        <div class="col-3"><strong>操作</strong></div>
+                </div>
+                <{datatree=>2,$datatree,0}>
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+</div>
+<{include "foot.cms"}>

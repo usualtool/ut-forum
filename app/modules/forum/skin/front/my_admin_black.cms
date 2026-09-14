@@ -1,0 +1,35 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     屏蔽列表
+                 </h5>
+            </div>
+            <table class="display table table-striped table-hover">
+                <thead>
+                        <tr>
+                                <th>主题</th>
+                                <th class="text-center">浏览</th>
+                                <th class="text-center">回复</th>
+                         </tr>
+                 </thead>
+                 <tbody>
+                    <{loop=>$data $rows}>
+                        <tr>
+                                <td><a target="_blank" href="?m=forum&p=post&id=<{$rows->id}>"><{$rows->title}></a></td>
+                                <td class="text-center"><{$rows->hit}></td>
+                                <td class="text-center"><{db=>QueryData("forum_reply","id","postid='".$rows["id"]."'","","")["querynum"]}></td>
+                        </tr>
+                    <{/loop}>
+                </tbody>
+            </table>
+            <{page=>total,curpage,listnum,pagelink}>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

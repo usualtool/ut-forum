@@ -1,0 +1,125 @@
+<{include "$pubtemp/head.cms"}>
+        <div class="main-panel">
+			<div class="content">
+				<div class="page-inner">
+					<div class="page-header">
+						<h4 class="page-title"><{$title}></h4>
+						<ul class="breadcrumbs">
+							<li class="nav-home">
+								<a href="./">
+									<i class="fa fa-home"></i>
+								</a>
+							</li>
+							<li class="separator">
+								<i class="fa fa-angle-double-right"></i>
+							</li>
+							<li class="nav-item">
+								<a href="?m=<{$module}>"><{$title}></a>
+							</li>
+							<li class="separator">
+								<i class="fa fa-angle-double-right"></i>
+							</li>
+							<li class="nav-item">
+								支付示例
+							</li>
+							<li class="nav-item pl-3 pr-3">
+                                                            <{item=>$module,$backitem}>
+                                                        </li>
+						</ul>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="card" style="padding:15px;">
+								<div class="card-header p-0 pb-3">
+									<div class="d-flex align-items-center">
+										<h4 class="card-title">支付表单</h4>
+									</div>
+								</div>
+								<form action="<{$appurl}>/?m=<{$module}>" method="post" name="form" id="add" target="_blank">
+								<div class="row form-group form-floating-label">
+                                                                <div class="col-md-6">
+									<input type="text" class="form-control input-border-bottom" name="uid" value="0" required="">
+									<label class="placeholder">用户ID</label>
+								</div>
+								<div class="col-md-6">
+									<label>支付平台</label><br>
+									<label class="form-radio-label">
+										<input class="form-radio-input" type="radio" name="form" value="1" checked>
+										<span class="form-radio-sign">支付宝</span>
+									</label>
+									<label class="form-radio-label">
+										<input class="form-radio-input" type="radio" name="form" value="2">
+										<span class="form-radio-sign">微信</span>
+									</label>
+									<label class="form-radio-label">
+										<input class="form-radio-input" type="radio" name="form" value="3">
+										<span class="form-radio-sign">贝宝</span>
+									</label>
+								</div>
+                                                                </div>
+								<div class="form-group form-floating-label">
+									<input type="text" class="form-control input-border-bottom" name="posnum" value="<{inc=>GetRandomString(14,"0123456789")}>" required="">
+									<label class="placeholder">商户单号</label>
+								</div>
+								<div class="row form-group form-floating-label">
+								<div class="col-md-6">
+									<input type="text" class="form-control input-border-bottom" name="amount" value="0.01" required="">
+									<label class="placeholder">金额</label>
+								</div><div class="col-md-6">
+									<input type="text" class="form-control input-border-bottom" name="unit" value="CNY" required="">
+									<label class="placeholder">货币单位</label>
+								</div>
+								</div>
+								<div class="form-group form-group-default">
+									<label>备注</label>
+									<textarea class="form-control" name="remark" rows="2"></textarea>
+								</div>
+								<button class="btn btn-success">支付</button>
+						        </form>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="card" style="padding:10px;">
+								<div class="card-header" style="padding:10px;">
+								    <div class="d-flex align-items-center">
+										<h4 class="card-title">参数说明</h4>
+									</div>
+								</div>
+								<div class="p-3">
+									<p>POST地址：<{$appurl}>/?m=payment</p>
+									<p>
+									POST参数：<br>
+                                                                        uid 用户ID，需要时传入，默认为0<br>
+									form 支付平台，1支付宝/2微信/3贝宝<br>
+									posnum 商户单号<br>
+									amount 金额<br>
+									unit 货币，人民币CNY/美元USD（贝宝支持）<br>
+									remark 附注
+									</p>
+								</div>
+								
+								<div class="p-3">
+									<p>示例代码：</p>
+									<p>
+									<code>
+								&lt;form action="<{$appurl}>/?m=<{$module}>" method="post" name="form" id="add" target="_blank"&gt;<br>
+                                                                用户ID：&lt;input type="text" name="uid" value="0"&gt;<br>
+								平台：&lt;input type="radio" name="form" value="1" checked&gt;支付宝<br>
+								&lt;input type="radio" name="form" value="2"&gt;微信<br>
+								&lt;input type="radio" name="form" value="3"&gt;贝宝<br>
+								单号：&lt;input type="text" name="posnum" value="<{inc=>GetRandomString(14,"0123456789")}>"&gt;<br>
+								金额：&lt;input type="text" name="amount" value="0.01"&gt;<br>
+								货币：&lt;input type="text" name="unit" value="CNY"&gt;<br>
+								附注：&lt;textarea name="remark" rows="2"&gt;&lt;/textarea&gt;<br>
+							    &lt;input type="submit" value="支付"&gt;<br>
+						        &lt;/form&gt;
+									</code>
+									</p>
+								</div>
+							</div>
+						<div>
+					</div>
+				</div>
+			</div>
+		</div>
+<{include "$pubtemp/foot.cms"}>

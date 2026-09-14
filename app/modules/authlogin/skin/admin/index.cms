@@ -1,0 +1,142 @@
+<{include "$pubtemp/head.cms"}>
+        <div class="main-panel">
+			<div class="content">
+				<div class="page-inner">
+					<div class="page-header">
+						<h4 class="page-title"><{$title}></h4>
+						<ul class="breadcrumbs">
+							<li class="nav-home">
+								<a href="./">
+									<i class="fa fa-home"></i>
+								</a>
+							</li>
+							<li class="separator">
+								<i class="fa fa-angle-double-right"></i>
+							</li>
+							<li class="nav-item">
+								<a href="?m=<{$module}>"><{$title}></a>
+							</li>
+							<li class="separator">
+								<i class="fa fa-angle-double-right"></i>
+							</li>
+							<li class="nav-item">
+								登录接口设置
+							</li>
+							<li class="nav-item pl-3 pr-3">
+                                <{item=>$module,$backitem}>
+                            </li>
+						</ul>
+					</div>
+							<div class="card">
+							    <div class="card-header">
+									<h4 class="card-title">登录接口设置</h4>
+								</div>
+                                <div class="card-body">
+                                <div class="row">
+                                <div class="col-md-7">
+									<ul class="nav nav-pills nav-secondary" id="pills-tab" role="tablist">
+										<li class="nav-item submenu">
+											<a href="?m=authlogin&l=qq" class="nav-link <{if empty($l) || $l=="qq"}>active show<{/if}>">QQ登录</a>
+										</li>
+                                        <li class="nav-item submenu">
+											<a href="?m=authlogin&l=weibo" class="nav-link <{if $l=="weibo"}>active show<{/if}>">微博登录</a>
+										</li>
+                                        <li class="nav-item submenu">
+											<a href="?m=authlogin&l=wechat" class="nav-link <{if $l=="wechat"}>active show<{/if}>">微信登录</a>
+										</li>
+									</ul>
+                                    <{loop=>$data $row}>
+									<div class="tab-content mt-2 mb-3">
+                                        <{if empty($l) || $l=="qq"}>
+										<div class="tab-pane fade active show">
+                                                <form action="?m=authlogin&do=update&l=qq" method="post" id=form1 name=form1>
+                                                <input type="hidden" name="id" value="<{$row->id}>" />
+                                                <div class="form-group">
+                                                    <label for="squareInput">APPID</label>
+                                                    <input type="text" class="form-control input-square" name="qq_appid" value="<{$row->qq_appid}>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="squareInput">APPKEY</label>
+                                                    <input type="text" class="form-control input-square" name="qq_appkey" value="<{$row->qq_appkey}>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="squareInput">回调地址</label>
+                                                    <input type="text" class="form-control input-square" name="qq_reurl" value="<{if !empty($row["qq_reurl"])}><{$row->qq_reurl}><{else}><{$appurl}>/?m=authlogin&p=auth_qq<{/if}>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <button class="btn btn-info">保存设置</button>
+                                                </div>
+                                                </form>
+										</div>
+                                        <{/if}>
+                                        <{if $l=="weibo"}>
+										<div class="tab-pane fade active show" id="weibo" role="tabpanel" aria-labelledby="weibo-tab">
+                                                <form action="?m=authlogin&do=update&l=weibo" method="post" id=form2 name=form2>
+                                                <input type="hidden" name="id" value="<{$row->id}>" />
+                                                <div class="form-group">
+                                                    <label for="squareInput">APPID</label>
+                                                    <input type="text" class="form-control input-square" name="wb_appid" value="<{$row->wb_appid}>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="squareInput">APPKEY</label>
+                                                    <input type="text" class="form-control input-square" name="wb_appkey" value="<{$row->wb_appkey}>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="squareInput">回调地址</label>
+                                                    <input type="text" class="form-control input-square" name="wb_reurl" value="<{if !empty($row["wb_reurl"])}><{$row->wb_reurl}><{else}><{$appurl}>/?m=authlogin&p=auth_weibo<{/if}>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <button class="btn btn-info">保存设置</button>
+                                                </div>
+                                                </form>
+										</div>
+                                        <{/if}>
+                                        <{if $l=="wechat"}>
+										<div class="tab-pane fade active show" id="wechat" role="tabpanel" aria-labelledby="wechat-tab">
+                                                <form action="?m=authlogin&do=update&l=wechat" method="post" id=form3 name=form3>
+                                                <input type="hidden" name="id" value="<{$row->id}>" />
+                                                <div class="form-group">
+                                                    <label for="squareInput">APPID</label>
+                                                    <input type="text" class="form-control input-square" name="wx_appid" value="<{$row->wx_appid}>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="squareInput">APPKEY</label>
+                                                    <input type="text" class="form-control input-square" name="wx_appkey" value="<{$row->wx_appkey}>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="squareInput">回调地址</label>
+                                                    <input type="text" class="form-control input-square" name="wx_reurl" value="<{if !empty($row["wx_reurl"])}><{$row->wx_reurl}><{else}><{$appurl}>/?m=authlogin&p=auth_wechat<{/if}>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <button class="btn btn-info">保存设置</button>
+                                                </div>
+                                                </form>
+										</div>
+                                        <{/if}>
+									</div>
+                                    <{/loop}>
+                                </div>
+                                <div class="col-md-5">
+                                    <p><strong>调用方法</strong></p>
+                                    <code>
+                                        &lt;a href="?m=authlogin&state=<font color=blue>xxx__yyy</font>&auth=qq"&gt;&lt;img src="/app/modules/authlogin/image/qq.png"&gt;&lt;/a&gt;<br>
+                                        &lt;a href="?m=authlogin&state=<font color=blue>xxx__yyy</font>&auth=weibo"&gt;&lt;img src="/app/modules/authlogin/image/weibo.png"&gt;&lt;/a&gt;<br>
+                                        &lt;a href="?m=authlogin&state=<font color=blue>xxx__yyy</font>&auth=wechat"&gt;&lt;img src="/app/modules/authlogin/image/wechat.png"&gt;&lt;/a&gt;
+                                    </code>
+                                    <p><strong>数据说明</strong><br>
+                                    参数state值xxx__yyy表示数据处理页，xxx表示模块名，yyy表示页名<br>
+                                    即授权登录成功后，将跳转到地址?m=xxx&p=yyy自由处理数据<br>
+                                    授权数据以临时cookie存储，固定数据如下：<br>
+                                    COOKIE值：auth_openid 唯一特征<br>
+                                    COOKIE值：auth_name 昵称/姓名<br>
+                                    COOKIE值：auth_avatar 头像<br>
+                                    在数据处理完毕后请及时清空临时COOKIE
+                                </div>
+                                </div>
+								</div>
+							</div>
+					</div>  
+				</div>
+			</div>
+		</div>
+<{include "$pubtemp/foot.cms"}>

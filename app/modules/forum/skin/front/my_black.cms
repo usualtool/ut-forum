@@ -1,0 +1,34 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     锁定/解除黑名单
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0">
+              <form method="post" action="<{url=>Link("forum","my_black","do=black")}>" class="form-validate">
+                <div class="form-group">
+                     <label>操作类型</label>
+                     <div class="radio">
+                         <label><input type="radio" name="black" value=1 checked> 锁定</label>
+                     </div>
+                     <div class="radio">
+                         <label><input type="radio" name="black" value=0> 解除</label>
+                     </div>
+                </div>
+                <div class="form-group">
+                 <label>账号</label>
+                 <input name="username" type="text" required class="form-control" style="width:40%;">
+                </div>
+                <button id="login" type="submit" class="btn btn-primary pl-3 pr-3">确定</button> 
+              </form>
+            </div>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

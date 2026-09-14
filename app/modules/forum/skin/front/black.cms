@@ -1,0 +1,39 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-7 mb-2">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     小黑屋处罚公示
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0">
+            <p class="mb-2">以下所展示的违规用户，已被永久关入小黑屋。请珍爱网络资产，保护网络环境。</p>
+            <div class="row">
+                <{loop=>$data $rows}>
+					<div class="col-2 text-center">
+						<img src="<{$rows->avatar}>" class="rounded-circle border" style="width:50px;height:50px;">
+						<p style="font-size:12px;"><{$rows->username}></p>
+					</div>
+                <{/loop}>
+            </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="panel-heading border-bottom mb-2">
+                 <h5 class="media-heading">
+                     封禁准则
+                 </h5>
+            </div>
+            <p style="font-size:13px;">
+            1. 发布违规内容（违法、违例、违规等禁止内容）。<br/>
+            2. 恶意灌水（重复发布简短、无意义等内容）。<br/>
+            3. 发布垃圾广告（明文禁止的文字或图片广告、宣传等）。<br/>
+            4. 虚假注册信息（手机、邮箱、姓名等信息虚假）。<br/>
+            5. 机器人账户（由机器人自动注册或发布内容的账户）。
+            </p>
+            <p class="mt-2 text-danger">账户一旦封禁，不接受任何申诉。</p>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

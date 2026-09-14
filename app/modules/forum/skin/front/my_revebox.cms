@@ -1,0 +1,42 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     收件箱
+                     <span class="right" style="font-size:14px;"><a href="<{url=>Link("forum","my_message")}>"><i class="fa fa-envelope" aria-hidden="true"></i> 发信</a></span>
+                 </h5>
+            </div>
+            <div class="border p-3 pb-0 mb-2">
+            <div class="table-responsive" id="ut-auto">
+            <table class="display table table-striped table-hover" id="ut-table">
+                <thead>
+                        <tr>
+                                <th width=15%>发送者</th>
+                                <th width=25%>时间</th>
+                                <th>信件内容</th>
+                                <th width=15%>操作</th>
+                         </tr>
+                 </thead>
+                 <tbody>
+                    <{loop=>$data $rows}>
+                        <tr>
+                                <td style="font-size:12px;"><{db=>QueryData("forum_member","username","id='".$rows["senduid"]."'","","")["querydata"][0]["username"]}></td>
+                                <td style="font-size:12px;"><{$rows->sendtime}></td>
+                                <td style="font-size:12px;"><{inc=>DeSqlCheck($rows["content"])}></td>
+                                <td><a href="?m=forum&p=my_message&reveuid=<{$rows->senduid}>">回复</a></td>
+                        </tr>
+                    <{/loop}>
+                </tbody>
+            </table>
+            </div>
+            </div>
+            <{page=>total,curpage,listnum,pagelink}>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

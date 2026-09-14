@@ -1,0 +1,53 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     <a class="text-dark" href="<{url=>Link("forum","my_admin_plugin")}>">社区插件</a> | 
+                     <a href="<{url=>Link("forum","my_admin_plugin","t=usualtool")}>">UT开放市场插件</a>
+                 </h5>
+            </div>
+            <div class="border">
+								<div class="card-body">
+                                <div class="row">
+                                    <{loop=>$plugin $rows}>
+                                        <div class="col-sm-6 col-md-3 mb-3">
+							                <div class="card card-stats card-round">
+								                <div class="card-body">
+									                <div class="row align-items-center">
+										            <div class="col col-stats ml-3 ml-sm-0">
+											            <div class="numbers">
+												            <h5 class="card-title text-truncate-1" style="font-size:14px;font-weight:bold;margin-bottom:0.3rem;"><{$rows->title}></h5>
+															<p class="card-category"><{$rows->pid}></p>
+															<p class="card-category"><{$rows->auther}></p>
+															<p class="card-category mb-2">
+															<{$rows->isfree}>
+															</p>
+															<p class="card-category border-top pt-2">
+															<{php=>
+															if(library\UsualToolInc\UTInc::SearchDir(APP_ROOT."/plugins/".return=>$rows["pid"])):
+															}>
+															<a href="<{url=>Link("forum","my_admin_plugin_view","pid=".$rows["pid"])}>">使用</a> | 
+                                                            <a href="<{url=>Link("forum","my_admin_plugin","do=uninstall&d=".$t."&pid=".$rows["pid"])}>">卸载</a>
+                                                            <{php=>else:}>
+                                                            <a href="<{url=>Link("forum","my_admin_plugin","do=install&d=".$t."&pid=".$rows["pid"])}>" class="text-danger">安装</a>
+                                                            <{php=>endif;}>
+															</p>
+											            </div>
+										            </div>
+									                </div>
+								                </div>
+							                </div>
+						                </div>
+                                    <{/loop}>
+                                </div>
+								</div>
+            </div>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

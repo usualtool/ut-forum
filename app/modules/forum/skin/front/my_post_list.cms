@@ -1,0 +1,40 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     主题列表
+                 </h5>
+            </div>
+            <table class="display table table-striped table-hover">
+                <thead>
+                        <tr>
+                                <th>主题</th>
+                                <th class="text-center">浏览</th>
+                                <th class="text-center">回复</th>
+                                <th class="text-center"></th>
+                         </tr>
+                 </thead>
+                 <tbody>
+                    <{loop=>$data $rows}>
+                        <tr>
+                                <td><a target="_blank" href="<{url=>Link("forum","post","id=".$rows["id"])}>"><{$rows->title}></a></td>
+                                <td class="text-center"><{$rows->hit}></td>
+                                <td class="text-center"><{db=>QueryData("forum_reply","id","postid='".$rows["id"]."'","","")["querynum"]}></td>
+                                <td class="text-center">
+                                    <a href="<{url=>Link("forum","my_post_edit","id=".$rows["id"])}>">编辑</a> | 
+                                    <a href="<{url=>Link("forum","my_post_list","do=del&id=".$rows["id"])}>">删除</a>
+                                </td>
+                        </tr>
+                    <{/loop}>
+                </tbody>
+            </table>
+            <{page=>total,curpage,listnum,pagelink}>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>

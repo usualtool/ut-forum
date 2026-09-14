@@ -1,0 +1,21 @@
+<{include "head.cms"}>
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-4 mb-2">
+        <{include "my_nav.cms"}>
+        </div>
+        <div class="col-md-8">
+            <div class="panel-heading">
+                 <h5 class="media-heading">
+                     <{$webplace}>
+                 </h5>
+            </div>
+            <div class="border">
+						    <div class="card-body">
+                                <{eval=>$plugin_code}>
+							</div>
+            </div>
+        </div>
+    </div>
+</div>
+<{include "foot.cms"}>
