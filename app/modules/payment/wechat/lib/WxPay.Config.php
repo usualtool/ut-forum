@@ -1,6 +1,6 @@
 <?php
-use library\UsualToolData\UTData;
-$set=UTData::QueryData("cms_pay","","","","1")["querydata"][0];
+use usualtool\Lib\Data;
+$set=Data::QueryData("cms_pay","","","","1")["querydata"][0];
 define('wx_appid',$set["wx_appid"]);
 define('wx_mchid',$set["wx_mchid"]);
 define('wx_key',$set["wx_key"]);

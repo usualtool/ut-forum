@@ -1,11 +1,11 @@
 <?php
-use library\UsualToolInc\UTInc;
-use library\UsualToolData\UTData;
-$auths=UTData::QueryData("cms_connect","","","","1")["querydata"][0];
-$state=explode("__",UTInc::SqlCheck($_GET["state"]));
-$code=UTInc::SqlCheck($_GET["code"]);
+use usualtool\Lib\Inc;
+use usualtool\Lib\Data;
+$auths=Data::QueryData("cms_connect","","","","1")["querydata"][0];
+$state=explode("__",Inc::SqlCheck($_GET["state"]));
+$code=Inc::SqlCheck($_GET["code"]);
 if(!empty($code)){
-    $callback=UTInc::HttpPost("https://api.weibo.com/oauth2/access_token?client_id=".$auths["wb_appid"]."&client_secret=".$auths["wb_appkey"]."&grant_type=authorization_code&redirect_uri=".$auths["wb_reurl"]."&code=".$code,"v=UTFrame");
+    $callback=Inc::HttpPost("https://api.weibo.com/oauth2/access_token?client_id=".$auths["wb_appid"]."&client_secret=".$auths["wb_appkey"]."&grant_type=authorization_code&redirect_uri=".$auths["wb_reurl"]."&code=".$code,"v=UTFrame");
     $data = json_decode($callback, true);
     $token=$data['access_token'];
     $openid=$data['uid'];
@@ -16,13 +16,13 @@ if(!empty($code)){
             setcookie("auth_name",$data_r['screen_name']); 
             setcookie("auth_avatar",$data_r['profile_image_url']);
             if(count($state)>1){
-                UTInc::GoUrl("?m=".$state[0]."&p=".$state[1],"");
+                Inc::GoUrl("?m=".$state[0]."&p=".$state[1],"");
             }else{
-                UTInc::GoUrl("?m=".$state[0],"");
+                Inc::GoUrl("?m=".$state[0],"");
             }
     }else{
-        UTInc::GoUrl("-1","Access Token读取失败!");
+        Inc::GoUrl("-1","Access Token读取失败!");
     }
 }else{
-    UTInc::GoUrl("-1","Code令牌读取失败!");
+    Inc::GoUrl("-1","Code令牌读取失败!");
 }

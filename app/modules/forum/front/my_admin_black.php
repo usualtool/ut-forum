@@ -1,16 +1,16 @@
 <?php
 require dirname(__FILE__).'/'.'power.php';
 require dirname(__FILE__).'/'.'session.php';
-use library\UsualToolInc\UTInc;
-use library\UsualToolData\UTData;
+use usualtool\Lib\Inc;
+use usualtool\Lib\Data;
 if($utype!=99999):
-    UTInc::GoUrl("-1","权限不足!"); 
+    Inc::GoUrl("-1","权限不足!"); 
 endif;
 $pagelink="?m=".$m."&p=".$p;
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);
-$data=UTData::QueryData("forum_post","","close=1","posttime desc","$minid,$pagenum");
+$data=Data::QueryData("forum_post","","close=1","posttime desc","$minid,$pagenum");
 $querynum=$data["querynum"];
 $querydata=$data["querydata"];
 $totalpage=ceil($querynum/$pagenum);

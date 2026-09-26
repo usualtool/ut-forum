@@ -1,6 +1,6 @@
 <?php
-use library\UsualToolData\UTData;
-$set=UTData::QueryData("cms_pay","","","","1")["querydata"][0];
+use usualtool\Lib\Data;
+$set=Data::QueryData("cms_pay","","","","1")["querydata"][0];
 $alipay=array (	
 		'app_id' => $set["ali_appid"],
 		'merchant_private_key' => urldecode($set["ali_private_key"]),

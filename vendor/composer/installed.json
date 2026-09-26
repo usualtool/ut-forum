@@ -1,0 +1,51 @@
+{
+    "packages": [
+        {
+            "name": "usualtool/ut-lib",
+            "version": "v1.0.7",
+            "version_normalized": "1.0.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/usualtool/ut-lib.git",
+                "reference": "c2bf6bd8b43d98f4cc2c37a757d3f53362e8c7ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/usualtool/ut-lib/zipball/c2bf6bd8b43d98f4cc2c37a757d3f53362e8c7ab",
+                "reference": "c2bf6bd8b43d98f4cc2c37a757d3f53362e8c7ab",
+                "shasum": ""
+            },
+            "time": "2026-09-25T06:57:11+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "usualtool\\Lib\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Huang Hui",
+                    "email": "usualtool@qq.com"
+                }
+            ],
+            "description": "Library extension of UT Framework.",
+            "homepage": "https://github.com/usualtool",
+            "keywords": [
+                "UsualTool Framework",
+                "ut-lib"
+            ],
+            "support": {
+                "issues": "https://github.com/usualtool/ut-lib/issues",
+                "source": "https://github.com/usualtool/ut-lib/tree/v1.0.7"
+            },
+            "install-path": "../usualtool/ut-lib"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

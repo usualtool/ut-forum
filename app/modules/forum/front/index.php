@@ -1,17 +1,16 @@
 <?php
 require dirname(__FILE__).'/'.'session.php';
-use library\UsualToolInc\UTInc;
-use library\UsualToolData\UTData;
-$notice=UTData::QueryData("forum_post","","close=0 and notice=1","posttime desc","")["querydata"];
-$forum=UTData::QueryData("forum","","bid=0","forum_number desc","")["querydata"];
-$users=UTData::QueryData("forum_member","","","creattime desc","0,10")["querydata"];
-$newtopic=UTData::QueryData("forum_post","","close=0 and notice=0","posttime desc","0,5")["querydata"];
-$topstar=UTData::QueryData("forum_member","","id in (Select uid from forum_post group by uid order by count(id) desc)","","0,3")["querydata"];
+use usualtool\Lib\Data;
+$notice=Data::QueryData("forum_post","","close=0 and notice=1","posttime desc","")["querydata"];
+$forum=Data::QueryData("forum","","bid=0","forum_number desc","")["querydata"];
+$users=Data::QueryData("forum_member","","","creattime desc","0,10")["querydata"];
+$newtopic=Data::QueryData("forum_post","","close=0 and notice=0","posttime desc","0,5")["querydata"];
+$topstar=Data::QueryData("forum_member","","id in (Select uid from forum_post group by uid order by count(id) desc)","","0,3")["querydata"];
 $pagelink="?m=".$m."&p=".$p;
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);
-$forum_post=UTData::QueryData("forum_post","","close=0 and notice=0","ding desc,posttime desc","$minid,$pagenum");
+$forum_post=Data::QueryData("forum_post","","close=0 and notice=0","ding desc,posttime desc","$minid,$pagenum");
 $querynum=$forum_post["querynum"];
 $querydata=$forum_post["querydata"];
 $totalpage=ceil($querynum/$pagenum);

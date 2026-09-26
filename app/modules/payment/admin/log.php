@@ -1,11 +1,11 @@
 <?php
-use library\UsualToolInc\UTInc;
-use library\UsualToolData\UTData;
+use usualtool\Lib\Inc;
+use usualtool\Lib\Data;
 $pagelink="?m=".$m."&p=".$p;
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);
-$data=UTData::QueryData("cms_pay_log","","","postime asc","$minid,$pagenum");
+$data=Data::QueryData("cms_pay_log","","","postime asc","$minid,$pagenum");
 $querynum=$data["querynum"];
 $querydata=$data["querydata"];
 $totalpage=ceil($querynum/$pagenum);
@@ -13,14 +13,14 @@ $app->Runin(array("data","total","curpage","listnum","pagelink"),array($querydat
 $app->Open("log.cms");
 if($_GET["do"]=="del"){
     if(!empty($_GET["id"])):
-        $ids=implode("','",UTInc::SqlCheck($_GET["id"]));
-        $result=UTData::DelData("cms_pay_log","id in ('$ids')");
+        $ids=implode("','",Inc::SqlCheck($_GET["id"]));
+        $result=Data::DelData("cms_pay_log","id in ('$ids')");
         if(!$result):
-            UTInc::GoUrl("?m=payment&p=log","删除失败!");
+            Inc::GoUrl("?m=payment&p=log","删除失败!");
         else:
-            UTInc::GoUrl("?m=payment&p=log","删除成功!");
+            Inc::GoUrl("?m=payment&p=log","删除成功!");
         endif;
     else:
-        UTInc::GoUrl("?m=payment&p=log","选中项为空!");
+        Inc::GoUrl("?m=payment&p=log","选中项为空!");
     endif;
 }

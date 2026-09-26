@@ -1,13 +1,12 @@
 <?php
 require dirname(__FILE__).'/'.'power.php';
 require dirname(__FILE__).'/'.'session.php';
-use library\UsualToolInc\UTInc;
-use library\UsualToolData\UTData;
+use usualtool\Lib\Data;
 $pagelink="?m=".$m."&p=".$p;
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);
-$data=UTData::QueryData("forum_payment","","uid='$uid'","addtime desc","$minid,$pagenum");
+$data=Data::QueryData("forum_payment","","uid='$uid'","addtime desc","$minid,$pagenum");
 $querynum=$data["querynum"];
 $querydata=$data["querydata"];
 $totalpage=ceil($querynum/$pagenum);

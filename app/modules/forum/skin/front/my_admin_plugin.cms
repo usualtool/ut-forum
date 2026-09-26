@@ -29,7 +29,7 @@
 															</p>
 															<p class="card-category border-top pt-2">
 															<{php=>
-															if(library\UsualToolInc\UTInc::SearchDir(APP_ROOT."/plugins/".return=>$rows["pid"])):
+															if(usualtool\Lib\Inc::SearchDir(APP_ROOT."/plugins/".return=>$rows["pid"])):
 															}>
 															<a href="<{url=>Link("forum","my_admin_plugin_view","pid=".$rows["pid"])}>">使用</a> | 
                                                             <a href="<{url=>Link("forum","my_admin_plugin","do=uninstall&d=".$t."&pid=".$rows["pid"])}>">卸载</a>

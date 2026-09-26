@@ -1,3 +1,3 @@
 <?php
-use library\UsualToolDebug\UTDebug;
-UTDebug::Error("module",str_replace(APP_ROOT."/modules","",$modfile));
+use usualtool\Lib\Debug;
+Debug::Error("module",str_replace(APP_ROOT."/modules","",$modfile));

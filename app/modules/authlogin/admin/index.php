@@ -1,52 +1,52 @@
 <?php
-use library\UsualToolInc\UTInc;
-use library\UsualToolData\UTData;
+use usualtool\Lib\Inc;
+use usualtool\Lib\Data;
 $l=$_GET["l"];
 $do=$_GET["do"];
 if($do=="update"){
-    $id=UTInc::SqlCheck($_POST["id"]);
-    $qq_appid=UTInc::SqlCheck($_POST["qq_appid"]);
-    $qq_appkey=UTInc::SqlCheck($_POST["qq_appkey"]);
-    $qq_reurl=UTInc::SqlCheck($_POST["qq_reurl"]);
-    $wb_appid=UTInc::SqlCheck($_POST["wb_appid"]);
-    $wb_appkey=UTInc::SqlCheck($_POST["wb_appkey"]);
-    $wb_reurl=UTInc::SqlCheck($_POST["wb_reurl"]);
-    $ww_appid=UTInc::SqlCheck($_POST["ww_appid"]);
-    $ww_appkey=UTInc::SqlCheck($_POST["ww_appkey"]);
-    $ww_reurl=UTInc::SqlCheck($_POST["ww_reurl"]);
-    $qr_appid=UTInc::SqlCheck($_POST["qr_appid"]);
-    $qr_appkey=UTInc::SqlCheck($_POST["qr_appkey"]);
-    $qr_reurl=UTInc::SqlCheck($_POST["qr_reurl"]);
+    $id=Inc::SqlCheck($_POST["id"]);
+    $qq_appid=Inc::SqlCheck($_POST["qq_appid"]);
+    $qq_appkey=Inc::SqlCheck($_POST["qq_appkey"]);
+    $qq_reurl=Inc::SqlCheck($_POST["qq_reurl"]);
+    $wb_appid=Inc::SqlCheck($_POST["wb_appid"]);
+    $wb_appkey=Inc::SqlCheck($_POST["wb_appkey"]);
+    $wb_reurl=Inc::SqlCheck($_POST["wb_reurl"]);
+    $ww_appid=Inc::SqlCheck($_POST["ww_appid"]);
+    $ww_appkey=Inc::SqlCheck($_POST["ww_appkey"]);
+    $ww_reurl=Inc::SqlCheck($_POST["ww_reurl"]);
+    $qr_appid=Inc::SqlCheck($_POST["qr_appid"]);
+    $qr_appkey=Inc::SqlCheck($_POST["qr_appkey"]);
+    $qr_reurl=Inc::SqlCheck($_POST["qr_reurl"]);
     if(!empty($id)){
         if($l=="qq"):
-            UTData::UpdateData("cms_connect",array("qq_appid"=>$qq_appid,"qq_appkey"=>$qq_appkey,"qq_reurl"=>$qq_reurl),"id='$id'");
+            Data::UpdateData("cms_connect",array("qq_appid"=>$qq_appid,"qq_appkey"=>$qq_appkey,"qq_reurl"=>$qq_reurl),"id='$id'");
         endif;
         if($l=="wb"):
-            UTData::UpdateData("cms_connect",array("wb_appid"=>$wb_appid,"wb_appkey"=>$wb_appkey,"wb_reurl"=>$wb_reurl),"id='$id'");
+            Data::UpdateData("cms_connect",array("wb_appid"=>$wb_appid,"wb_appkey"=>$wb_appkey,"wb_reurl"=>$wb_reurl),"id='$id'");
         endif;
         if($l=="ww"):
-            UTData::UpdateData("cms_connect",array("ww_appid"=>$ww_appid,"ww_appkey"=>$ww_appkey,"ww_reurl"=>$ww_reurl),"id='$id'");
+            Data::UpdateData("cms_connect",array("ww_appid"=>$ww_appid,"ww_appkey"=>$ww_appkey,"ww_reurl"=>$ww_reurl),"id='$id'");
         endif;
         if($l=="sm"):
-            UTData::UpdateData("cms_connect",array("qr_appid"=>$qr_appid,"qr_appkey"=>$qr_appkey,"qr_reurl"=>$qr_reurl),"id='$id'");
+            Data::UpdateData("cms_connect",array("qr_appid"=>$qr_appid,"qr_appkey"=>$qr_appkey,"qr_reurl"=>$qr_reurl),"id='$id'");
         endif;
     }else{
         if($l=="qq"):
-            UTData::InsertData("cms_connect",array("qq_appid"=>$qq_appid,"qq_appkey"=>$qq_appkey,"qq_reurl"=>$qq_reurl));
+            Data::InsertData("cms_connect",array("qq_appid"=>$qq_appid,"qq_appkey"=>$qq_appkey,"qq_reurl"=>$qq_reurl));
         endif;
         if($l=="wb"):
-            UTData::InsertData("cms_connect",array("wb_appid"=>$wb_appid,"wb_appkey"=>$wb_appkey,"wb_reurl"=>$wb_reurl));
+            Data::InsertData("cms_connect",array("wb_appid"=>$wb_appid,"wb_appkey"=>$wb_appkey,"wb_reurl"=>$wb_reurl));
         endif;
         if($l=="ww"):
-            UTData::InsertData("cms_connect",array("ww_appid"=>$ww_appid,"ww_appkey"=>$ww_appkey,"ww_reurl"=>$ww_reurl));
+            Data::InsertData("cms_connect",array("ww_appid"=>$ww_appid,"ww_appkey"=>$ww_appkey,"ww_reurl"=>$ww_reurl));
         endif;
         if($l=="sm"):
-            UTData::InsertData("cms_connect",array("qr_appid"=>$qr_appid,"qr_appkey"=>$qr_appkey,"qr_reurl"=>$qr_reurl));
+            Data::InsertData("cms_connect",array("qr_appid"=>$qr_appid,"qr_appkey"=>$qr_appkey,"qr_reurl"=>$qr_reurl));
         endif;
     }
         echo "<script>window.location.href='?m=authlogin&u=a_auth.php&l=$l'</script>";
 }
-$row=UTData::QueryData("cms_connect","","","","1","0")["querydata"][0];
+$row=Data::QueryData("cms_connect","","","","1","0")["querydata"][0];
     $id=$row["id"];
     $qq_appid=$row["qq_appid"];
     $qq_appkey=$row["qq_appkey"];

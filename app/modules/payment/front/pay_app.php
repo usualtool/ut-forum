@@ -1,7 +1,7 @@
 <?php
-use library\UsualToolInc\UTInc;
-use library\UsualToolData\UTData;
-$lb=UTInc::SqlCheck($_GET["lb"]);
+use usualtool\Lib\Inc;
+use usualtool\Lib\Data;
+$lb=Inc::SqlCheck($_GET["lb"]);
 /**
  * /?m=payment&p=pay_app&lb=alipay
  * /?m=payment&p=pay_app&lb=wechat
@@ -9,10 +9,10 @@ $lb=UTInc::SqlCheck($_GET["lb"]);
 if($lb=="alipay"):
 		require_once MODULE_PATH.'/payment/alipay/Config.php';
 		require_once MODULE_PATH.'/payment/alipay/AopSdk.php';
-		$row=UTData::QueryData("cms_routine","","","","1")["querydata"][0];
-		$buyerid=UTInc::SqlCheck($_POST["buyerid"]);
-		$posnum=UTInc::SqlCheck($_POST["posnum"]);
-		$pay=UTData::QueryData("cms_pay_log","","posnum='$posnum'","","")["querydata"][0];
+		$row=Data::QueryData("cms_routine","","","","1")["querydata"][0];
+		$buyerid=Inc::SqlCheck($_POST["buyerid"]);
+		$posnum=Inc::SqlCheck($_POST["posnum"]);
+		$pay=Data::QueryData("cms_pay_log","","posnum='$posnum'","","")["querydata"][0];
 		$aop = new AopClient();
 		$aop->gatewayUrl = 'https://openapi.alipay.com/gateway.do';
 		$aop->appId = $row["alrteid"];

@@ -9,7 +9,7 @@
                 <a target='_blank' href='<{url=>Link("forum","post","id=".$rows["id"])}>'>
                     <{php=>echo str_ireplace(return=>$key,"<font color=red><b>".return=>$key."</b></font>",return=>$rows["title"]);}></a>
                     <br>
-                    <span style='color:#999999;font-size:12px;'><{php=>echo library\UsualToolInc\UTInc::SubKey(library\UsualToolInc\UTInc::DeleteHtml(return=>$rows["content"]),return=>$key);}>...</span></div>
+                    <span style='color:#999999;font-size:12px;'><{php=>echo usualtool\Lib\Inc::SubKey(usualtool\Lib\Inc::DeleteHtml(return=>$rows["content"]),return=>$key);}>...</span></div>
             <{/loop}>
         </div>
             <div class="pt-2"><{page=>total,curpage,listnum,pagelink}></div>

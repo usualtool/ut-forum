@@ -1,7 +1,7 @@
 <?php
 require "lib/autoload.php";
-use library\UsualToolData\UTData;
-$set=UTData::QueryData("cms_pay","","","","1")["querydata"][0];
+use usualtool\Lib\Data;
+$set=Data::QueryData("cms_pay","","","","1")["querydata"][0];
 define('SITE_URL',$config["APPURL"]);
 $paypal = new \PayPal\Rest\ApiContext(
 new \PayPal\Auth\OAuthTokenCredential($set["pp_clientid"],$set["pp_secret"])

@@ -1,10 +1,10 @@
 <?php
-use library\UsualToolInc\UTInc;
+use usualtool\Lib\Inc;
 if($_GET['do']=="del"){
-    $img=UTInc::SqlCheck(str_replace("..","",$_GET['img']));
+    $img=Inc::SqlCheck(str_replace("..","",$_GET['img']));
     if(in_array(substr($img,-4),array(".jpg",".png",".gif"))):
         $img=str_replace($config["APPURL"],OPEN_ROOT,$img);
-        UTInc::UnlinkFile($img);
+        Inc::UnlinkFile($img);
         echo json_encode(array("error"=>0));
     else:
         echo json_encode(array("error"=>1));

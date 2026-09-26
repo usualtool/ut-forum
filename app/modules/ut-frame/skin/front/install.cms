@@ -111,13 +111,13 @@
                   <hr/>
                   <{php=>
                   if($_GET["t"]=="db-sql"){
-                     $sql=file_get_contents("../forum.sql");
+                     $sql=file_get_contents(UTF_ROOT."/forum.sql");
                      $arr=explode(';',$sql);
                      $total=count($arr)-1;
                      $c=0;
                      for($i=0;$i<$total;$i++){
                         $k=$i+1;
-                        $result=library\UsualToolData\UTData::RunSql($arr[$i]);
+                        $result=usualtool\Lib\Data::RunSql($arr[$i]);
                         if($result){
                            echo"<p class='fontsmall'>第".$k."条SQL执行成功!</p>";
                         }else{
@@ -125,8 +125,8 @@
                            echo"<p class='fontsmall' style='color:red;'>第".$k."条SQL执行失败:".$arr[$i]."</p>";
                         }
                         if($k==$total && $c==0){
-                           file_put_contents("../usualtool.lock","lock");
-                           library\UsualToolInc\UTInc::GoUrl("./","UTForum安装成功!");
+                           file_put_contents(UTF_ROOT."/usualtool.lock","lock");
+                           usualtool\Lib\Inc::GoUrl("./","UTForum安装成功!");
                         }
                      }
                   }

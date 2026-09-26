@@ -37,7 +37,7 @@
                             <a href="<{url=>Link("forum","register","")}>" class="btn btn-secondary">注册</a>
                         </li>
                         <li class="nav-item">
-                            <a href="<{url=>Link("forum","login","goto=".urlencode(base64_encode(library\UsualToolInc\UTInc::CurPageUrl())))}>" class="btn btn-danger">登陆</a>
+                            <a href="<{url=>Link("forum","login","goto=".urlencode(base64_encode(usualtool\Lib\Inc::CurPageUrl())))}>" class="btn btn-danger">登陆</a>
                         </li>
                     <{else}>
                         <li class="nav-item">

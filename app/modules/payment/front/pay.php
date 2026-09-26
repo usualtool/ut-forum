@@ -1,6 +1,6 @@
 <?php
-use library\UsualToolInc\UTInc;
-use library\UsualToolData\UTData;
+use usualtool\Lib\Inc;
+use usualtool\Lib\Data;
 use \PayPal\Api\Payer;
 use \PayPal\Api\Item;
 use \PayPal\Api\ItemList;
@@ -10,13 +10,13 @@ use \PayPal\Api\Transaction;
 use \PayPal\Api\RedirectUrls;
 use \PayPal\Api\Payment;
 use \PayPal\Exception\PayPalConnectionException;
-$lb=UTInc::SqlCheck($_GET["lb"]);
-$posnum=UTInc::SqlCheck($_GET["posnum"]);
+$lb=Inc::SqlCheck($_GET["lb"]);
+$posnum=Inc::SqlCheck($_GET["posnum"]);
 if($lb=="alipay"):
     require_once MODULE_PATH.'/payment/alipay/Config.php';
-    $amount=UTData::QueryData("cms_pay_log","amount","posnum='$posnum'","","")["querydata"][0]["amount"];
+    $amount=Data::QueryData("cms_pay_log","amount","posnum='$posnum'","","")["querydata"][0]["amount"];
     //支付宝移动支付
-    if(UTInc::IsApp()):
+    if(Inc::IsApp()):
         require_once MODULE_PATH.'/payment/alipay/service/AlipayTradeWapPayService.php';
         require_once MODULE_PATH.'/payment/alipay/wappaybuilder/AlipayTradeWapPayContentBuilder.php';
         $timeout="1m";
@@ -47,10 +47,10 @@ if($lb=="alipay"):
 elseif($lb=="wechat"):
     require_once MODULE_PATH.'/payment/wechat/lib/WxPay.Api.php';
     require_once MODULE_PATH.'/payment/wechat/Log.php';
-		$pay=UTData::QueryData("cms_pay_log","","posnum='$posnum'","","0")["querydata"][0];
+		$pay=Data::QueryData("cms_pay_log","","posnum='$posnum'","","0")["querydata"][0];
 		$amount=$pay["amount"]*100;
 		//微信移动支付
-    if(UTInc::IsApp()):
+    if(Inc::IsApp()):
         require_once MODULE_PATH.'/payment/wechat/WxPay.JsApiPay.php';
 				$logHandler= new CLogFileHandler(MODULE_PATH.'/payment/logs/wechat_'.date("Y-m-d").'.log');
 				$log = Log::Init($logHandler, 15);
@@ -75,7 +75,7 @@ elseif($lb=="wechat"):
 				$order = WxPayApi::unifiedOrder($input);
 				$jsApiParameters = $tools->GetJsApiParameters($order);
 				$editAddress = $tools->GetEditAddressParameters();
-				$return=UTData::QueryData("cms_pay_log","","posnum='$posnum'","","")["querydata"][0]["returnurl"];
+				$return=Data::QueryData("cms_pay_log","","posnum='$posnum'","","")["querydata"][0]["returnurl"];
 				echo '<html>' . "\n";
 				echo '<head>' . "\n";
 				echo '    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>' . "\n";
@@ -129,7 +129,7 @@ elseif($lb=="wechat"):
 				require_once MODULE_PATH.'/payment/wechat/WxPay.NativePay.php';
 				$timediff=time()-strtotime($pay["postime"]);
 				if($timediff>"7140"):
-						UTInc::GoUrl("","支付时间失效!");
+						Inc::GoUrl("","支付时间失效!");
 				else:
 						$notify = new NativePay();
 						$input = new WxPayUnifiedOrder();
@@ -145,7 +145,7 @@ elseif($lb=="wechat"):
 						$input->SetProduct_id("123456789");
 						$result = $notify->GetPayUrl($input);
 						$url2 = $result["code_url"];
-						$return=UTData::QueryData("cms_pay_log","","posnum='$posnum'","","")["querydata"][0]["returnurl"];
+						$return=Data::QueryData("cms_pay_log","","posnum='$posnum'","","")["querydata"][0]["returnurl"];
 						echo '<html>' . "\n";
 						echo '<head>' . "\n";
 						echo '    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>' . "\n";
@@ -185,7 +185,7 @@ elseif($lb=="wechat"):
 		endif;
 elseif($lb=="paypal"):
     require_once MODULE_PATH.'/payment/paypal/Config.php';
-		$pay=library\UsualToolData\UTData::QueryData("cms_pay_log","","posnum='$posnum'","","1")["querydata"][0];
+		$pay=library\UsualToolData\Data::QueryData("cms_pay_log","","posnum='$posnum'","","1")["querydata"][0];
 		$shipping = 0.00;
 		$total = $pay["amount"] + $shipping;
 		$payer = new Payer();

@@ -1,0 +1,19 @@
+{
+    "name": "usualtool/ut-lib",
+    "description": "Library extension of UT Framework.",
+    "keywords": ["ut-lib", "UsualTool Framework"],
+    "homepage": "https://github.com/usualtool",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+        "name":  "Huang Hui",
+        "email": "usualtool@qq.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "usualtool\\Lib\\": "src"
+        }
+    }
+}

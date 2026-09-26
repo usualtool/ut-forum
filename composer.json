@@ -8,7 +8,9 @@
         "name":         "Huang Hui",
         "email":        "usualtool@qq.com"
     }],
-    "require": {},
+    "require": {
+        "usualtool/ut-lib": "*"
+    },
     "scripts": {
         "post-install-cmd": "php usualtool composer",
         "post-update-cmd": "php usualtool composer"
