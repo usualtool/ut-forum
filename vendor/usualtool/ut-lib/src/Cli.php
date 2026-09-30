@@ -408,7 +408,7 @@ class Cli{
      * @return string
      */
     public static function Swoole($array){
-        require_once UTF_ROOT.'/'.'vendor/autoload.php';
+        require_once UTF_ROOT.'/autoload.php';
         if(count($array)>2){
             $server=$array[2];
             $host=$array[3];
@@ -436,7 +436,7 @@ class Cli{
      * @return string
      */
     public static function Workerman($array){
-        require_once UTF_ROOT.'/'.'vendor/autoload.php';
+        require_once UTF_ROOT.'/autoload.php';
         $server=$array[2];
             if($server=="start"){
                 if(in_array('-d',$array)){
@@ -606,6 +606,6 @@ class Cli{
      * @return int
      */
     public static function Version(){
-        echo file_get_contents(UTF_ROOT."/UTVer.ini")."\r\n";
+        echo file_get_contents(UTF_ROOT."/.version.ini")."\r\n";
     }
 }
