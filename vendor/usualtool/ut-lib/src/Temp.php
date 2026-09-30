@@ -121,7 +121,7 @@ class Temp{
         '<?php echo usualtool\Lib\Lang::LangSet("${1}",${2});?>',
         '<?php echo usualtool\Lib\Lang::LangData("${1}");?>',
 		'<?php echo usualtool\Lib\Lang::LangData($this->tplvars["${1}"]["${2}"]);?>',
-		'<?php if(usualtool\Lib\Lang::Contain(",","${1}")):$langdata=explode(",","${1}");echo usualtool\Lib\Lang::ModLangData($langdata[0],$langdata[1]);else:echo usualtool\Lib\Lang::ModLangData("${1}");endif;?>',
+		'<?php if(usualtool\Lib\Inc::Contain(",","${1}")):$langdata=explode(",","${1}");echo usualtool\Lib\Lang::ModLangData($langdata[0],$langdata[1]);else:echo usualtool\Lib\Lang::ModLangData("${1}");endif;?>',
 		'<?php echo usualtool\Lib\Lang::ModLangData($this->tplvars["${1}"]["${2}"]);?>',
 		'<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],2);echo$Page->ShowPager();?>',
 		'<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],${5});echo$Page->ShowPager();?>',
