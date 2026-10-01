@@ -24,18 +24,18 @@ class Temp{
     var $tempdir;
     var $cachedir;
     var $tplvars;
-    function __construct($mode,$tempdir,$cachedir){
+    public function __construct($mode,$tempdir,$cachedir){
         $this->tempdir=rtrim($tempdir,'/').'/';
         $this->cachedir=rtrim($cachedir,'/').'/';
         $this->mode=trim($mode);
         $this->tplvars=array();
     }
     /**
-     * 向模板写入数据
+     * 渲染模板
      * @param string $tplvar
      * @param string|array $value 字符或数组
      */
-    function Runin($tplvar,$value){
+    public function Runin($tplvar,$value){
         if(is_array($tplvar)){
             foreach($tplvar as $key=>$values){
                 $this->tplvars[$values] =$value[$key];
@@ -46,24 +46,39 @@ class Temp{
         }
     }
     /**
-     * 打开模板
+     * 编译模板
      * @param string $filename 模板文件
      */
-    function Open($filename){
-        $tplfile=$this->tempdir.$filename;
-        if(!file_exists($tplfile)){
+    public function Open($filename){
+        $tpl=$this->tempdir.$filename;
+        if(!file_exists($tpl)){
             Debug::Error("view",str_replace(APP_ROOT."/modules","",$this->tempdir).$filename);
         }
         Inc::MakeDir($this->cachedir);
-        $comfilename=$this->cachedir."cache_".basename($tplfile);
-        if($this->mode==1){
-            $repcontent=$this->TempReplace(file_get_contents($tplfile));
-            $handle=fopen($comfilename, 'w+');
-            fwrite($handle,$repcontent);
+        $cache=$this->cachedir."cache_".basename($tpl);
+        if($this->mode==1 || $this->CacheExpired($tpl,$cache)){
+            $code=$this->TempReplace(file_get_contents($tpl));
+            $handle=fopen($cache,'w+');
+            fwrite($handle,$code);
             fclose($handle);
-            unset($repcontent);
+            unset($code);
         }
-        require_once($comfilename);
+        require_once($cache);
+    }
+    /**
+     * 缓存编译是否过期
+     * @param string $tpl 模板文件
+     * @param string $cache 缓存编译文件
+     * @return bool
+     */
+    public function CacheExpired($tpl,$cache){
+        if(!file_exists($cache)){
+            return true;
+        }
+        if(filemtime($tpl)>filemtime($cache)){
+            return true;
+        }
+        return false;
     }
     /**
      * 模板变量替换
@@ -73,68 +88,68 @@ class Temp{
      * “,”逗号用于表示间隔连接，承上启下
      * @param string $content 模板内容
      */
-    function TempReplace($content){
+    public function TempReplace($content){
         $pattern=array(
-		'/<\{\s*nav\s*=>\s*(.+?),(.+?)\s*\}>/i',
-		'/<\{\s*item\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
-		'/<\{\s*plugin\s*=>\s*(.+?)\s*\}>/i',
-		'/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),"(.+?)",([0-9]*)\s*\}>/i',
-		'/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),"(.+?)",all\s*\}>(.+?)<\{\s*\/split\s*\}>/is',
-		'/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z0-9_\x7f-\xff]*),"(.+?)",([0-9]*)\s*\}>/i',
-		'/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z0-9_\x7f-\xff]*),"(.+?)",all\s*\}>(.+?)<\{\s*\/split\s*\}>/is',
-		'/<\{\s*substr\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?),([0-9]*),([0-9]*)\s*\}>/i',
-		'/<\{\s*substr\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),([0-9]*),([0-9]*)\s*\}>/i',
-		'/<\{\s*(loop|foreach)\s*=>\s*\$(\S+)(\s*|\s*as\s*)\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>(.+?)<\{\s*\/(loop|foreach)\s*\}>/is',
-		'/<\{\s*(loop|foreach)\s*=>\s*\$(\S+)(\s*|\s*as\s*)\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->\$(\S+)\s*\}>(.+?)<\{\s*\/(loop|foreach)\s*\}>/is',
-		'/<\{\s*datatree\s*=>\s*([0-9]*),\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),(.+?)(\s*|\s*^[^,]*(?=,)\s*)\s*\}>/is',
+        '/<\{\s*nav\s*=>\s*(.+?),(.+?)\s*\}>/i',
+        '/<\{\s*item\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
+        '/<\{\s*plugin\s*=>\s*(.+?)\s*\}>/i',
+        '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),"(.+?)",([0-9]*)\s*\}>/i',
+        '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),"(.+?)",all\s*\}>(.+?)<\{\s*\/split\s*\}>/is',
+        '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z0-9_\x7f-\xff]*),"(.+?)",([0-9]*)\s*\}>/i',
+        '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z0-9_\x7f-\xff]*),"(.+?)",all\s*\}>(.+?)<\{\s*\/split\s*\}>/is',
+        '/<\{\s*substr\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?),([0-9]*),([0-9]*)\s*\}>/i',
+        '/<\{\s*substr\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),([0-9]*),([0-9]*)\s*\}>/i',
+        '/<\{\s*(loop|foreach)\s*=>\s*\$(\S+)(\s*|\s*as\s*)\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>(.+?)<\{\s*\/(loop|foreach)\s*\}>/is',
+        '/<\{\s*(loop|foreach)\s*=>\s*\$(\S+)(\s*|\s*as\s*)\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->\$(\S+)\s*\}>(.+?)<\{\s*\/(loop|foreach)\s*\}>/is',
+        '/<\{\s*datatree\s*=>\s*([0-9]*),\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),(.+?)(\s*|\s*^[^,]*(?=,)\s*)\s*\}>/is',
         '/<\{\s*lang\s*=>\s*set->(.+?),(.+?)\s*\}>/is',
         '/<\{\s*lang\s*=>\s*(.+?)\s*\}>/i',
-		'/<\{\s*lang\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?)\s*\}>/i',
-		'/<\{\s*modlang\s*=>\s*(.+?)\s*\}>/i',
-		'/<\{\s*modlang\s*=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?)\s*\}>/i',
-		'/<\{\s*page\s*=>\s*(.+?),(.+?),(.+?),(.+?)\s*\}>/i',
-		'/<\{\s*pager\s*=>\s*(.+?),(.+?),(.+?),(.+?),([0-9]*)\s*\}>/i',
+        '/<\{\s*lang\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?)\s*\}>/i',
+        '/<\{\s*modlang\s*=>\s*(.+?)\s*\}>/i',
+        '/<\{\s*modlang\s*=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?)\s*\}>/i',
+        '/<\{\s*page\s*=>\s*(.+?),(.+?),(.+?),(.+?)\s*\}>/i',
+        '/<\{\s*pager\s*=>\s*(.+?),(.+?),(.+?),(.+?),([0-9]*)\s*\}>/i',
         '/<\{\s*eval\s*=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
         '/<\{\s*(get|GET)\s*=>\s*(.+?)\s*\}>/is',
         '/<\{\s*(post|POST)\s*=>\s*(.+?)\s*\}>/is',
-		'/<\{\s*php\s*=>\s*(.+?)\s*\}>/is',
-		'/\s*return=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/i',
-		'/\s*return=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/i',
-		'/<\{\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*->\s*(.+?)\s*\}>/i',
-		'/<\{\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
-		'/<\{\s*else\s*\}>/i',
-		'/<\{\s*\/if\s*\}>/i'
+        '/<\{\s*php\s*=>\s*(.+?)\s*\}>/is',
+        '/\s*return=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/i',
+        '/\s*return=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/i',
+        '/<\{\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*->\s*(.+?)\s*\}>/i',
+        '/<\{\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
+        '/<\{\s*else\s*\}>/i',
+        '/<\{\s*\/if\s*\}>/i'
         );
         $replacement=array(
         '<?php if("${1}"=="null"):if(rtrim(usualtool\Lib\Inc::CurPageUrl(),"/")==rtrim($GLOBALS["config"]["APPURL"],"/")):echo"${2}";endif;else:if(usualtool\Lib\Inc::Contain("${1}",usualtool\Lib\Inc::CurPageUrl())):echo"${2}";endif;endif;?>',
         '<?php echo"<div class=\"nav-item dropdown\"><a class=\"nav-link dropdown-toggle\" data-toggle=dropdown><i class=\"fa fa-link\"></i> Column</a><div class=\"dropdown-menu\">";$item=explode(",",$this->tplvars["${2}"]);for($i=0;$i<count($item);$i++):echo"<a class=\"dropdown-item\" href=?m=".$this->tplvars["${1}"]."&p=".explode(":",$item[$i])[1].">".explode(":",$item[$i])[0]."</a>";endfor;echo"</div></div>";?>',
-		'<?php $plugin=explode(",","${1}");if(count($plugin)==1):usualtool\Lib\Inc::Plugin($plugin[0]);else:usualtool\Lib\Inc::Plugin($plugin[0],$plugin[1]);endif;?>',
-		'<?php $split=explode("${2}",$this->tplvars["${1}"]);echo $split[${3}];?>',
-		'<?php $${1}=explode("${2}",$this->tplvars["${1}"]);for($i=0;$i<count($${1});$i++){?>${3}<?php }?>',
+        '<?php $plugin=explode(",","${1}");if(count($plugin)==1):usualtool\Lib\Inc::Plugin($plugin[0]);else:usualtool\Lib\Inc::Plugin($plugin[0],$plugin[1]);endif;?>',
+        '<?php $split=explode("${2}",$this->tplvars["${1}"]);echo $split[${3}];?>',
+        '<?php $${1}=explode("${2}",$this->tplvars["${1}"]);for($i=0;$i<count($${1});$i++){?>${3}<?php }?>',
         '<?php $split=explode("${3}",$this->tplvars["${1}"]["${2}"]);echo $split[${4}];?>',
-		'<?php $${1}=explode("${3}",$this->tplvars["${1}"]["${2}"]);for($i=0;$i<count($${1});$i++){?>${4}<?php }?>',
+        '<?php $${1}=explode("${3}",$this->tplvars["${1}"]["${2}"]);for($i=0;$i<count($${1});$i++){?>${4}<?php }?>',
         '<?php echo usualtool\Lib\Inc::CutSubstr(usualtool\Lib\Inc::DeleteHtml($this->tplvars["${1}"]["${2}"]),${3},${4}); ?>',
-		'<?php echo usualtool\Lib\Inc::CutSubstr(usualtool\Lib\Inc::DeleteHtml($this->tplvars["${1}"]),${2},${3}); ?>',
-		'<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"]) { ?>${5}<?php }}?>',
+        '<?php echo usualtool\Lib\Inc::CutSubstr(usualtool\Lib\Inc::DeleteHtml($this->tplvars["${1}"]),${2},${3}); ?>',
+        '<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"]) { ?>${5}<?php }}?>',
         '<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"] => $this->tplvars["${5}"]) { ?>${6}<?php }}?>', 
-		'<?php $tree=new usualtool\Lib\Tree();$tree->Init($this->tplvars["${2}"]);if(${1}==0):echo$tree->SubClass(${3},${4});elseif(${1}==1):$string="<option value=\\\$id \\\$selected \\\$disabled>\\\$spacer\\\$name</option>";echo$tree->GetTree(0,$string,${3},${4});elseif(${1}==2):$url=usualtool\Lib\Inc::ClearParam("id",usualtool\Lib\Inc::ClearParam("do",$_SERVER["QUERY_STRING"]));$string="<div class=row style=margin-bottom:15px;font-size:14px;><div class=col-9 data-id=\\\$id data-name=\\\$name>\\\$spacer\\\$name</div><div class=col-3><a id=\'tree-mod\' class=\'mr-2\' href=?".$url."&id=\\\$id&do=mon>Edit</a> <a id=\'tree-del\' href=?".$url."&id=\\\$id&do=del>Del</a></div></div>";echo$tree->GetTree(0,$string,${3});endif;?>',
+        '<?php $tree=new usualtool\Lib\Tree();$tree->Init($this->tplvars["${2}"]);if(${1}==0):echo$tree->SubClass(${3},${4});elseif(${1}==1):$string="<option value=\\\$id \\\$selected \\\$disabled>\\\$spacer\\\$name</option>";echo$tree->GetTree(0,$string,${3},${4});elseif(${1}==2):$url=usualtool\Lib\Inc::ClearParam("id",usualtool\Lib\Inc::ClearParam("do",$_SERVER["QUERY_STRING"]));$string="<div class=row style=margin-bottom:15px;font-size:14px;><div class=col-9 data-id=\\\$id data-name=\\\$name>\\\$spacer\\\$name</div><div class=col-3><a id=\'tree-mod\' class=\'mr-2\' href=?".$url."&id=\\\$id&do=mon>Edit</a> <a id=\'tree-del\' href=?".$url."&id=\\\$id&do=del>Del</a></div></div>";echo$tree->GetTree(0,$string,${3});endif;?>',
         '<?php echo usualtool\Lib\Lang::LangSet("${1}",${2});?>',
         '<?php echo usualtool\Lib\Lang::LangData("${1}");?>',
-		'<?php echo usualtool\Lib\Lang::LangData($this->tplvars["${1}"]["${2}"]);?>',
-		'<?php if(usualtool\Lib\Inc::Contain(",","${1}")):$langdata=explode(",","${1}");echo usualtool\Lib\Lang::ModLangData($langdata[0],$langdata[1]);else:echo usualtool\Lib\Lang::ModLangData("${1}");endif;?>',
-		'<?php echo usualtool\Lib\Lang::ModLangData($this->tplvars["${1}"]["${2}"]);?>',
-		'<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],2);echo$Page->ShowPager();?>',
-		'<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],${5});echo$Page->ShowPager();?>',
-		'<?php eval($this->tplvars["${1}"]);?>',
+        '<?php echo usualtool\Lib\Lang::LangData($this->tplvars["${1}"]["${2}"]);?>',
+        '<?php if(usualtool\Lib\Inc::Contain(",","${1}")):$langdata=explode(",","${1}");echo usualtool\Lib\Lang::ModLangData($langdata[0],$langdata[1]);else:echo usualtool\Lib\Lang::ModLangData("${1}");endif;?>',
+        '<?php echo usualtool\Lib\Lang::ModLangData($this->tplvars["${1}"]["${2}"]);?>',
+        '<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],2);echo$Page->ShowPager();?>',
+        '<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],${5});echo$Page->ShowPager();?>',
+        '<?php eval($this->tplvars["${1}"]);?>',
         '<?php echo$_GET["${2}"];?>',
         '<?php echo$_POST["${2}"];?>',
         '<?php ${1}?>',
-		'$this->tplvars["${1}"]["${2}"]',
-		'$this->tplvars["${1}"]',
-		'<?php echo $this->tplvars["${1}"]["${2}"]; ?>',
-		'<?php echo $this->tplvars["${1}"]; ?>',
-		'<?php }else{?>',
-		'<?php }?>'        
+        '$this->tplvars["${1}"]["${2}"]',
+        '$this->tplvars["${1}"]',
+        '<?php echo $this->tplvars["${1}"]["${2}"]; ?>',
+        '<?php echo $this->tplvars["${1}"]; ?>',
+        '<?php }else{?>',
+        '<?php }?>'        
         );
         $content=preg_replace_callback(
             "/<\{\s*include\s+[\"\'](.+?)[\"\']?\s*\}>/i",
@@ -187,7 +202,7 @@ class Temp{
      * 标签转换
      * @param string $expr 转换标签
      */
-    function StripTags($expr,$statement=''){
+    public function StripTags($expr,$statement=''){
         $var_pattern='/\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*/is';
         $expr = preg_replace($var_pattern, '$this->tplvars["${1}"]', $expr);
         $expr = str_replace("\\\"", "\"", $expr);
@@ -198,12 +213,12 @@ class Temp{
      * 模板管理器
      * @return array
      */
-    function GetTempFile($path=APP_ROOT.'/modules/'){
+    public function GetTempFile($path=APP_ROOT.'/modules/'){
         $file_arr=Inc::GetDir($path);
         $admin=array();
         $front=array();
         foreach($file_arr as $file){
-		      if($file!="index.html"){
+              if($file!="index.html"){
             if(is_dir(APP_ROOT."/modules/".$file."/skin/front/")){
                 $dirx = scandir(APP_ROOT."/modules/".$file."/skin/front/");
                 foreach ($dirx as $valuex){
@@ -224,7 +239,7 @@ class Temp{
                       }
                 }
             }
-		      }
+              }
         }
         return array("admin"=>$admin,"front"=>$front);
     }
