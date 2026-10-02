@@ -70,37 +70,6 @@ function checkform(){
       return false;
     }
 };
-//time
-function getnowdate() {
-    var thedate = new Date;
-    var year = thedate.getFullYear();
-    var mon = thedate.getMonth() + 1;
-    if(mon<10){
-        mon="0"+mon;
-    }
-    var date = thedate.getDate();
-    if(date<10){
-        date="0"+date;
-    }
-    var hours = thedate.getHours();
-    if(hours<10){
-        hours="0"+hours;
-    }
-    var minutes = thedate.getMinutes();
-    if(minutes<10){
-        minutes="0"+minutes;
-    }
-    var seconds = thedate.getSeconds();
-    if(seconds<10){
-        seconds="0"+seconds;
-    }
-    var now = year + "-" + mon + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
-    return now;
-}
-//timestamp
-function gettimestamp() {
-    return Math.round(new Date(getnowdate()).getTime()/1000).toString();
-}
 //UT-Navclick
 function clicknav(module){
     setcookie("Nav",module);
@@ -167,14 +136,14 @@ function upload(fileid,inputid,folder='',posturl=''){
     formData.append("file",document.getElementById(""+fileid).files[0]);
     formData.append("l",folder);
     $.ajax({
-        url: posturl+'/?m=ut-frame&p=upload' ,  
-        type: 'POST',  
-        data: formData,  
-        async: false,  
-        cache: false,  
-        contentType: false,  
-        processData: false,  
-        success: function(data){  
+        url: posturl,
+        type: 'POST',
+        data: formData,
+        async: false,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(data){
             var datas = eval("("+data+")");
             document.getElementById(""+inputid).value=""+datas.pic;
         },  
@@ -195,7 +164,7 @@ function uploads(number, folder, posturl, inputtype = 'radio', inputfield = 'ind
     var uploader = new plupload.Uploader({
         runtimes: 'html5,flash,silverlight,html4',
         browse_button: 'btn',
-        url: posturl + "/?m=ut-frame&p=upload",
+        url: posturl,
         multipart_params: {
             "l": folder
         },
@@ -240,25 +209,25 @@ function uploads(number, folder, posturl, inputtype = 'radio', inputfield = 'ind
     });
     uploader.init();
 }
-function delimg(o,url=""){
-  var src = $(o).prev().attr("src");
-  var url = $(o).prev().attr("appurl");
-  var posturl;
-  if(typeof url == "undefined" || url == null || url == ""){
-      posturl="?m=ut-frame&p=upload&do=del&img="+src;
-  }else{
-      posturl=url+"/?m=ut-frame&p=upload&do=del&img="+src;
-  }
-  $.post(posturl,function(data){
-    var datas = eval("("+data+")");
-    if(datas.error==0){ 
-        $(o).parent().remove(); 
-        alert("删除图片成功!");
-    }else{
-        alert("删除图片失败!");
+function delimg(o, u=''){
+    var src = $(o).prev().attr("src");
+    var url = (u !== undefined && u !== "") ? u : $(o).prev().attr("appurl");
+    if (!url) {
+        alert("URL为空!");
+        return;
     }
-  })
-};
+    $.post(url, { do: 'del', img: src }, function(datas) {
+        if (datas.error == 0) {
+            $(o).parent().remove();
+            alert("文件删除成功!");
+        } else {
+            alert(datas.msg || "文件删除失败!");
+        }
+    }, 'json')
+    .fail(function() {
+        alert("网络请求失败，请重试");
+    });
+}
 $(".nav-search .input-group > input").focus(function(e){
     $(this).parent().addClass("focus");
 }).blur(function(e){
@@ -525,4 +494,46 @@ if($("#tags").length>0){
             $(this).find("span").addClass(bgcolor[rand]);
         });
     });    
+}
+//cookie
+function setcookie(cookiename,value){ 
+    var Days = 30;
+    var exp = new Date();
+    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+    document.cookie = cookiename + "="+ escape (value) + ";expires=" + exp.toGMTString();
+}
+function getcookie(cookiename){
+    var arr = document.cookie.match(new RegExp("(^| )"+cookiename+"=([^;]*)(;|$)"));
+    if(arr != null) return unescape(arr[2]); return null
+}
+//time
+function getnowdate() {
+    var thedate = new Date;
+    var year = thedate.getFullYear();
+    var mon = thedate.getMonth() + 1;
+    if(mon<10){
+        mon="0"+mon;
+    }
+    var date = thedate.getDate();
+    if(date<10){
+        date="0"+date;
+    }
+    var hours = thedate.getHours();
+    if(hours<10){
+        hours="0"+hours;
+    }
+    var minutes = thedate.getMinutes();
+    if(minutes<10){
+        minutes="0"+minutes;
+    }
+    var seconds = thedate.getSeconds();
+    if(seconds<10){
+        seconds="0"+seconds;
+    }
+    var now = year + "-" + mon + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
+    return now;
+}
+//timestamp
+function gettimestamp() {
+    return Math.round(new Date(getnowdate()).getTime()/1000).toString();
 }

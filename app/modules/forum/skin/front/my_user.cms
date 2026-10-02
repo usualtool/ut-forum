@@ -23,7 +23,7 @@
                      <div class="col-9">
                      <input name="avatar" id="upload-avatar" type="text" class="mb-2 form-control" value="<{$row->avatar}>">
                      <input type="file" class="mb-2 form-control-file mr-1" id="file0" style="max-width:25%;">
-                                <input type="button" class="ut-button bg-info text-white" value="上传头像" onclick="upload('file0','upload-avatar','','<{$appurl}>/')">
+                                <input type="button" class="ut-button bg-info text-white" value="上传头像" onclick="upload('file0','upload-avatar','','<{$appurl}>/?m=forum&p=upload')">
                      </div>
                     </div>
                     <div class="form-group">

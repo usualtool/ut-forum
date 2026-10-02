@@ -51,7 +51,7 @@
                                 <input type="button" class="ut-button bg-danger text-white mr-1" onclick=delitem("matter<{php=>echo$i;}>") value="删" style="max-width:15%;">
                                 <input type="file" class="form-control-file mr-1" id="file<{php=>echo$i;}>" style="max-width:25%;">
                                 <input type="text" class="form-control mr-1" name="files[]" id="files<{php=>echo$i;}>" value="<{php=>echo$row[$i];}>" style="max-width:35%;">
-                                <input type="button" class="ut-button bg-info text-white" value="上传" onclick="upload('file<{php=>echo$i;}>','files<{php=>echo$i;}>','','<{$appurl}>/')" style="max-width:20%;">
+                                <input type="button" class="ut-button bg-info text-white" value="上传" onclick="upload('file<{php=>echo$i;}>','files<{php=>echo$i;}>','','<{$appurl}>/?m=forum&p=upload')" style="max-width:20%;">
                                 </div>
                                 <div class="block mt-2" style="width:100%"></div>
                              <{/split}>
@@ -70,7 +70,7 @@
         var upcount=999;
         $("#addupload").click(function (e){
             upcount++;
-            $("#upload").append('<div id="matter'+upcount+'" style="display:contents;"><input type="button" class="ut-button bg-danger text-white mr-1" onclick=delitem("matter'+upcount+'") value="删" style="max-width:15%;"><input type="file" class="form-control-file mr-1" id="file'+upcount+'" style="max-width:25%;"><input type="text" class="form-control mr-1" name="files[]" id="files'+upcount+'" placeholder="文件地址" style="max-width:35%;"><input type="button" class="ut-button bg-info text-white mr-2" value="上传" onclick=upload("file'+upcount+'","files'+upcount+'","","<{$appurl}>/") style="max-width:20%;"></div><div class="block mt-2" style="width:100%"></div>');
+            $("#upload").append('<div id="matter'+upcount+'" style="display:contents;"><input type="button" class="ut-button bg-danger text-white mr-1" onclick=delitem("matter'+upcount+'") value="删" style="max-width:15%;"><input type="file" class="form-control-file mr-1" id="file'+upcount+'" style="max-width:25%;"><input type="text" class="form-control mr-1" name="files[]" id="files'+upcount+'" placeholder="文件地址" style="max-width:35%;"><input type="button" class="ut-button bg-info text-white mr-2" value="上传" onclick=upload("file'+upcount+'","files'+upcount+'","","<{$appurl}>/?m=forum&p=upload") style="max-width:20%;"></div><div class="block mt-2" style="width:100%"></div>');
         });
     });
 </script>
