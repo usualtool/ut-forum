@@ -3,6 +3,7 @@ namespace usualtool\Lib;
 use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
 use usualtool\Lib\Cache;
+use usualtool\Lib\Ai;
 /**
        * --------------------------------------------------------       
        *  |                  █   █ ▀▀█▀▀                    |           
@@ -582,6 +583,81 @@ class Cli{
         exit(Cache::Rebuild($args));
     }
     /**
+     * AI能力
+     * @param array $array
+     * @return void
+     */
+    public static function Ai($array){
+        if(!class_exists('usualtool\\Ai\\Ai')){
+            echo"未安装ut-ai依赖\r\n";
+            return;
+        }
+        $envfile=Ai::EnvFile();
+        $model=count($array)>2?trim($array[2]):"";
+        if($model!==""){
+            if(!Ai::EnvSet($envfile,"INDEX_MODEL",$model,"UPSTREAM_BASE_URL") || !Ai::EnvAllow($envfile,$model)){
+                echo"写入ut-ai配置失败，请检查文件权限：".$envfile."\r\n";
+                return;
+            }
+            echo"默认模型已设为：".$model."\r\n";
+            echo"已写入 ".$envfile." 的 INDEX_MODEL 与 ALLOWED_MODELS\r\n";
+        }
+        $env=Ai::EnvAll();
+        $missing=Ai::EnvMissing($env);
+        if(!empty($missing)){
+            echo"ut-ai配置不完整，以下必要配置项为空：\r\n";
+            foreach($missing as $key){
+                echo"  ".$key."\r\n";
+            }
+            echo"请在 ".$envfile." 中补全后重试\r\n";
+            return;
+        }
+        $config=Ai::Config();
+        if($model===""){
+            $model=$config["index_model"]!==""?$config["index_model"]:$config["allowed_models"][0];
+        }
+        list($fix,$echo)=Ai::Tty();
+        $messages=array();
+        $tokens=array("prompt"=>0,"completion"=>0);
+        $echo("UT-AI对话已开启，当前模型：".$model."，输出编码：".Ai::$tty."\r\n");
+        $echo("直接输入内容提问；/new 清空上下文，/model 查看或临时切换模型，/enc 切换输出编码，/help 查看命令，exit 退出\r\n");
+        while(true){
+            $echo("\r\n你> ");
+            $line=fgets(STDIN);
+            if($line===false){
+                $echo("\r\n");
+                break;
+            }
+            $line=Ai::Clean($fix(trim($line)));
+            if($line===""){
+                continue;
+            }
+            $lower=strtolower($line);
+            if(in_array($lower,array("exit","quit","q","/exit","/quit"))){
+                break;
+            }
+            if(Ai::Command($line,$config,$messages,$model,$tokens,$echo)){
+                continue;
+            }
+            $messages[]=array("role"=>"user","content"=>$line);
+            $reply="";
+            try{
+                $reply=Ai::Ask($messages,$model,$tokens,$echo);
+            }catch(\Throwable $e){
+                $echo("\r\n请求异常：".get_class($e)."：".$e->getMessage()."\r\n");
+            }
+            if($reply!==""){
+                $messages[]=array("role"=>"assistant","content"=>$reply);
+            }else{
+                array_pop($messages);
+            }
+        }
+        if($tokens["prompt"]>0 || $tokens["completion"]>0){
+            $echo("本次累计tokens：输入".$tokens["prompt"]."，输出".$tokens["completion"]."\r\n");
+        }
+        $echo("对话已结束\r\n");
+    }
+    /**
      * 帮助
      * @return string
      */
@@ -596,8 +672,6 @@ class Cli{
         echo"* --------------------------------------------------\r\n";        
         echo"usualtool命令列表\r\n";
         echo"1个中括号代表整1个参数，实际命令中不需要加中括号\r\n";
-        echo"参考地址:http://frame.usualtool.com/baike/function.php?do=PHP-Cli\r\n";
-        echo"命令安装成功后请注意文件夹所有者及权限，如Linux下默认所有者为root，权限便需更改为777，否则请更改所有者为www\r\n";
         echo"php usualtool 命令帮助\r\n";
         echo"php usualtool help 命令帮助\r\n";
         echo"php usualtool task 执行任务\r\n";
@@ -613,6 +687,8 @@ class Cli{
         echo"php usualtool cache rebuild 重建整站缓存\r\n";
         echo"php usualtool cache rebuild [--mod=xxx] 重建指定模块缓存\r\n";
         echo"php usualtool cache rebuild [--dry] 预演只编译\r\n";
+        echo"php usualtool ai AI对话\r\n";
+        echo"php usualtool ai [model] 配置对话模型\r\n";
         echo"php usualtool cache help 缓存帮助\r\n";
         echo"php usualtool swoole [name] [host] [port] ... swoole协程命令\r\n";
         echo"php usualtool kafka [host] [topic] kafka命令\r\n";
