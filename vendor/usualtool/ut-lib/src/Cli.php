@@ -84,15 +84,14 @@ class Cli{
                 $c="<?xml version='1.0' encoding='UTF-8'?>\r\n";
                 $c.="<mod>\r\n";
                 $c.="<id>".$module."</id>\r\n";
-                $c.="<modtype>2</modtype>\r\n";
-                $c.="<auther>NULL</auther>\r\n";
+                $c.="<type>2</type>\r\n";
+                $c.="<auther>自用</auther>\r\n";
                 $c.="<title>".$module."</title>\r\n";
-                $c.="<modname>".$module."</modname>\r\n";
                 $c.="<ver>1.0</ver>\r\n";
                 $c.="<description>NULL</description>\r\n";
                 $c.="<itemid>1</itemid>\r\n";
-                $c.="<ordernum>1</ordernum>\r\n";
-                $c.="<modurl>index.php</modurl>\r\n";
+                $c.="<sorting>1</sorting>\r\n";
+                $c.="<starturl>index.php</starturl>\r\n";
                 $c.="<befoitem>NULL</befoitem>\r\n";
                 $c.="<backitem>NULL</backitem>\r\n";
                 $c.="<installsql><![CDATA[0]]></installsql>\r\n";
@@ -127,17 +126,16 @@ class Cli{
                 $c="<?xml-stylesheet type='text/css' href='http://frame.usualtool.com/image/css/xml.css'?>\r\n";
                 $c.="<hook>\r\n";
                 $c.="<id>".$plugin."</id>\r\n";
-                $c.="<type>Free</type>\r\n";
-                $c.="<plugintype>1</plugintype>\r\n";
+                $c.="<type>1</type>\r\n";
+                $c.="<cate>Free</cate>\r\n";
                 $c.="<price>0.00</price>\r\n";
-                $c.="<auther>NULL</auther>\r\n";
+                $c.="<auther>自用</auther>\r\n";
                 $c.="<title>".$plugin."</title>\r\n";
-                $c.="<pluginname>".$plugin."</pluginname>\r\n";
                 $c.="<ver>1.0</ver>\r\n";
                 $c.="<description>NULL</description>\r\n";
                 $c.="<installsql><![CDATA[0]]></installsql>\r\n";
                 $c.="<uninstallsql><![CDATA[0]]></uninstallsql>\r\n";
-                $c.="<plugincode><![CDATA[?><?php echo'插件操作管理示例';?>]]></plugincode>\r\n";
+                $c.="<code><![CDATA[?><?php echo'插件操作管理示例';?>]]></code>\r\n";
                 $c.="</hook>";
                 file_put_contents(APP_ROOT."/plugins/".$plugin."/usualtool.config",$c);
                 $i="插件类方法示例";
@@ -210,9 +208,9 @@ class Cli{
                 }
                 $modconfig=APP_ROOT."/modules/".$name."/usualtool.config";
                 $mods=file_get_contents($modconfig);
-                $modname=Inc::StrSubstr("<modname>","</modname>",$mods);
-                $ordernum=Inc::StrSubstr("<ordernum>","</ordernum>",$mods);
-                $modurl=Inc::StrSubstr("<modurl>","</modurl>",$mods);
+                $title=Inc::StrSubstr("<title>","</title>",$mods);
+                $sorting=Inc::StrSubstr("<sorting>","</sorting>",$mods);
+                $starturl=Inc::StrSubstr("<starturl>","</starturl>",$mods);
                 $befoitem=Inc::StrSubstr("<befoitem>","</befoitem>",$mods);
                 $backitem=Inc::StrSubstr("<backitem>","</backitem>",$mods);
                 $itemid=Inc::StrSubstr("<itemid>","</itemid>",$mods);
@@ -227,19 +225,19 @@ class Cli{
                     if(Data::QueryData("cms_module","","mid='$name'","","1")["querynum"]>0){
                         Data::UpdateData("cms_module",array(
                             "bid"=>$itemid,
-                            "modname"=>$modname,
-                            "modurl"=>$modurl,
+                            "modname"=>$title,
+                            "modurl"=>$starturl,
                             "befoitem"=>$befoitem,
                             "backitem"=>$backitem),"mid='$name'");
                     }else{
                         Data::InsertData("cms_module",array(
                             "bid"=>$itemid,
                             "mid"=>$name,
-                            "modname"=>$modname,
-                            "modurl"=>$modurl,
+                            "modname"=>$title,
+                            "modurl"=>$starturl,
                             "isopen"=>1,
                             "look"=>1,
-                            "ordernum"=>$ordernum,
+                            "ordernum"=>$sorting,
                             "befoitem"=>$befoitem,
                             "backitem"=>$backitem));
                     }
@@ -292,7 +290,7 @@ class Cli{
                 }
                 $pconfig=APP_ROOT."/plugins/".$name."/usualtool.config";
                 $plugins=file_get_contents($pconfig);
-                $type=Inc::StrSubstr("<type>","</type>",$plugins);
+                $cate=Inc::StrSubstr("<cate>","</cate>",$plugins);
                 $auther=Inc::StrSubstr("<auther>","</auther>",$plugins);
                 $title=Inc::StrSubstr("<title>","</title>",$plugins);
                 $ver=Inc::StrSubstr("<ver>","</ver>",$plugins);
@@ -301,7 +299,7 @@ class Cli{
                 if(Data::ModTable("cms_plugin")){
                     if(Data::QueryData("cms_plugin","","pid='$name'","","1")["querynum"]>0){
                         Data::UpdateData("cms_plugin",array(
-                            "type"=>$type,
+                            "type"=>$cate,
                             "auther"=>$auther,
                             "title"=>$title,
                             "ver"=>$ver,
@@ -309,7 +307,7 @@ class Cli{
                     }else{
                         Data::InsertData("cms_plugin",array(
                             "pid"=>$name,
-                            "type"=>$type,
+                            "type"=>$cate,
                             "auther"=>$auther,
                             "title"=>$title,
                             "ver"=>$ver,
@@ -369,7 +367,7 @@ class Cli{
                 $pconfig=APP_ROOT."/template/".$name."/usualtool.config";
                 $template=file_get_contents($pconfig);
                 $id=Inc::StrSubstr("<id>","</id>",$template);
-                $type=Inc::StrSubstr("<type>","</type>",$template);
+                $cate=Inc::StrSubstr("<cate>","</cate>",$template);
                 $lang=Inc::StrSubstr("<lang>","</lang>",$template);
                 $auther=Inc::StrSubstr("<auther>","</auther>",$template);
                 $title=Inc::StrSubstr("<title>","</title>",$template);

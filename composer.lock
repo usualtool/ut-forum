@@ -1,9 +1,14 @@
 {
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "9ee45a290430e7725dacdfa303f6b3aa",
     "packages": [
         {
             "name": "usualtool/ut-lib",
             "version": "v1.1.6",
-            "version_normalized": "1.1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/usualtool/ut-lib.git",
@@ -15,9 +20,7 @@
                 "reference": "6d16f74ef2a6ce4211f05c8f27309ca5b7c0d04c",
                 "shasum": ""
             },
-            "time": "2026-10-03T15:29:55+00:00",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "usualtool\\Lib\\": "src"
@@ -43,9 +46,16 @@
                 "issues": "https://github.com/usualtool/ut-lib/issues",
                 "source": "https://github.com/usualtool/ut-lib/tree/v1.1.6"
             },
-            "install-path": "../usualtool/ut-lib"
+            "time": "2026-10-03T15:29:55+00:00"
         }
     ],
-    "dev": true,
-    "dev-package-names": []
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }

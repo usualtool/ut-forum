@@ -287,13 +287,13 @@ class Inc{
                 $file=APP_ROOT."/modules/".$v;
                 if(is_file($file."/usualtool.config")){
                     $mods=file_get_contents($file."/usualtool.config");
-                    $modtype=self::StrSubstr("<modtype>","</modtype>",$mods);
+                    $modtype=self::StrSubstr("<type>","</type>",$mods);
                     if($modtype==2){
                         $mid=self::StrSubstr("<id>","</id>",$mods);
                         $catid=self::StrSubstr("<itemid>","</itemid>",$mods);
-                        $title=self::StrSubstr("<modname>","</modname>",$mods);
+                        $title=self::StrSubstr("<title>","</title>",$mods);
                         $auther=self::StrSubstr("<auther>","</auther>",$mods);
-                        $url=self::StrSubstr("<modurl>","</modurl>",$mods);
+                        $url=self::StrSubstr("<starturl>","</starturl>",$mods);
                         $mod[]=array("mid"=>$mid,"catid"=>$catid,"title"=>$title,"auther"=>$auther,"url"=>$url);
                     }
                 }
@@ -337,10 +337,10 @@ class Inc{
                 $file=APP_ROOT."/plugins/".$v;
                 if(is_file($file."/usualtool.config")){
                     $plugins=file_get_contents($file."/usualtool.config");
-                    $plugintype=self::StrSubstr("<plugintype>","</plugintype>",$plugins);
+                    $plugintype=self::StrSubstr("<type>","</type>",$plugins);
                     if($plugintype==2){
                         $pid=self::StrSubstr("<id>","</id>",$plugins);
-                        $title=self::StrSubstr("<pluginname>","</pluginname>",$plugins);
+                        $title=self::StrSubstr("<title>","</title>",$plugins);
                         $auther=self::StrSubstr("<auther>","</auther>",$plugins);
                         $description=self::StrSubstr("<description>","</description>",$plugins);
                         $plugin[]=array("pid"=>$pid,"title"=>$title,"auther"=>$auther,"description"=>$description);
@@ -388,7 +388,7 @@ class Inc{
                 $file=APP_ROOT."/template/".$v;
                 if(is_file($file."/usualtool.config")){
                     $temps=file_get_contents($file."/usualtool.config");
-                    $temptype=self::StrSubstr("<temptype>","</temptype>",$temps);
+                    $temptype=self::StrSubstr("<type>","</type>",$temps);
                     if($temptype==2){
                         $tid=self::StrSubstr("<id>","</id>",$temps);
                         $title=self::StrSubstr("<title>","</title>",$temps);

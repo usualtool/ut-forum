@@ -57,7 +57,7 @@ if($do=="install"){
     endif;
     $pconfig=APP_ROOT."/plugins/".$pid."/usualtool.config";
     $plugins=file_get_contents($pconfig);
-    $type=Inc::StrSubstr("<type>","</type>",$plugins);
+    $cate=Inc::StrSubstr("<cate>","</cate>",$plugins);
     $auther=Inc::StrSubstr("<auther>","</auther>",$plugins);
     $title=Inc::StrSubstr("<title>","</title>",$plugins);
     $ver=Inc::StrSubstr("<ver>","</ver>",$plugins);
@@ -65,7 +65,7 @@ if($do=="install"){
     $installsql=Inc::StrSubstr("<installsql><![CDATA[","]]></installsql>",$plugins);
     if(Data::QueryData("cms_plugin","","pid='$pid'","","1")["querynum"]>0):
         Data::UpdateData("cms_plugin",array(
-            "type"=>$type,
+            "type"=>$cate,
             "auther"=>$auther,
             "title"=>$title,
             "ver"=>$ver,
@@ -73,7 +73,7 @@ if($do=="install"){
     else:
         Data::InsertData("cms_plugin",array(
             "pid"=>$pid,
-            "type"=>$type,
+            "type"=>$cate,
             "auther"=>$auther,
             "title"=>$title,
             "ver"=>$ver,
