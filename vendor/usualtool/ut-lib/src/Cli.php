@@ -397,6 +397,54 @@ class Cli{
                         echo"模板".$name."安装失败\r\n";
                     }  
                 }
+            }elseif($type=="develop"){
+                echo "可视包安装中...\r\n";
+                $res=Inc::SaveFile($config["DOWNURL"]."/develop.zip",UTF_ROOT."/update","develop.zip",1);
+                if(!empty($res)){
+                    $zip=new \ZipArchive;
+                    if($zip->open(UTF_ROOT."/update/develop.zip")!==TRUE){
+                        echo "update目录775权限不足\r\n";
+                        exit();
+                    }
+                    $root=rtrim(UTF_ROOT,"/\\");
+                    for($i=0;$i<$zip->numFiles;$i++){
+                        $name=$zip->getNameIndex($i);
+                        $name=str_replace("\\","/",$name);
+                        if(strpos($name,"./")===0) $name=substr($name,2);
+                        if(strpos($name,"develop/")!==0){continue;}
+                        $target=$root."/".substr($name,strlen("develop/"));
+                        if($target==$root."/"||$target=="") continue;
+                        if(substr($target,-1)=="/"){
+                            if(!is_dir($target)&&!mkdir($target,0755,true)){
+                                echo "创建目录失败: ".$target."\r\n";
+                                exit();
+                            }
+                            continue;
+                        }
+                        $dir=dirname($target);
+                        if(!is_dir($dir)&&!mkdir($dir,0755,true)){
+                            echo "创建目录失败: ".$dir."\r\n";
+                            exit();
+                        }
+                        $stream=$zip->getStream($name);
+                        if(!$stream){
+                            echo "读取失败: ".$name."\r\n";
+                            exit();
+                        }
+                        if(file_put_contents($target,$stream)===false){
+                            fclose($stream);
+                            echo "写入失败: ".$target."\r\n（检查目录权限/open_basedir）\r\n";
+                            exit();
+                        }
+                        fclose($stream);
+                    }
+                    $zip->close();
+                    unlink(UTF_ROOT."/update/develop.zip");
+                    echo "成功安装可视包\r\n";
+                }else{
+                    echo "下载可视包失败\r\n";
+                    exit();
+                }
             }
         }else{
             echo"命令参数错误\r\n";
@@ -682,6 +730,7 @@ class Cli{
         echo"php usualtool install module [name] [1/2/3] 安装模块\r\n";
         echo"php usualtool install plugin [name] [1/2/3] 安装插件\r\n";
         echo"php usualtool install template [name] [1/2/3] 安装整站模板工程\r\n";
+        echo"php usualtool install develop 安装可视包\r\n";
         echo"php usualtool cache rebuild 重建整站缓存\r\n";
         echo"php usualtool cache rebuild [--mod=xxx] 重建指定模块缓存\r\n";
         echo"php usualtool cache rebuild [--dry] 预演只编译\r\n";
