@@ -720,11 +720,11 @@ class Cli{
         echo"1个中括号代表整1个参数，实际命令中不需要加中括号\r\n";
         echo"php usualtool 命令帮助\r\n";
         echo"php usualtool help 命令帮助\r\n";
-        echo"php usualtool task 执行任务\r\n";
         echo"php usualtool key 验证UT令牌的合法性\r\n";
         echo"php usualtool version 获取当前UT框架版本号\r\n";
         echo"php usualtool print [param] [param] ... 打印参数\r\n";
         echo"php usualtool [path/class::function] 自定义命令行\r\n";
+        echo"php usualtool task 执行任务\r\n";
         echo"php usualtool module [name] 创建模块\r\n";
         echo"php usualtool plugin [name] 创建插件\r\n";
         echo"php usualtool install module [name] [1/2/3] 安装模块\r\n";
@@ -732,11 +732,11 @@ class Cli{
         echo"php usualtool install template [name] [1/2/3] 安装整站模板工程\r\n";
         echo"php usualtool install develop 安装可视包\r\n";
         echo"php usualtool cache rebuild 重建整站缓存\r\n";
-        echo"php usualtool cache rebuild [--mod=xxx] 重建指定模块缓存\r\n";
-        echo"php usualtool cache rebuild [--dry] 预演只编译\r\n";
+        echo"php usualtool cache rebuild --mod=[xxx] 重建指定模块缓存\r\n";
+        echo"php usualtool cache rebuild --dry 预演只编译\r\n";
+        echo"php usualtool cache help 缓存帮助\r\n";
         echo"php usualtool ai AI对话\r\n";
         echo"php usualtool ai [model] 配置对话模型\r\n";
-        echo"php usualtool cache help 缓存帮助\r\n";
         echo"php usualtool swoole [name] [host] [port] ... swoole协程命令\r\n";
         echo"php usualtool kafka [host] [topic] kafka命令\r\n";
         echo"php usualtool workerman [start/reload/stop/restart] [host] ... workerman命令\r\n";
