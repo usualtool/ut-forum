@@ -132,8 +132,13 @@ function upload(fileid,inputid,folder='',posturl=''){
     var folder;
     var posturl;
     var datas;
+    var fileobj = document.getElementById(""+fileid);
+    if(!fileobj || !fileobj.files || fileobj.files.length<1){
+        alert("上传失败:请先选择文件!");
+        return false;
+    }
     var formData = new FormData();
-    formData.append("file",document.getElementById(""+fileid).files[0]);
+    formData.append("file",fileobj.files[0]);
     formData.append("l",folder);
     $.ajax({
         url: posturl,
@@ -144,11 +149,28 @@ function upload(fileid,inputid,folder='',posturl=''){
         contentType: false,
         processData: false,
         success: function(data){
-            var datas = eval("("+data+")");
-            document.getElementById(""+inputid).value=""+datas.pic;
-        },  
-        error: function (data){  
-            document.getElementById(""+inputid).value="Upload Error!";
+            var datas;
+            try{
+                datas = eval("("+data+")");
+            }catch(e){
+                datas = null;
+            }
+            if(datas && datas.error==0){
+                var target = document.getElementById(""+inputid);
+                if(target){
+                    target.value=""+datas.pic;
+                    if(target.type==="hidden"){
+                        alert("上传成功!");
+                    }
+                }
+            }else{
+                var msg = (datas && datas.error) ? ""+datas.error : ""+data;
+                alert("上传失败:" + msg.split("|-|")[0].replace(/<br\s*\/?>/gi,"\n"));
+            }
+        },
+        error: function (xhr,status,err){
+            var msg = (xhr && xhr.responseText) ? xhr.responseText : (err || status || "网络错误");
+            alert("上传失败:" + (""+msg).replace(/<[^>]*>/g," ").substr(0,300));
         }
     })  
 };
@@ -197,9 +219,9 @@ function uploads(number, folder, posturl, inputtype = 'radio', inputfield = 'ind
             FileUploaded: function(up, file, info) {
                 var data = eval("(" + info.response + ")");
                 if (inputtype == "radio") {
-                    $("#" + file.id).html("<img src='" + data.pic + "' appurl='" + data.post + "'><i onclick='delimg(this)'>-</i><label><span id='break'></span><input type='radio' name='" + inputfield + "' value='" + data.pic + "' checked> Selected</label>");
+                    $("#" + file.id).html("<img src='" + data.pic + "' appurl='" + posturl + "'><i onclick='delimg(this)'>-</i><label><span id='break'></span><input type='radio' name='" + inputfield + "' value='" + data.pic + "' checked> Selected</label>");
                 } else if (inputtype == "checkbox") {
-                    $("#" + file.id).html("<img src='" + data.pic + "' appurl='" + data.post + "'><i onclick='delimg(this)'>-</i><label><span id='break'></span><input type='checkbox' name='" + inputfield + "[]' value='" + data.pic + "' checked> Selected</label>");
+                    $("#" + file.id).html("<img src='" + data.pic + "' appurl='" + posturl + "'><i onclick='delimg(this)'>-</i><label><span id='break'></span><input type='checkbox' name='" + inputfield + "[]' value='" + data.pic + "' checked> Selected</label>");
                 }
             },
             Error: function(up, err) {
@@ -429,7 +451,7 @@ function readURL(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
-$('.input-file-image input[type="file"').change(function () {
+$('.input-file-image input[type="file"]').change(function () {
     readURL(this);
 });
 // Show Password
