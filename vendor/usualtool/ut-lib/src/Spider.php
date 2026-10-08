@@ -12,7 +12,7 @@ namespace usualtool\Lib;
        * --------------------------------------------------------       
 */
 /**
- * 批量任务
+ * 爬虫工具
  */
 class Spider{
     protected $http_data = array();
@@ -29,7 +29,6 @@ class Spider{
     const ERROR_GET = 'NULL';
     const ERROR_POST = 'NULL';
     function __construct(){}
-    //设置$cookie
     public function SetAgent($agent){
         $this->agent = $agent;
         return $this;
@@ -46,7 +45,6 @@ class Spider{
         $this->ip = $ip;
         return $this;
     }
-    // 设置curl参数
     public function SetOption($key, $value){
         if ( $key===CURLOPT_HTTPHEADER ){
             $this->header = array_merge($this->header,$value);
@@ -55,14 +53,11 @@ class Spider{
         }
         return $this;
     }
-    //设置多个列队默认排队数上限
     public function SetMultiMaxNum($num=0){
         $this->multi_exec_num = (int)$num;
         return $this;
     }
-    //用POST方式提交，支持多个URL
     public function Post($url, $vars, $timeout = 60){
-        # POST模式
         $this->SetOption(CURLOPT_HTTPHEADER,array('Accept-Language:zh-CN'));
         $this->SetOption(CURLOPT_POST,true);
         if(is_array($url)){
@@ -82,7 +77,6 @@ class Spider{
         $this->_post_data = $myvars;
         return $this->Get($url,$timeout);
     }
-    //GET方式获取数据，支持多个URL
     public function Get($url, $timeout = 30){
         if(is_array($url)){
             $getone = false;
@@ -105,7 +99,6 @@ class Spider{
             return $data;
         }
     }
-    //创建一个CURL对象
     public function _create($url,$timeout){
         if(false===strpos($url, '://')){
             preg_match('#^(http(?:s)?\://[^/]+/)#',($_SERVER["SCRIPT_URI"] ?? ''),$m);
@@ -114,7 +107,6 @@ class Spider{
             $the_url = $url;
         } 
         if ($this->ip){
-            # 如果设置了IP，则把URL替换，然后设置Host的头即可
             if ( preg_match('#^(http(?:s)?)\://([^/\:]+)(\:[0-9]+)?/#', $the_url.'/',$m) ){
                 $this->header[] = 'Host: '.$m[2];
                 $the_url = $m[1].'://'.$this->ip.$m[3].'/'.substr($the_url,strlen($m[0]));
@@ -148,41 +140,30 @@ class Spider{
         if($this->header){
             $header = array();
             foreach ($this->header as $item){
-            # 防止有重复的header
             if (preg_match('#(^[^:]*):.*$#', $item,$m)){
                 $header[$m[1]] = $item;
             }
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_values($header));
         }
-        # 设置POST数据
         if(isset($this->_post_data[$the_url])){
             curl_setopt($ch , CURLOPT_POSTFIELDS , $this->_post_data[$the_url]);
         }
         return $ch;
     }
-    //支持多线程获取网页
     protected function RequestUrls($urls, $timeout = 10){
-        # 去重
         $urls = array_unique($urls);
         if(!$urls)return array();
         $mh = curl_multi_init();
-        # 监听列表
         $listener_list = array();
-        # 返回值
         $result = array();
-        # 总列队数
         $list_num = 0;
-        # 排队列表
         $multi_list = array();
         foreach ( $urls as $url ){
-        # 创建一个curl对象
         $current = $this->_create($url, $timeout);
         if($this->multi_exec_num>0 && $list_num>=$this->multi_exec_num ){
-            # 加入排队列表
             $multi_list[] = $url;
         }else{
-            # 列队数控制
             curl_multi_add_handle($mh, $current);
             $listener_list[$url] = $current;
             $list_num++;
@@ -192,7 +173,6 @@ class Spider{
         }
         unset($current);
         $running = null;
-        # 已完成数
         $done_num = 0; 
         do{
             while(($execrun = curl_multi_exec($mh,$running)) == CURLM_CALL_MULTI_PERFORM);
@@ -200,31 +180,22 @@ class Spider{
             while(true==($done = curl_multi_info_read($mh))){
                 foreach($listener_list as $done_url=>$listener){
                     if($listener === $done['handle']){
-                        # 获取内容
                         $this->http_data[$done_url] = $this->GetData(curl_multi_getcontent($done['handle']), $done['handle']);
                         if($this->http_data[$done_url]['code'] != 200){
                             $result[$done_url] = false;
                         }else{
-                        # 返回内容
                             $result[$done_url] = $this->http_data[$done_url]['data']; 
                         }
                         curl_close($done['handle']);
                         curl_multi_remove_handle($mh, $done['handle']);
-                        # 把监听列表里移除
                         unset($listener_list[$done_url],$listener);
                         $done_num++;
-                        # 如果还有排队列表，则继续加入
                         if($multi_list){
-                            # 获取列队中的一条URL
                             $current_url = array_shift($multi_list);
-                            # 创建CURL对象
                             $current = $this->_create($current_url, $timeout);
-                            # 加入到列队
                             curl_multi_add_handle($mh, $current);
-                            # 更新监听列队信息
                             $listener_list[$current_url] = $current;
                             unset($current);
-                            # 更新列队数
                             $list_num++;
                         } 
                         break;
@@ -233,7 +204,6 @@ class Spider{
             }
             if ($done_num>=$list_num)break;
         } while (true);
-        # 关闭列队
         curl_multi_close($mh);
         return $result;
     }
@@ -241,7 +211,7 @@ class Spider{
         return $this->http_data;
     } 
     protected function GetData($data,$ch){
-        $header_size  = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $header_size  = substr($data,0,5)=='HTTP/' ? curl_getinfo($ch, CURLINFO_HEADER_SIZE) : 0;
         $result['code']   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $result['data']   = substr($data, $header_size);
         $result['header'] = explode("\r\n", substr($data, 0, $header_size));
