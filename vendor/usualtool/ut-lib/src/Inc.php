@@ -440,12 +440,13 @@ class Inc{
         }
     }
     /**
-     * 引用UT插件
+     * 引用插件
      * @param string $plugin 插件
      * @param string $action 动作
-     * @return string include_once输出方法
+     * @param string $params 传参
+     * @return string
      */
-    public static function Plugin($plugin,$action='index'){
+    public static function Plugin($plugin,$action='index',...$params){
         if(!preg_match('/^[a-z0-9\-_]+$/i', $plugin)){
             return;
         }
@@ -462,7 +463,7 @@ class Inc{
         if(!method_exists($instance,$action)){
             return;
         }
-        call_user_func([$instance,$action],$_POST);
+        call_user_func_array([$instance,$action],$params?:[$_POST]);
     }
     /**
      * 判断配置文件的依赖是否安装

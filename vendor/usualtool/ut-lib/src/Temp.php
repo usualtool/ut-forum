@@ -123,7 +123,7 @@ class Temp{
         $replacement=array(
         '<?php if("${1}"=="null"):if(rtrim(usualtool\Lib\Inc::CurPageUrl(),"/")==rtrim($GLOBALS["config"]["APPURL"],"/")):echo"${2}";endif;else:if(usualtool\Lib\Inc::Contain("${1}",usualtool\Lib\Inc::CurPageUrl())):echo"${2}";endif;endif;?>',
         '<?php echo"<div class=\"nav-item dropdown\"><a class=\"nav-link dropdown-toggle\" data-toggle=dropdown><i class=\"fa fa-link\"></i> Column</a><div class=\"dropdown-menu\">";$item=explode(",",$this->tplvars["${2}"]);for($i=0;$i<count($item);$i++):echo"<a class=\"dropdown-item\" href=?m=".$this->tplvars["${1}"]."&p=".explode(":",$item[$i])[1].">".explode(":",$item[$i])[0]."</a>";endfor;echo"</div></div>";?>',
-        '<?php $plugin=explode(",","${1}");if(count($plugin)==1):usualtool\Lib\Inc::Plugin($plugin[0]);else:usualtool\Lib\Inc::Plugin($plugin[0],$plugin[1]);endif;?>',
+        '<?php $plugin=explode(",","${1}");usualtool\Lib\Inc::Plugin(...$plugin);?>',
         '<?php $split=explode("${2}",$this->tplvars["${1}"]);echo $split[${3}];?>',
         '<?php $${1}=explode("${2}",$this->tplvars["${1}"]);for($i=0;$i<count($${1});$i++){?>${3}<?php }?>',
         '<?php $split=explode("${3}",$this->tplvars["${1}"]["${2}"]);echo $split[${4}];?>',
