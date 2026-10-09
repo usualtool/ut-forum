@@ -140,7 +140,7 @@ class Temp{
         '<?php echo usualtool\Lib\Lang::ModLangData($this->tplvars["${1}"]["${2}"]);?>',
         '<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],2);echo$Page->ShowPager();?>',
         '<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],${5});echo$Page->ShowPager();?>',
-        '<?php eval($this->tplvars["${1}"]);?>',
+        '<?php eval("?>".preg_replace("/^\\s*\\?>/","",$this->tplvars["${1}"]));?>',
         '<?php echo$_GET["${2}"];?>',
         '<?php echo$_POST["${2}"];?>',
         '<?php ${1}?>',
