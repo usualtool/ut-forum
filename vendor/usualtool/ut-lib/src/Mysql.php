@@ -151,7 +151,11 @@ class Mysql{
      */
     public static function InsertData($table,$data){
         $db=self::GetMysql();
-        $sql="insert into `".$table."` (".implode(',',array_keys($data)).") values ('".implode("','",array_values($data))."')";
+        $values=array();
+        foreach(array_values($data) as $v){
+            $values[]=mysqli_real_escape_string($db,(string)$v);
+        }
+        $sql="insert into `".$table."` (".implode(',',array_keys($data)).") values ('".implode("','",$values)."')";
         $query=$db->query($sql);
         if($query){
             return mysqli_insert_id($db);
@@ -175,11 +179,11 @@ class Mysql{
                     $updatestr.=$k."=NULL,";
                 }elseif(is_bool($v)){
                     $updatestr.=$k."=".($v ? 1 : 0).",";
-			    }elseif(preg_match('/\+\d/is',$v)){
-			        $updatestr.=$k."=".$v.",";
-			    }else{
-                    $updatestr.=$k."='".$v."',";
-		        }
+                }elseif(preg_match('/^[A-Za-z_][A-Za-z0-9_]*\+\d+$/',$v)){
+                    $updatestr.=$k."=".$v.",";
+                }else{
+                    $updatestr.=$k."='".mysqli_real_escape_string($db,(string)$v)."',";
+                }
             }
             $updatestr=rtrim($updatestr,',');
         }
