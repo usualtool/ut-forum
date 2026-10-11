@@ -11,9 +11,14 @@
                  </h5>
             </div>
             <div class="border">
-						    <div class="card-body">
-                                <{eval=>$plugin_code}>
-							</div>
+                <div class="card-body">
+                    <{if $plugin_file}>
+                        <{php=>require_once return=>$plugin_file;}>
+                    <{else}>
+                        此插件无管理端<br/>This plugin has no management end<br/>
+                        Example <code>plugin=><{$pid}></code> / <code>Inc::Plugin("<{$pid}>")</code>
+                    <{/if}>
+                </div>
             </div>
         </div>
     </div>

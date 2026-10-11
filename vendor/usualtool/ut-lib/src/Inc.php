@@ -76,7 +76,7 @@ class Inc{
             }
             return $clean;
         }else{
-            $str=trim($str);
+            $str=trim($str ?? "");
             $str=str_replace(['(',')'],['（','）'],$str);
             $str=htmlspecialchars($str,ENT_QUOTES);
             return $str;
