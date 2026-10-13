@@ -515,8 +515,7 @@ class Inc{
      */
     public static function Auth($authcode,$authurl,$apitype){
         $fromurl=self::CurPageUrl();
-        $url="".$authurl."?AuthCode=".$authcode."&FromUrl=".$fromurl."&Type=".$apitype."";
-        $content=self::HttpGet($url);
+        $content=self::HttpPost($authurl,"AuthCode=".$authcode."&FromUrl=".$fromurl."&Type=".$apitype);
         return str_replace("#","$",str_replace("&","=",self::StrSubstr("<php>","</php>",$content)));
     }
     /**

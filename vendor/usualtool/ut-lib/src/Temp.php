@@ -243,4 +243,146 @@ class Temp{
         }
         return array("admin"=>$admin,"front"=>$front);
     }
+    /**
+     * 扫描目录
+     * @param string $dir 当前扫描目录
+     * @param string $base 相对路径基准目录
+     * @param array $files 扫描结果
+     * @return void
+     */
+    public function Scan($dir,$base,&$files){
+        $handle=@opendir($dir);
+        if(!$handle){
+            return;
+        }
+        while(false!==($file=readdir($handle))){
+            if($file=='.' || $file=='..'){
+                continue;
+            }
+            $path=$dir."/".$file;
+            if(is_dir($path)){
+                $this->Scan($path,$base,$files);
+            }else{
+                $files[]=str_replace("\\","/",substr($path,strlen($base)));
+            }
+        }
+        closedir($handle);
+    }
+    /**
+     * 获取备份文件
+     * @param string $target 目标目录
+     * @return array
+     */
+    public function GetBak($target){
+        $list=array();
+        if(is_dir($target)){
+            $rel=array();
+            $this->Scan($target,$target,$rel);
+            $stamped=array();
+            foreach($rel as $f){
+                $file=$target.$f;
+                if(preg_match('/_(\d{14})\.bak$/',$file)){
+                    $stamped[]=$file;
+                }elseif(preg_match('/\.bak$/',$file)){
+                    $list[]=$file;
+                }
+            }
+            sort($list);
+            sort($stamped);
+            return array_merge($list,$stamped);
+        }
+        $base=preg_replace('/\.[^.\/]+$/','',$target);
+        $dir=dirname($base);
+        $name=basename($base);
+        $list=array();
+        if(!is_dir($dir)){
+            return $list;
+        }
+        if(is_file($base.".bak")){
+            $list[]=$base.".bak";
+        }
+        $stamped=array();
+        foreach(scandir($dir) as $f){
+            if(preg_match('/^'.preg_quote($name,'/').'_(\d{14})\.bak$/',$f)){
+                $stamped[]=$dir."/".$f;
+            }
+        }
+        sort($stamped);
+        return array_merge($list,$stamped);
+    }
+    /**
+     * 备份文件
+     * @param string $dir 目标目录
+     * @return int
+     */
+    public function CreatBak($dir){
+        if(!is_dir($dir)){
+            return 0;
+        }
+        $files=array();
+        $this->Scan($dir,$dir,$files);
+        $num=0;
+        foreach($files as $rel){
+            $target=UTF_ROOT.$rel;
+            if(!is_file($target)){
+                continue;
+            }
+            $stamp=date("YmdHis");
+            $bak=preg_replace('/\.[^.\/]+$/','_'.$stamp.'.bak',$target);
+            $bak=$bak===$target ? $target."_".$stamp.".bak" : $bak;
+            if(@rename($target,$bak)){
+                $num++;
+            }
+        }
+        return $num;
+    }
+    /**
+     * 回滚备份文件
+     * @param string $dir 目标目录
+     * @return int
+     */
+    public function Rollback($dir){
+        if(!is_dir($dir)){
+            return 0;
+        }
+        $files=array();
+        $this->Scan($dir,$dir,$files);
+        $num=$this->Remove($dir);
+        foreach($files as $rel){
+            $target=UTF_ROOT.$rel;
+            $list=$this->GetBak($target);
+            if(empty($list)){
+                continue;
+            }
+            if(@rename($list[0],$target)){
+                $num++;
+            }
+            for($i=1;$i<count($list);$i++){
+                @unlink($list[$i]);
+            }
+        }
+        return $num;
+    }
+    /**
+     * 移除文件
+     * @param string $dir 目标目录
+     * @return int
+     */
+    public function Remove($dir){
+        if(!is_dir($dir)){
+            return 0;
+        }
+        $files=array();
+        $this->Scan($dir,$dir,$files);
+        $num=0;
+        foreach($files as $rel){
+            $target=UTF_ROOT.$rel;
+            if(is_file($target)){
+                if(@unlink($target)){
+                    $num++;
+                }
+            }
+        }
+        return $num;
+    }
 }

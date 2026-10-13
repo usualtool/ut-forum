@@ -25,6 +25,14 @@ class Cli{
      * @param array $array
      */
     public static function Run($array){
+        if(PHP_SAPI==="cli"){
+            $config=Inc::GetConfig();
+            $appurl=parse_url($config["APPURL"]);
+            $_SERVER["HTTP_HOST"]=isset($appurl["host"])
+                ? $appurl["host"].(isset($appurl["port"]) ? ":".$appurl["port"] : "")
+                : "localhost";
+            $_SERVER["REQUEST_URI"]=!empty($appurl["path"]) ? $appurl["path"] : "/";
+        }
         if(count($array)>1){
             $cli=ucwords($array[1]);
         }else{
@@ -209,6 +217,8 @@ class Cli{
                 $modconfig=APP_ROOT."/modules/".$name."/usualtool.config";
                 $mods=file_get_contents($modconfig);
                 $title=Inc::StrSubstr("<title>","</title>",$mods);
+                $module=Inc::StrSubstr("<module>","</module>",$mods);
+                $plugin=Inc::StrSubstr("<plugin>","</plugin>",$mods);
                 $sorting=Inc::StrSubstr("<sorting>","</sorting>",$mods);
                 $starturl=Inc::StrSubstr("<starturl>","</starturl>",$mods);
                 $befoitem=Inc::StrSubstr("<befoitem>","</befoitem>",$mods);
@@ -216,7 +226,7 @@ class Cli{
                 $itemid=Inc::StrSubstr("<itemid>","</itemid>",$mods);
                 $installsql=Inc::StrSubstr("<installsql><![CDATA[","]]></installsql>",$mods);
                 if(Data::ModTable("cms_admin_role") && Data::ModTable("cms_module")){
-                    $role=Data::QueryData("cms_admin_role","","","","")["querydata"];
+                    $role=Data::QueryData("cms_admin_role")["querydata"];
                     foreach($role as $rows){
                         $role_range=Data::QueryData("cms_admin_role","","id='".$rows["id"]."'","","")["querydata"][0]["module"];
                         $new_range=$role_range.",".$name;
@@ -241,6 +251,16 @@ class Cli{
                             "befoitem"=>$befoitem,
                             "backitem"=>$backitem));
                     }
+                }
+                if(!empty($module)){
+                    $modstr.="请继续安装该模块的前置模块 ".$module."\r\n";
+                }else{
+                    $modstr.="";
+                }
+                if(!empty($plugin)){
+                    $modstr.="请继续安装该模块的前置插件 ".$plugin."\r\n";
+                }else{
+                    $modstr.="";
                 }
                 if($installsql=='0'){
                     echo"成功安装".$name."模块\r\n";
@@ -325,6 +345,10 @@ class Cli{
                 }
             }elseif($type=="template"){
                 echo"整站模板工程安装中...\r\n";
+                $side=isset($array[5]) ? strtolower(trim($array[5])) : "front";
+                [$field, $keyword, $sidename] = $side === 'admin'
+                    ? ['makeadmin', 'TEMPADMIN', '后端']
+                    : ['makefront', 'TEMPFRONT', '前端'];
                 if($number!="-2"){
                     $down="";
                     if($number=="-1"){
@@ -351,9 +375,18 @@ class Cli{
                         exit();
                     }
                 }
-                if(is_dir(APP_ROOT."/template/".$name."/move")){
+                $movedir=APP_ROOT."/template/".$name."/move";
+                if(is_dir($movedir)){
                     echo"正在移动模型文件...\r\n";
-                    Inc::MoveDir(APP_ROOT."/template/".$name."/move",UTF_ROOT);
+                    $baknum=0;
+                    global $app;
+                    if(isset($app) && is_object($app)){
+                        $baknum=$app->CreatBak($movedir);
+                    }
+                    Inc::MoveDir($movedir,UTF_ROOT);
+                    if($baknum>0){
+                        echo"已备份原模型文件".$baknum."个\r\n";
+                    }
                 }
                 if(is_dir(APP_ROOT."/template/".$name."/assets")){
                     echo"正在移动静态资源...\r\n";
@@ -366,28 +399,30 @@ class Cli{
                 }
                 $pconfig=APP_ROOT."/template/".$name."/usualtool.config";
                 $template=file_get_contents($pconfig);
-                $id=Inc::StrSubstr("<id>","</id>",$template);
-                $cate=Inc::StrSubstr("<cate>","</cate>",$template);
                 $lang=Inc::StrSubstr("<lang>","</lang>",$template);
-                $auther=Inc::StrSubstr("<auther>","</auther>",$template);
                 $title=Inc::StrSubstr("<title>","</title>",$template);
-                $ver=Inc::StrSubstr("<ver>","</ver>",$template);
-                $description=Inc::StrSubstr("<description>","</description>",$template);
-                $installsql=Inc::StrSubstr("<installsql><![CDATA[","]]></installsql>",$template);
                 $module=Inc::StrSubstr("<module>","</module>",$template);
+                $installsql=Inc::StrSubstr("<installsql><![CDATA[","]]></installsql>",$template);
                 if(Data::ModTable("cms_template")){
+                    Data::UpdateData("cms_template",array($field=>0),"id>0");
                     if(Data::QueryData("cms_template","","tid='$name'","","1")["querynum"]>0){
-                        Data::UpdateData("cms_template",array("tid"=>$name,"lang"=>$lang,"title"=>$title),"tid='$name'");
+                        Data::UpdateData("cms_template",array("tid"=>$name,"lang"=>$lang,"title"=>$title,$field=>1),"tid='$name'");
                     }else{
-                        Data::InsertData("cms_template",array("tid"=>$name,"lang"=>$lang,"title"=>$title));
+                        Data::InsertData("cms_template",array("tid"=>$name,"lang"=>$lang,"title"=>$title,$field=>1));
                     }
                 }
                 if(!empty($module)){
                     $mod=explode(",",$module);
                     for($i=0;$i<count($mod);$i++){
-                        cli::Install(array("usualtool","install","module",$mod[$i],"-1"));
+                        if(Inc::SearchDir(APP_ROOT."/modules/".$mod[$i])):
+                            echo "模块".$mod[$i]."已存在，跳过安装\r\n";
+                        else:
+                            Cli::Install(array("usualtool","install","module",$mod[$i],"-1"));
+                        endif;
                     }
                 }
+                $_config=file_get_contents(UTF_ROOT."/.ut.config");
+                file_put_contents(UTF_ROOT."/.ut.config",preg_replace("/".$keyword."=(.*)/",$keyword."=".$name,$_config));
                 if($installsql=='0'){
                     echo"成功安装".$name."模板\r\n";
                 }else{
@@ -727,9 +762,9 @@ class Cli{
         echo"php usualtool task 执行任务\r\n";
         echo"php usualtool module [name] 创建模块\r\n";
         echo"php usualtool plugin [name] 创建插件\r\n";
-        echo"php usualtool install module [name] [1/2/3] 安装模块\r\n";
-        echo"php usualtool install plugin [name] [1/2/3] 安装插件\r\n";
-        echo"php usualtool install template [name] [1/2/3] 安装整站模板工程\r\n";
+        echo"php usualtool install module [name] -[1/2/3] 安装模块\r\n";
+        echo"php usualtool install plugin [name] -[1/2/3] 安装插件\r\n";
+        echo"php usualtool install template [name] -[1/2/3] [front/admin] 安装整站模板工程\r\n";
         echo"php usualtool install develop 安装可视包\r\n";
         echo"php usualtool cache rebuild 重建整站缓存\r\n";
         echo"php usualtool cache rebuild --mod=[xxx] 重建指定模块缓存\r\n";
