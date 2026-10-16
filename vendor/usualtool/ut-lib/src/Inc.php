@@ -187,17 +187,17 @@ class Inc{
     }
     /**
      * 判断某个字符在字符串中是否存在
-     * @param string $split 需要判断的字符
-     * @param string|array $string 字符串或数组
+     * @param string $test 需要判断的字符
+     * @param string|array $data 字符串或数组
      * @return bool
      */
-    public static function Contain($split,$string){
-        if(is_array($string)){
-            if(in_array($split,$string))return true;
+    public static function Contain($test,$data){
+        if(is_array($data)){
+            if(in_array($test,$data))return true;
             else return false;
         }else{
-            $tmpArr = explode($split,$string);
-            if(count($tmpArr)>1)return true;
+            $strarr = explode($test,$data);
+            if(count($strarr)>1)return true;
             else return false;
         }
     }
@@ -1255,7 +1255,7 @@ class Inc{
      */
     public static function Robot(){
         $config=self::GetConfig();
-        $robot=self::HttpGet($config["UTFURL"]."?AuthCode=".$config["UTCODE"]."&FromUrl=".self::CurPageUrl()."&Type=robot");
+        $robot=self::HttpPost($config["UTFURL"],"AuthCode=".$config["UTCODE"]."&FromUrl=".self::CurPageUrl()."&Type=robot");
         echo self::StrSubstr("<robot-code>","</robot-code>",$robot);
     }
 }

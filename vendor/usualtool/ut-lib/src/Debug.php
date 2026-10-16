@@ -75,6 +75,9 @@ class Debug{
 		fclose($fp);
     }
     public static function Error($type='',$path=''){
+        if(PHP_SAPI!=="cli" && !headers_sent()){
+            http_response_code(404);
+        }
         echo "<p style='margin-top:5%;'>";
         echo "<strong><span style='font-size:20px;'>~( ´•︵•` )~ Don't hit me 404</span></strong><br/>";
         echo "</p>";

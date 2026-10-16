@@ -45,6 +45,44 @@ class Route{
     public static function Analy($url=''){
         $config = Inc::GetConfig();
         $param = array();
+        $path = self::Path($url);
+        $develop = trim($config["DEVELOP"] ?? '', '/');
+        $control_type = self::Control($path);
+        $param['_control_'] = $control_type;
+        $segments = array_values(array_filter(explode('/', $path)));
+        if ($control_type === "admin" && !empty($develop) && isset($segments[0]) && $segments[0] === $develop) {
+            array_shift($segments);
+        }
+        $m = $config["DEFAULT_MOD"] ?? 'index';
+        $p = $config["DEFAULT_PAGE"] ?? 'index';
+        $hasm = false;
+        $hasp = false;
+        if (count($segments) >= 1) {
+            $m = $segments[0];
+            $hasm = true;
+            if (isset($segments[1])) {
+                $p = $segments[1];
+                $hasp = true;
+            }
+        }
+        $param['m'] = $m;
+        $param['p'] = $p;
+        if(!empty($_SERVER['QUERY_STRING'])){
+            $cleanQuery=str_replace('&amp;','&',$_SERVER['QUERY_STRING']); 
+            parse_str($cleanQuery,$queryParams);
+            $param=array_merge($param,$queryParams);
+            if($hasm){$param['m']=$m;}
+            if($hasp){$param['p']=$p;}
+        }
+        if($control_type === "admin"){ $param['_control_'] = "admin"; }
+        $m = self::Verify($param['m'] ?? '');
+        $param['m'] = self::Module($m === '' ? ($config["DEFAULT_MOD"] ?? 'index') : $m);
+        $p = self::Verify($param['p'] ?? '');
+        $param['p'] = ($p === '' ? ($config["DEFAULT_PAGE"] ?? 'index') : $p);
+        return $param;
+    }
+    public static function Path($url=''){
+        $config = Inc::GetConfig();
         if(empty($url)){
             $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
             $path = parse_url($requestUri, PHP_URL_PATH);
@@ -58,41 +96,52 @@ class Route{
         if(!empty($config["APPURL"])){
             $path = preg_replace('#^'.preg_quote($config["APPURL"],'#').'#','',$path);
         }
-        $path = trim($path,'/');
-        $segment = explode('/', $path);
+        return trim($path,'/');
+    }
+    public static function Control($url=''){
+        $config = Inc::GetConfig();
         $develop = trim($config["DEVELOP"] ?? '', '/');
-        $control_type = "front";
-        if(!empty($develop) && isset($segment[0]) && $segment[0] === $develop){
-            $control_type = "admin";
+        if(empty($develop)){
+            return "front";
         }
-        $param['_control_'] = $control_type;
-        $segments = array_values(array_filter(explode('/', $path)));
-        if ($control_type === "admin" && !empty($develop) && isset($segments[0]) && $segments[0] === $develop) {
-            array_shift($segments);
+        $path = self::Path($url);
+        return ($path === $develop || strpos($path, $develop."/") === 0) ? "admin" : "front";
+    }
+    public static function Verify($name){
+        if(!is_string($name)){
+            return "";
         }
-        $m = $config["DEFAULT_MOD"] ?? 'index';
-        $p = $config["DEFAULT_PAGE"] ?? 'index';
-        if (count($segments) >= 1) {
-            $m = $segments[0];
-            if (isset($segments[1])) {
-                $p = $segments[1];
+        $name = str_replace(".php","",$name);
+        return preg_match('/^[A-Za-z0-9_-]+$/', $name) ? $name : "";
+    }
+    public static function Map($file){
+        if (file_exists($file)) {
+            $map = include $file;
+            if (is_array($map)) {
+                return $map;
             }
         }
-        $route = OPEN_ROOT.'/route.php';
-        if (file_exists($route)) {
-            $map = include $route;
-            if (is_array($map) && isset($map[$m])) {
-                $m = $map[$m];
-            }
+        return array();
+    }
+    public static function Module($m){
+        $map = self::Map(OPEN_ROOT.'/route.php');
+        if (is_string($m) && isset($map[$m])) {
+            return $map[$m];
         }
-        $param['m'] = $m;
-        $param['p'] = $p;
-        if(!empty($_SERVER['QUERY_STRING'])){
-            $cleanQuery=str_replace('&amp;','&',$_SERVER['QUERY_STRING']); 
-            parse_str($cleanQuery,$queryParams);
-            $param=array_merge($param,$queryParams);
+        return $m;
+    }
+    public static function Page($modpath, $form, $page){
+        $map = self::Map($modpath."/route.php");
+        $page = self::Verify($page);
+        if (isset($map[$page])) {
+            $page = $map[$page];
         }
-        return $param;
+        return $modpath."/".$form."/".$page.".php";
+    }
+    public static function Alias($m){
+        $map = self::Map(OPEN_ROOT.'/route.php');
+        $key = is_string($m) ? array_search($m,$map,true) : false;
+        return ($key === false) ? $m : $key;
     }
     /**
      * 编制路由
@@ -105,6 +154,7 @@ class Route{
     public static function Link($module="", $page="", $param=""){
         $config = Inc::GetConfig();
         $m = empty($module) ? $config["DEFAULT_MOD"] : $module;
+        $m = self::Alias($m);
         $p = empty($page) ? $config["DEFAULT_PAGE"] : str_replace(".php","",$page);
         $dev = (strpos($_SERVER["REQUEST_URI"],$config["DEVELOP"])===0);
         $place = $dev ? $config["DEVELOP"] : "";

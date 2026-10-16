@@ -49,7 +49,7 @@ class Power{
         $power_out=$this->deve ? "ADMIN_POWER_OUT" : "FRONT_POWER_OUT";
         $_power_page_=$config[$power_page] ?? '';
         $_power_out_=$config[$power_out] ?? '';
-        if(!empty($_power_page_) && !Inc::Contain($this->page,$_power_out_)){
+        if(!empty($_power_page_) && !Inc::Contain($this->page,explode(",",$_power_out_))){
             $_auth_=$this->path."/".$_power_page_.".php";
             if(file_exists($_auth_)){
                 require_once $_auth_;
