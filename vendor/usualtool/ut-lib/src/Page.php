@@ -35,7 +35,7 @@ class Page{
         'current_show' => '<ut data-localize="l.currentpage">当前显示</ut>:', 
         'total_record' => '<ut data-localize="l.totalnum">总记录数</ut>:'
     ); 
-    function __construct($total_page,$current_page,$sub_pages=10,$subpage_link='',$subpage_type=2){ 
+    function __construct($total_page,$current_page,$sub_pages=10,$subpage_link,$subpage_type=2){ 
         $this->Pager($total_page,$current_page,$sub_pages,$subpage_link,$subpage_type); 
     }
     /**
@@ -54,18 +54,107 @@ class Page{
         } 
         $this->sub_pages=intval($sub_pages); 
         $this->pagenums=ceil($total_page); 
-        if($subpage_link){ 
-            if(strpos($subpage_link,'?page=') === false AND strpos($subpage_link,'&page=') === false){ 
-                if(substr($subpage_link, -1)=="?" || substr($subpage_link, -1)=="&"){
-                    $subpage_link .="page=";}
-                else{
-                    $subpage_link .= (strpos($subpage_link,'?') === false ? '?' : '&') . 'page='; 
-                }
-            } 
+        $rewrite=$this->RewriteMode(); 
+        if($rewrite==0 && !$this->HasModuleParam($subpage_link)){ 
+            $subpage_link=$this->CurrentUrl(); 
         } 
-        $this->subpage_link=$subpage_link ? $subpage_link : ($_SERVER['PHP_SELF'] ?? '/') . '?page=';
+        $this->subpage_link=$this->BuildLink($subpage_link,$rewrite); 
         $this->subpage_type = $subpage_type; 
         $this->each_num=5;
+    }
+    private function RewriteMode(){ 
+        $rewrite=0; 
+        if(defined('UTF_ROOT') && UTF_ROOT!==''){ 
+            $config=Inc::GetConfig(); 
+            if(isset($config['REWRITE']) && intval($config['REWRITE'])===1){ 
+                $rewrite=1; 
+            } 
+        } 
+        return $rewrite; 
+    }
+    private function HasModuleParam($link){ 
+        if($link===null || $link===''){ 
+            return false; 
+        } 
+        $query=''; 
+        $pos=strpos($link,'?'); 
+        if($pos!==false){ 
+            $query=substr($link,$pos+1); 
+        } 
+        if($query===''){ 
+            return false; 
+        } 
+        $params=array(); 
+        parse_str($query,$params); 
+        return isset($params['m']) || isset($params['p']); 
+    }
+    private function CurrentUrl(){ 
+        $uri=$_SERVER['REQUEST_URI'] ?? ''; 
+        if($uri===''){ 
+            $uri=($_SERVER['PHP_SELF'] ?? '/'); 
+            $qs=$_SERVER['QUERY_STRING'] ?? ''; 
+            if($qs!==''){ 
+                $uri.='?'.$qs; 
+            } 
+        } 
+        return $uri; 
+    }
+    private function BuildLink($link,$rewrite=0){ 
+        $link=(string)$link; 
+        $frag=''; 
+        $pos=strpos($link,'#'); 
+        if($pos!==false){ 
+            $frag=substr($link,$pos); 
+            $link=substr($link,0,$pos); 
+        } 
+        $base=$link; 
+        $query=''; 
+        $pos=strpos($link,'?'); 
+        if($pos!==false){ 
+            $base=substr($link,0,$pos); 
+            $query=substr($link,$pos+1); 
+        } 
+        if($base===''){ 
+            $current=$this->CurrentUrl(); 
+            $cpos=strpos($current,'?'); 
+            $cbase=($cpos===false) ? $current : substr($current,0,$cpos); 
+            $cquery=($cpos===false) ? '' : substr($current,$cpos+1); 
+            $base=($cbase==='') ? '/' : $cbase; 
+            if($query===''){ 
+                $query=$cquery; 
+            } 
+        } 
+        $query=$this->RemoveParam($query,'page'); 
+        if($rewrite==1){ 
+            $query=$this->RemoveParam($query,'m'); 
+            $query=$this->RemoveParam($query,'p'); 
+        } 
+        $link=$base.($query!=='' ? '?'.$query : ''); 
+        if(strpos($link,'?')===false){ 
+            $link.='?page='; 
+        }elseif(substr($link,-1)==='?' || substr($link,-1)==='&'){ 
+            $link.='page='; 
+        }else{ 
+            $link.='&page='; 
+        } 
+        return $link.$frag; 
+    }
+    private function RemoveParam($query,$name){ 
+        if($query===''){ 
+            return ''; 
+        } 
+        $out=array(); 
+        foreach(explode('&',$query) as $item){ 
+            if($item===''){ 
+                continue; 
+            } 
+            $pair=explode('=',$item); 
+            if($pair[0]===$name){ 
+                continue; 
+            } 
+            $out[]=$item; 
+        } 
+        return implode('&',$out); 
     }
     /**
      * 展示分页
