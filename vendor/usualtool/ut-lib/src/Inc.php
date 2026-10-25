@@ -58,6 +58,11 @@ class Inc{
                 echo'<script>window.location.reload();</script>';
                 exit();
             }else{
+                $url=str_replace(array("\r","\n"),"",$url);
+                if(!headers_sent()){
+                    header("Location: ".$url);
+                    exit();
+                }
                 echo'<script>window.location.href="'.$url.'"</script>';
                 exit();
             }
@@ -300,7 +305,7 @@ class Inc{
               }
             }
         }elseif($type==1){
-            $modules=self::Auth($config["UTCODE"],$config["UTFURL"],"module");
+            $modules=self::Auth("module");
             preg_match_all("/\<module\>(.*?)\<\/module\>/s",$modules,$moduleblocks);
             foreach($moduleblocks[1] as $module){
                 preg_match_all("/\<mid\>(.*?)\<\/mid\>/",$module,$mid);
@@ -310,7 +315,7 @@ class Inc{
                 $mod[]=array("mid"=>$mid[1][0],"catid"=>$catid[1][0],"title"=>$title[1][0],"isfree"=>$isfree[1][0]);
             }
         }elseif($type==2){
-            $modules=self::Auth($config["UTCODE"],$config["UTFURL"],"moduleorder");
+            $modules=self::Auth("moduleorder");
             preg_match_all("/\<module\>(.*?)\<\/module\>/s",$modules,$moduleblocks);
             foreach($moduleblocks[1] as $module){
                 preg_match_all("/\<moduleid\>(.*?)\<\/moduleid\>/",$module,$moduleid); 
@@ -349,7 +354,7 @@ class Inc{
               }
             }
         }elseif($type==1){
-            $hooks=self::Auth($config["UTCODE"],$config["UTFURL"],"plugin");
+            $hooks=self::Auth("plugin");
             preg_match_all( "/\<hook\>(.*?)\<\/hook\>/s",$hooks,$hookblocks);
             foreach($hookblocks[1] as $hook){
                 preg_match_all("/\<pid\>(.*?)\<\/pid\>/",$hook,$pid);  
@@ -361,7 +366,7 @@ class Inc{
                 $plugin[]=array("pid"=>$pid[1][0],"type"=>$type[1][0],"title"=>$title[1][0],"picurl"=>$picurl[1][0],"ver"=>$ver[1][0],"isfree"=>$isfree[1][0]);
             }
         }elseif($type==2){
-            $hooks=self::Auth($config["UTCODE"],$config["UTFURL"],"pluginorder");
+            $hooks=self::Auth("pluginorder");
             preg_match_all("/\<hook\>(.*?)\<\/hook\>/s",$hooks,$hookblocks);
             foreach($hookblocks[1] as $hook){
                 preg_match_all("/\<hookid\>(.*?)\<\/hookid\>/",$hook,$hookid);  
@@ -400,7 +405,7 @@ class Inc{
                 }
             }
         }elseif($type==1){
-            $temps=self::Auth($config["UTCODE"],$config["UTFURL"],"temp");
+            $temps=self::Auth("temp");
             preg_match_all( "/\<temp\>(.*?)\<\/temp\>/s",$temps,$tempblocks);
             foreach($tempblocks[1] as $temp){
                 preg_match_all("/\<tid\>(.*?)\<\/tid\>/",$temp,$tid);
@@ -412,7 +417,7 @@ class Inc{
                 $template[]=array("tid"=>$tid[1][0],"title"=>$title[1][0],"picurl"=>$picurl[1][0],"module"=>$module[1][0],"lang"=>$lang[1][0],"isfree"=>$isfree[1][0]);
             }
         }elseif($type==2){
-            $temps=self::Auth($config["UTCODE"],$config["UTFURL"],"temporder");
+            $temps=self::Auth("temporder");
             preg_match_all("/\<temp\>(.*?)\<\/temp\>/s",$temps,$tempblocks);
             foreach($tempblocks[1] as $temp){
                 preg_match_all("/\<orderid\>(.*?)\<\/orderid\>/",$temp,$orderid);  
@@ -507,16 +512,32 @@ class Inc{
         return null;
     }
     /**
-     * UT令牌验证
-     * @param string $authcode UT令牌
-     * @param string $authurl 验证通讯地址
-     * @param string $apitype API接口类型
-     * @return string 获得一个XML文件
+     * UT通讯
+     * @param string $api 接口类型
+     * @return string 获得一个类XML文件
      */
-    public static function Auth($authcode,$authurl,$apitype){
-        $fromurl=self::CurPageUrl();
-        $content=self::HttpPost($authurl,"AuthCode=".$authcode."&FromUrl=".$fromurl."&Type=".$apitype);
-        return str_replace("#","$",str_replace("&","=",self::StrSubstr("<php>","</php>",$content)));
+    public static function Auth($api){
+        $config=self::GetConfig();
+        $file=UTF_ROOT."/log/auth/".$api.".log";
+        if(is_file($file) && (time()-filemtime($file))<86400){
+            $content=file_get_contents($file);
+        }else{
+            if(!is_dir(UTF_ROOT."/log/auth")){
+                self::MakeDir(UTF_ROOT."/log/auth/");
+            }
+            $content=self::HttpPost($config["UTFURL"],"AuthCode=".$config["UTCODE"]."&FromUrl=".self::CurPageUrl()."&Type=".$api);
+            if($content===false || $content===null){
+                $content="";
+            }
+            if($api=="robot"){
+                $content=self::StrSubstr("<robot-code>","</robot-code>",$content);
+            }else{
+                $content=self::StrSubstr("<php>","</php>",$content);
+                $content=str_replace("#","$",str_replace("&","=",$content));
+            }
+            file_put_contents($file,$content,LOCK_EX);
+        }
+        return $content;
     }
     /**
      * 生成随机字符串
@@ -777,6 +798,14 @@ class Inc{
         $pageURL .= "://";
         $pageURL .= ($_SERVER["HTTP_HOST"] ?? 'localhost') . ($_SERVER["REQUEST_URI"] ?? '/');
         return $pageURL;
+    }
+    /**
+     * 是否首页
+     */
+    public static function IsHome(){
+        $config=self::GetConfig();
+        $index=$config["DEFAULT_MOD"] ?? "";
+        return $index!=="" && (Route::Analy(self::CurPageUrl())["m"] ?? "")===$index;
     }
     /**
      * 获取模板末尾节点标识
@@ -1254,8 +1283,6 @@ class Inc{
      * @param string
      */
     public static function Robot(){
-        $config=self::GetConfig();
-        $robot=self::HttpPost($config["UTFURL"],"AuthCode=".$config["UTCODE"]."&FromUrl=".self::CurPageUrl()."&Type=robot");
-        echo self::StrSubstr("<robot-code>","</robot-code>",$robot);
+        echo self::Auth("robot");
     }
 }

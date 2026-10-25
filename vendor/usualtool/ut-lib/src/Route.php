@@ -151,12 +151,14 @@ class Route{
      * @param string $param
      * @return string
      */
-    public static function Link($module="", $page="", $param=""){
+    public static function Link($module="", $page="", $param="", $entry=""){
         $config = Inc::GetConfig();
         $m = empty($module) ? $config["DEFAULT_MOD"] : $module;
         $m = self::Alias($m);
         $p = empty($page) ? $config["DEFAULT_PAGE"] : str_replace(".php","",$page);
         $dev = (strpos($_SERVER["REQUEST_URI"],$config["DEVELOP"])===0);
+        if($entry==="front"){$dev=false;}
+        if($entry==="admin"){$dev=true;}
         $place = $dev ? $config["DEVELOP"] : "";
         if($config["REWRITE"]==0){
             $params = ['m'=>$m,'p'=>$p];

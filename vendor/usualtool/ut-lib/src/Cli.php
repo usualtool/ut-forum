@@ -164,7 +164,7 @@ class Cli{
     public static function Key(){
         $config=Inc::GetConfig();
         $key=$config["UTCODE"];
-        echo Inc::Auth($config["UTCODE"],$config["UTFURL"],"key")."\r\n";
+        echo Inc::Auth("key")."\r\n";
     }
     /**
      * 安装命令
@@ -182,15 +182,15 @@ class Cli{
                 if($number!="-2"){
                     $down="";
                     if($number=="-1"){
-                        $down=Inc::Auth($config["UTCODE"],$config["UTFURL"],"module-".$name);
+                        $down=Inc::Auth("module-".$name);
                     }elseif($number=="-3"){ 
-                        $down=Inc::Auth($config["UTCODE"],$config["UTFURL"],"moduleorder-".$name);
+                        $down=Inc::Auth("moduleorder-".$name);
                     }
                     $downurl=Inc::StrSubstr("<downurl>","</downurl>",$down);
                     $filename=basename($downurl);
                     $res=Inc::SaveFile($downurl,APP_ROOT."/modules",$filename,1);
                     if(!empty($res)){
-                        Inc::Auth($config["UTCODE"],$config["UTFURL"],"moduledel-".str_replace(".zip","",$filename)."");
+                        Inc::Auth("moduledel-".str_replace(".zip","",$filename));
                         $zip=new \ZipArchive;
                         if($zip->open(APP_ROOT."/modules/".$filename)===TRUE){ 
                             $zip->extractTo(APP_ROOT."/modules/");
@@ -276,15 +276,15 @@ class Cli{
                 if($number!="-2"){
                     $down="";
                     if($number=="-1"){
-                        $down=Inc::Auth($config["UTCODE"],$config["UTFURL"],"plugin-".$name);
+                        $down=Inc::Auth("plugin-".$name);
                     }elseif($number=="-3"){  
-                        $down=Inc::Auth($config["UTCODE"],$config["UTFURL"],"pluginorder-".$name);
+                        $down=Inc::Auth("pluginorder-".$name);
                     }
                     $downurl=Inc::StrSubstr("<downurl>","</downurl>",$down);
                     $filename=basename($downurl);
                     $res=Inc::SaveFile($downurl,APP_ROOT."/plugins",$filename,1);
                     if(!empty($res)){
-                        Inc::Auth($config["UTCODE"],$config["UTFURL"],"plugindel-".str_replace(".zip","",$filename)."");
+                        Inc::Auth("plugindel-".str_replace(".zip","",$filename));
                         $zip=new \ZipArchive;
                         if($zip->open(APP_ROOT."/plugins/".$filename)===TRUE){ 
                             $zip->extractTo(APP_ROOT."/plugins/");
@@ -352,15 +352,15 @@ class Cli{
                 if($number!="-2"){
                     $down="";
                     if($number=="-1"){
-                        $down=Inc::Auth($config["UTCODE"],$config["UTFURL"],"temp_".$name);
+                        $down=Inc::Auth("temp_".$name);
                     }elseif($number=="-3"){  
-                        $down=Inc::Auth($config["UTCODE"],$config["UTFURL"],"temporder_".$name);
+                        $down=Inc::Auth("temporder_".$name);
                     }
                     $downurl=Inc::StrSubstr("<downurl>","</downurl>",$down);
                     $filename=basename($downurl);
                     $res=Inc::SaveFile($downurl,APP_ROOT."/template",$filename,1);
                     if(!empty($res)){
-                        Inc::Auth($config["UTCODE"],$config["UTFURL"],"tempdel_".str_replace(".zip","",$filename)."");
+                        Inc::Auth("tempdel_".str_replace(".zip","",$filename));
                         $zip=new \ZipArchive;
                         if($zip->open(APP_ROOT."/template/".$filename)===TRUE){ 
                             $zip->extractTo(APP_ROOT."/template/");

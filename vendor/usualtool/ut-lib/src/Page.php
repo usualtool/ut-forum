@@ -88,6 +88,36 @@ class Page{
         parse_str($query,$params); 
         return isset($params['m']) || isset($params['p']); 
     }
+    private function PathCarriesRoute($link){ 
+        $path=(string)$link; 
+        $pos=strpos($path,'?'); 
+        if($pos!==false){ 
+            $path=substr($path,0,$pos); 
+        } 
+        $pos=strpos($path,'#'); 
+        if($pos!==false){ 
+            $path=substr($path,0,$pos); 
+        } 
+        if(preg_match('#^[a-z][a-z0-9+.\-]*://#i',$path)){ 
+            $path=(string)parse_url($path,PHP_URL_PATH); 
+        } 
+        $segment=array_values(array_filter(explode('/',trim($path,'/')))); 
+        $config=Inc::GetConfig(); 
+        $apppath=parse_url($config['APPURL'] ?? '',PHP_URL_PATH); 
+        $apppath=trim((string)$apppath,'/'); 
+        if($apppath!==''){ 
+            $appsegment=array_values(array_filter(explode('/',$apppath))); 
+            $num=count($appsegment); 
+            if($num>0 && count($segment)>=$num && array_slice($segment,0,$num)===$appsegment){ 
+                $segment=array_slice($segment,$num); 
+            } 
+        } 
+        $develop=trim($config['DEVELOP'] ?? '','/'); 
+        if($develop!=='' && isset($segment[0]) && $segment[0]===$develop){ 
+            array_shift($segment); 
+        } 
+        return count($segment)>=2; 
+    }
     private function CurrentUrl(){ 
         $uri=$_SERVER['REQUEST_URI'] ?? ''; 
         if($uri===''){ 
@@ -125,7 +155,7 @@ class Page{
             } 
         } 
         $query=$this->RemoveParam($query,'page'); 
-        if($rewrite==1){ 
+        if($rewrite==1 && $this->PathCarriesRoute($base)){ 
             $query=$this->RemoveParam($query,'m'); 
             $query=$this->RemoveParam($query,'p'); 
         } 

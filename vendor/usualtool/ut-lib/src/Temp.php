@@ -121,8 +121,8 @@ class Temp{
         '/<\{\s*\/if\s*\}>/i'
         );
         $replacement=array(
-        '<?php if("${1}"=="null"):if(rtrim(usualtool\Lib\Inc::CurPageUrl(),"/")==rtrim($GLOBALS["config"]["APPURL"],"/")):echo"${2}";endif;else:if(usualtool\Lib\Inc::Contain("${1}",usualtool\Lib\Inc::CurPageUrl())):echo"${2}";endif;endif;?>',
-        '<?php echo"<div class=\"nav-item dropdown\"><a class=\"nav-link dropdown-toggle\" data-toggle=dropdown><i class=\"fa fa-link\"></i> Column</a><div class=\"dropdown-menu\">";$item=explode(",",$this->tplvars["${2}"]);for($i=0;$i<count($item);$i++):echo"<a class=\"dropdown-item\" href=?m=".$this->tplvars["${1}"]."&p=".explode(":",$item[$i])[1].">".explode(":",$item[$i])[0]."</a>";endfor;echo"</div></div>";?>',
+        '<?php if("${1}"=="null"):if(usualtool\Lib\Inc::IsHome()):echo"${2}";endif;else:if(usualtool\Lib\Inc::Contain("${1}",usualtool\Lib\Inc::CurPageUrl())):echo"${2}";endif;endif;?>',
+        '<?php echo"<div class=\"ut-item-menu\"><a class=\"ut-item-link\">Column</a><div class=\"ut-item-menu-small\">";$item=explode(",",$this->tplvars["${2}"]);for($i=0;$i<count($item);$i++):echo"<a class=\"ut-item-link-samll\" href=".usualtool\Lib\Route::Link($this->tplvars["${1}"],explode(":",$item[$i])[1]).">".explode(":",$item[$i])[0]."</a>";endfor;echo"</div></div>";?>',
         '<?php $plugin=explode(",","${1}");usualtool\Lib\Inc::Plugin(...$plugin);?>',
         '<?php $split=explode("${2}",$this->tplvars["${1}"]);echo $split[${3}];?>',
         '<?php $${1}=explode("${2}",$this->tplvars["${1}"]);for($i=0;$i<count($${1});$i++){?>${3}<?php }?>',
@@ -132,7 +132,7 @@ class Temp{
         '<?php echo usualtool\Lib\Inc::CutSubstr(usualtool\Lib\Inc::DeleteHtml($this->tplvars["${1}"]),${2},${3}); ?>',
         '<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"]) { ?>${5}<?php }}?>',
         '<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"] => $this->tplvars["${5}"]) { ?>${6}<?php }}?>', 
-        '<?php $tree=new usualtool\Lib\Tree();$tree->Init($this->tplvars["${2}"]);if(${1}==0):echo$tree->SubClass(${3},${4});elseif(${1}==1):$string="<option value=\\\$id \\\$selected \\\$disabled>\\\$spacer\\\$name</option>";echo$tree->GetTree(0,$string,${3},${4});elseif(${1}==2):$url=usualtool\Lib\Inc::ClearParam("id",usualtool\Lib\Inc::ClearParam("do",$_SERVER["QUERY_STRING"]));$string="<div class=row style=margin-bottom:15px;font-size:14px;><div class=col-9 data-id=\\\$id data-name=\\\$name>\\\$spacer\\\$name</div><div class=col-3><a id=\'tree-mod\' class=\'mr-2\' href=?".$url."&id=\\\$id&do=mon>Edit</a> <a id=\'tree-del\' href=?".$url."&id=\\\$id&do=del>Del</a></div></div>";echo$tree->GetTree(0,$string,${3});endif;?>',
+        '<?php $tree=new usualtool\Lib\Tree();$tree->Init($this->tplvars["${2}"]);if(${1}==0):echo$tree->SubClass(${3},${4});elseif(${1}==1):$string="<option value=\\\$id \\\$selected \\\$disabled>\\\$spacer\\\$name</option>";echo$tree->GetTree(0,$string,${3},${4});elseif(${1}==2):$url=usualtool\Lib\Inc::ClearParam("id",usualtool\Lib\Inc::ClearParam("do",$_SERVER["QUERY_STRING"]));$string="<div class=\"ut-tree-menu\"><div class=\"ut-tree-left\" data-id=\\\$id data-name=\\\$name>\\\$spacer\\\$name</div><div class=\"ut-tree-right\"><a id=\'ut-tree-mon\' class=\'mr-2\' href=?".$url."&id=\\\$id&do=mon>Edit</a> <a id=\'ut-tree-del\' href=?".$url."&id=\\\$id&do=del>Del</a></div></div>";echo$tree->GetTree(0,$string,${3});endif;?>',
         '<?php echo usualtool\Lib\Lang::LangSet("${1}",${2});?>',
         '<?php echo usualtool\Lib\Lang::LangData("${1}");?>',
         '<?php echo usualtool\Lib\Lang::LangData($this->tplvars["${1}"]["${2}"]);?>',
