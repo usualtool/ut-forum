@@ -3,7 +3,6 @@
           <div class="row ml-0 mr-0">
             <div class="col-md-12 bg-light p-3">
                   <form method="post" action="<{url=>Link("forum","register","do=register")}>" class="form-validate">
-                  <input type="hidden" name="salts" value="<{$salts}>">
                     <div class="form-group row">
                         <div class="col-md-6">
                             <label>Email</label>

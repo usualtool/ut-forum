@@ -2,13 +2,12 @@
 use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
 use usualtool\Lib\Route;
-$app->Runin(array("webplace","salts"),array("创建账户",Inc::GetRandomString(8)));
+$app->Runin(array("webplace"),array("创建账户"));
 $app->Open("register.cms");
 if($_GET["do"]=="register"){
     $username=Inc::SqlCheck($_POST["username"]);
     $password=Inc::SqlCheck($_POST["password"]);
     $passwords=Inc::SqlCheck($_POST["passwords"]);
-    $salts=Inc::SqlCheck($_POST["salts"]);
     if(!empty($_POST["avatar"])){
         $avatar=Inc::SqlCheck($_POST["avatar"]);
     }else{
