@@ -68,11 +68,22 @@ class Mysql{
      */
     public static function RunSql($sql){
         $db=self::GetMysql();
-        if($db->multi_query($sql)){
-            return true;
-        }else{
-            return false;
+        $ret=false;
+        try{
+            $ret=$db->multi_query($sql);
+            if($ret){
+                while($db->more_results()){
+                    if($db->next_result()){
+                        $res=$db->store_result();
+                        if($res instanceof \mysqli_result){ $res->free(); }
+                    }
+                }
+                if($db->errno){ $ret=false; }
+            }
+        }catch(\mysqli_sql_exception $e){
+            $ret=false;
         }
+        return $ret;
     }
     /**
      * 获取单个或多个数据

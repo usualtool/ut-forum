@@ -111,7 +111,7 @@ class Tree{
                 $selected = $tid==$sid ? 'selected' : '';
                 $disabled = $tid==$did ? 'disabled' : '';
                 @extract($value);
-                $bid == 0 && $str_group ? eval("\$nstr = \"$str_group\";") : eval("\$nstr = \"$str\";");
+                $bid == 0 && $str_group ? eval("\$nstr = \"".str_replace('"','\\"',$str_group)."\";") : eval("\$nstr = \"".str_replace('"','\\"',$str)."\";");
                 $this->ret .= $nstr;
                 $nbsp = $this->nbsp;
                 $this->GetTree($tid,$str,$sid,$did,$adds.$k.$nbsp,$str_group);
@@ -144,7 +144,7 @@ class Tree{
             $spacer = $adds ? $adds.$j : '';
             $selected = $this->Have($sid,$tid) ? 'selected' : '';
             @extract($a);
-            eval("\$nstr = \"$str\";");
+            eval("\$nstr = \"".str_replace('"','\\"',$str)."\";");
             $this->ret .= $nstr;
             $this->GetTreeMulti($tid, $str, $sid, $adds.$k.' ');
             $number++;
@@ -179,9 +179,9 @@ class Tree{
             $selected = $this->Have($sid,$tid) ? 'selected' : '';
             @extract($a);
             if (empty($html_disabled)) {
-                eval("\$nstr = \"$str\";");
+                eval("\$nstr = \"".str_replace('"','\\"',$str)."\";");
             } else {
-                eval("\$nstr = \"$str2\";");
+                eval("\$nstr = \"".str_replace('"','\\"',$str2)."\";");
             }
             $this->ret .= $nstr;
             $this->GetTreeCategory($tid, $str, $str2, $sid, $adds.$k.' ');
@@ -218,7 +218,7 @@ class Tree{
             $this->str .= $recursion ? '<ul><li'.$floder_status.' id=\''.$tid.'\'>' : '<li'.$floder_status.' id=\''.$tid.'\'>';
             $recursion = FALSE;
             if($this->GetChild($tid)){
-                eval("\$nstr = \"$str2\";");
+                eval("\$nstr = \"".str_replace('"','\\"',$str2)."\";");
                 $this->str .= $nstr;
                 if($showlevel == 0 || ($showlevel > 0 && $showlevel > $currentlevel)) {
                     $this->GetTreeView($tid, $effected_id, $str, $str2, $showlevel, $style, $currentlevel+1, TRUE);
@@ -226,7 +226,7 @@ class Tree{
                     $this->str .= $placeholder;
                 }
             } else {
-                eval("\$nstr = \"$str\";");
+                eval("\$nstr = \"".str_replace('"','\\"',$str)."\";");
                 $this->str .= $nstr;
             }
             $this->str .=$recursion ? '</a></li></ul>': '</a></li>';
