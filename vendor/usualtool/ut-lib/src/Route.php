@@ -92,6 +92,10 @@ class Route{
             $url = self::ConverUrl($url);
             $parsedUrl = parse_url($url);
             $path = isset($parsedUrl['path']) ? $parsedUrl['path'] : $url;
+            $scriptName = basename($_SERVER['SCRIPT_NAME'] ?? '');
+            if($scriptName !== ''){
+                $path = str_replace("/".$scriptName,"",$path);
+            }
         }
         if(!empty($config["APPURL"])){
             $path = preg_replace('#^'.preg_quote($config["APPURL"],'#').'#','',$path);
