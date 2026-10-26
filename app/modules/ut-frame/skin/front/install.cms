@@ -63,11 +63,6 @@
                     </script>
                <{else if $do=="config"}>
                <form action="?m=ut-frame&do=db-save" method="post" name="form">
-               <div class="row mb-2">
-                   <div class="form-group col-md-6">
-					   <p><a target="_blank" href="//frame.usualtool.com/baike/index.php?do=%E5%AE%89%E5%85%A8">生产环境安全配置建议</a></p>
-                   </div>
-               </div>
                <div class="row">
                   <div class="form-group col-md-6">
                      <label for="email">应用域名/IP（请带HTTP）:</label>
