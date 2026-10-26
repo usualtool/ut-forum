@@ -375,6 +375,22 @@ class Cli{
                         exit();
                     }
                 }
+                $pconfig=APP_ROOT."/template/".$name."/usualtool.config";
+                $template=file_get_contents($pconfig);
+                $lang=Inc::StrSubstr("<lang>","</lang>",$template);
+                $title=Inc::StrSubstr("<title>","</title>",$template);
+                $module=Inc::StrSubstr("<module>","</module>",$template);
+                $installsql=Inc::StrSubstr("<installsql><![CDATA[","]]></installsql>",$template);
+                if(!empty($module)){
+                    $mod=explode(",",$module);
+                    for($i=0;$i<count($mod);$i++){
+                        if(Inc::SearchDir(APP_ROOT."/modules/".$mod[$i])):
+                            echo "模块".$mod[$i]."已存在，跳过安装\r\n";
+                        else:
+                            Cli::Install(array("usualtool","install","module",$mod[$i],"-1"));
+                        endif;
+                    }
+                }
                 $movedir=APP_ROOT."/template/".$name."/move";
                 if(is_dir($movedir)){
                     echo"正在移动模型文件...\r\n";
@@ -397,28 +413,12 @@ class Cli{
                     Inc::MoveDir(APP_ROOT."/template/".$name."/assets",$assets_dir);
                     Inc::DelDir(APP_ROOT."/template/".$name."/assets");
                 }
-                $pconfig=APP_ROOT."/template/".$name."/usualtool.config";
-                $template=file_get_contents($pconfig);
-                $lang=Inc::StrSubstr("<lang>","</lang>",$template);
-                $title=Inc::StrSubstr("<title>","</title>",$template);
-                $module=Inc::StrSubstr("<module>","</module>",$template);
-                $installsql=Inc::StrSubstr("<installsql><![CDATA[","]]></installsql>",$template);
                 if(Data::ModTable("cms_template")){
                     Data::UpdateData("cms_template",array($field=>0),"id>0");
                     if(Data::QueryData("cms_template","","tid='$name'","","1")["querynum"]>0){
                         Data::UpdateData("cms_template",array("tid"=>$name,"lang"=>$lang,"title"=>$title,$field=>1),"tid='$name'");
                     }else{
                         Data::InsertData("cms_template",array("tid"=>$name,"lang"=>$lang,"title"=>$title,$field=>1));
-                    }
-                }
-                if(!empty($module)){
-                    $mod=explode(",",$module);
-                    for($i=0;$i<count($mod);$i++){
-                        if(Inc::SearchDir(APP_ROOT."/modules/".$mod[$i])):
-                            echo "模块".$mod[$i]."已存在，跳过安装\r\n";
-                        else:
-                            Cli::Install(array("usualtool","install","module",$mod[$i],"-1"));
-                        endif;
                     }
                 }
                 $_config=file_get_contents(UTF_ROOT."/.ut.config");
@@ -434,7 +434,7 @@ class Cli{
                 }
             }elseif($type=="develop"){
                 echo "可视包安装中...\r\n";
-                $res=Inc::SaveFile($config["DOWNURL"]."/develop.zip",UTF_ROOT."/update","develop.zip",1);
+                $res=Inc::SaveFile("https://codeload.github.com/usualtool/develop/zip/refs/heads/main",UTF_ROOT."/update","develop.zip",1);
                 if(!empty($res)){
                     $zip=new \ZipArchive;
                     if($zip->open(UTF_ROOT."/update/develop.zip")!==TRUE){
@@ -442,12 +442,20 @@ class Cli{
                         exit();
                     }
                     $root=rtrim(UTF_ROOT,"/\\");
+                    $prefix="develop";
+                    for($j=0;$j<$zip->numFiles;$j++){
+                        $top=explode("/",str_replace("\\","/",$zip->getNameIndex($j)));
+                        if($top[0]==="develop-main"){
+                            $prefix="develop-main";
+                            break;
+                        }
+                    }
                     for($i=0;$i<$zip->numFiles;$i++){
                         $name=$zip->getNameIndex($i);
                         $name=str_replace("\\","/",$name);
                         if(strpos($name,"./")===0) $name=substr($name,2);
-                        if(strpos($name,"develop/")!==0){continue;}
-                        $target=$root."/".substr($name,strlen("develop/"));
+                        if(strpos($name,$prefix."/")!==0){continue;}
+                        $target=$root."/".substr($name,strlen($prefix."/"));
                         if($target==$root."/"||$target=="") continue;
                         if(substr($target,-1)=="/"){
                             if(!is_dir($target)&&!mkdir($target,0755,true)){
@@ -475,6 +483,36 @@ class Cli{
                     }
                     $zip->close();
                     unlink(UTF_ROOT."/update/develop.zip");
+                    $sqlfile=UTF_ROOT."/develop.sql";
+                    if(is_file($sqlfile)){
+                        echo "可视包数据安装中...\r\n";
+                        $sql=file_get_contents($sqlfile);
+                        $arr=explode(';',$sql);
+                        $total=count($arr)-1;
+                        $c=0;
+                        for($k=0;$k<$total;$k++){
+                            if(trim($arr[$k])===""){continue;}
+                            if(!Data::RunSql($arr[$k])){
+                                $c=$c+1;
+                                echo "第".($k+1)."条SQL执行失败\r\n";
+                            }
+                        }
+                        if($c==0){
+                            unlink($sqlfile);
+                            echo "可视包数据安装完成\r\n";
+                        }else{
+                            echo "可视包数据安装失败".$c."条，已保留 develop.sql 以便重试\r\n";
+                            exit();
+                        }
+                    }
+                    $info=file_get_contents(UTF_ROOT."/.ut.config");
+                    if(preg_match("/^ADMIN_POWER_PAGE=\s*$/m",$info)){
+                        $info=preg_replace("/^ADMIN_POWER_PAGE=.*/m","ADMIN_POWER_PAGE=ut-frame/admin/session",$info);
+                    }
+                    if(preg_match("/^ADMIN_POWER_OUT=\s*$/m",$info)){
+                        $info=preg_replace("/^ADMIN_POWER_OUT=.*/m","ADMIN_POWER_OUT=ut-frame/admin/login,ut-frame/admin/captcha",$info);
+                    }
+                    file_put_contents(UTF_ROOT."/.ut.config",$info);
                     echo "成功安装可视包\r\n";
                 }else{
                     echo "下载可视包失败\r\n";

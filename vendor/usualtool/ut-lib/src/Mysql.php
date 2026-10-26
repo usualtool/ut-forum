@@ -27,8 +27,31 @@ class Mysql{
      */    
     public static function GetMysql(){
         $config=self::GetConfig();
+        if(empty($config["MYSQL_DB"]) || empty($config["MYSQL_USER"])){
+            $msg="请检查.ut.config Mysql数据库配置";
+            if(PHP_SAPI==="cli"){
+                echo $msg."\r\n";
+                exit();
+            }
+            http_response_code(503);
+            header('Content-Type: text/html; charset=utf-8');
+            echo'<pre style="padding:24px;font:14px/1.8 monospace">'.$msg.'</pre>';
+            exit;
+        }
         $host=empty($config["MYSQL_PORT"]) ? $config["MYSQL_HOST"] : $config["MYSQL_HOST"].":".$config["MYSQL_PORT"];
-        $db=new \mysqli($host,$config["MYSQL_USER"],$config["MYSQL_PASS"],$config["MYSQL_DB"]);
+        try{
+            $db=new \mysqli($host,$config["MYSQL_USER"],$config["MYSQL_PASS"],$config["MYSQL_DB"]);
+        }catch(\mysqli_sql_exception $e){
+            $msg=$e->getMessage();
+            if(PHP_SAPI==="cli"){
+                echo $msg."\r\n";
+                exit();
+            }
+            http_response_code(503);
+            header('Content-Type: text/html; charset=utf-8');
+            echo'<pre style="padding:24px;font:14px/1.8 monospace">'.$msg.'</pre>';
+            exit;
+        }
         if(!$db){
             return "Mysqli connection error.";
         }else{
