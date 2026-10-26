@@ -519,7 +519,8 @@ class Inc{
     public static function Auth($api){
         $config=self::GetConfig();
         $file=UTF_ROOT."/log/auth/".$api.".log";
-        if(is_file($file) && (time()-filemtime($file))<86400){
+        $cache=in_array($api,array("module","plugin","temp","app","message","language","robot"))?true:false;
+        if($cache && is_file($file) && (time()-filemtime($file))<86400){
             $content=file_get_contents($file);
         }else{
             if(!is_dir(UTF_ROOT."/log/auth")){
@@ -535,7 +536,9 @@ class Inc{
                 $content=self::StrSubstr("<php>","</php>",$content);
                 $content=str_replace("#","$",str_replace("&","=",$content));
             }
-            file_put_contents($file,$content,LOCK_EX);
+            if($cache){
+                file_put_contents($file,$content,LOCK_EX);
+            }
         }
         return $content;
     }
