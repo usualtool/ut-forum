@@ -8,7 +8,7 @@ if($utype!=99999):
     Inc::GoUrl("-1","权限不足!"); 
 endif;
 $do=$_GET["do"];
-$pagelink="?m=".$m."&p=".$p;
+$pagelink="";
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);

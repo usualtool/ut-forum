@@ -1,6 +1,7 @@
 <?php
 use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
+use usualtool\Lib\Route;
 $l=$_GET["l"];
 $app->Runin(array("l","data"),array($l,Data::QueryData("cms_pay","","","","1")["querydata"]));
 if($_GET["do"]=="update"){
@@ -78,9 +79,9 @@ if($_GET["do"]=="update"){
         endif;
     }
     if($sql):
-        Inc::GoUrl("?m=payment&l=".$l,"操作成功!");
+        Inc::GoUrl(Route::Link("payment","index","l=".$l),"操作成功!");
     else:
-        Inc::GoUrl("?m=payment&l=".$l,"操作失败!");
+        Inc::GoUrl(Route::Link("payment","index","l=".$l),"操作失败!");
     endif;
 }
 $app->Open("index.cms");

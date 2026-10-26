@@ -20,8 +20,8 @@ if($_GET["do"]=="edit"){
     $fid=Inc::SqlCheck($_POST["fid"]);
     $title=Inc::SqlCheck($_POST["title"]);
     $content=Inc::SqlCheck($_POST["ut-editor"]);
-    $payfiles=Inc::SqlCheck($_POST["payfiles"]);
-    $files=implode(",",Inc::SqlChecks($_POST["files"]));
+    $payfiles=($_POST["payfiles"]==="")?0:Inc::SqlCheck($_POST["payfiles"]);
+    $files=implode(",",Inc::SqlCheck($_POST["files"]));
     if(Data::UpdateData("forum_post",array(
         "look"=>$look,
         "fid"=>$fid,

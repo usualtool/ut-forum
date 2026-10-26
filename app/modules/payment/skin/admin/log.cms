@@ -14,7 +14,7 @@
 								<i class="fa fa-angle-double-right"></i>
 							</li>
 							<li class="nav-item">
-								<a href="?m=<{$module}>"><{$title}></a>
+								<a href="<{url=>Link($module)}>"><{$title}></a>
 							</li>
 							<li class="separator">
 								<i class="fa fa-angle-double-right"></i>

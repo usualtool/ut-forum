@@ -35,7 +35,7 @@ if($do=="a"){
     if(Data::InsertData("forum",array(
         "bid"=>Inc::SqlCheck($_POST["bid"]),
         "forum_name"=>Inc::SqlCheck($_POST["forum_name"]),
-        "forum_number"=>Inc::SqlCheck($_POST["forum_number"]),
+        "forum_number"=>(Inc::SqlCheck($_POST["forum_number"])==="")?0:Inc::SqlCheck($_POST["forum_number"]),
         "forum_content"=>Inc::SqlCheck($_POST["forum_content"])))){
         Inc::GoUrl(Route::Link("forum","my_admin_forum"),"版块创建成功!");
     }else{
@@ -47,7 +47,7 @@ if($do=="m"){
     if(Data::UpdateData("forum",array(
         "bid"=>Inc::SqlCheck($_POST["bid"]),
         "forum_name"=>Inc::SqlCheck($_POST["forum_name"]),
-        "forum_number"=>Inc::SqlCheck($_POST["forum_number"]),
+        "forum_number"=>(Inc::SqlCheck($_POST["forum_number"])==="")?0:Inc::SqlCheck($_POST["forum_number"]),
         "forum_content"=>Inc::SqlCheck($_POST["forum_content"])),"id='$id'")){
         Inc::GoUrl(Route::Link("forum","my_admin_forum"),"版块编辑成功!");
     }else{

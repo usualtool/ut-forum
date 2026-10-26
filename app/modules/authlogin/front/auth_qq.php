@@ -1,6 +1,7 @@
 <?php
 use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
+use usualtool\Lib\Route;
 $auths=Data::QueryData("cms_connect","","","","1")["querydata"][0];
 $state=explode("__",Inc::SqlCheck($_GET["state"]));
 $code=Inc::SqlCheck($_GET["code"]);
@@ -18,9 +19,9 @@ if(!empty($code)){
             setcookie("auth_name",$data_r['nickname']); 
             setcookie("auth_avatar",$data_r['figureurl_qq_1']);
             if(count($state)>1){
-                Inc::GoUrl("?m=".$state[0]."&p=".$state[1],"");
+                Inc::GoUrl(Route::Link($state[0],$state[1]),"");
             }else{
-                Inc::GoUrl("?m=".$state[0],"");
+                Inc::GoUrl(Route::Link($state[0]),"");
             }
         }else{
             Inc::GoUrl("-1","OpenId读取失败!");

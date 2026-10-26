@@ -2,7 +2,7 @@
 require dirname(__FILE__).'/'.'power.php';
 require dirname(__FILE__).'/'.'session.php';
 use usualtool\Lib\Data;
-$pagelink="?m=".$m."&p=".$p;
+$pagelink="";
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);

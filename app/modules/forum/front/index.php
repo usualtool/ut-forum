@@ -6,7 +6,7 @@ $forum=Data::QueryData("forum","","bid=0","forum_number desc","")["querydata"];
 $users=Data::QueryData("forum_member","","","creattime desc","0,10")["querydata"];
 $newtopic=Data::QueryData("forum_post","","close=0 and notice=0","posttime desc","0,5")["querydata"];
 $topstar=Data::QueryData("forum_member","","id in (Select uid from forum_post group by uid order by count(id) desc)","","0,3")["querydata"];
-$pagelink="?m=".$m."&p=".$p;
+$pagelink="";
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);

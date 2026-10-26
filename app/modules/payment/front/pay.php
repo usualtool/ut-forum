@@ -1,6 +1,7 @@
 <?php
 use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
+use usualtool\Lib\Route;
 use \PayPal\Api\Payer;
 use \PayPal\Api\Item;
 use \PayPal\Api\ItemList;
@@ -155,7 +156,7 @@ elseif($lb=="wechat"):
 						echo '    <script>' . "\n";
 						echo '    $(function(){setInterval(function(){check()}, 5000);})' . "\n";
 						echo '        function check(){' . "\n";
-						echo '            var url = "?m=payment&p=query&lb=wechat";' . "\n";
+						echo '            var url = "' . Route::Link("payment","query","lb=wechat") . '";' . "\n";
 						echo '            var param = {\'out_trade_no\':\'' . $posnum . '\'};' . "\n";
 						echo '            $.post(url, param, function(data){' . "\n";
 						echo '                data = JSON.parse(data);' . "\n";
@@ -177,7 +178,7 @@ elseif($lb=="wechat"):
 						echo '<body>' . "\n";
 						echo '<div style="margin:0 auto;width:80%;font-size:18px;text-align:center;padding:10% 0;">' . "\n";
 						echo '    <p>支付订单:' . $posnum . '</p>' . "\n";
-						echo '    <p><img alt="Qrcode Pay" src="?m=payment&p=qrcode&data=' . urlencode($url2) . '" style="width:200px;height:200px;"/></p>' . "\n";
+						echo '    <p><img alt="Qrcode Pay" src="' . Route::Link("payment","qrcode","data=".urlencode($url2)) . '" style="width:200px;height:200px;"/></p>' . "\n";
 						echo '</div>' . "\n";
 						echo '</body>' . "\n";
 						echo '</html>';
@@ -210,7 +211,7 @@ elseif($lb=="paypal"):
 				->setDescription("Pay ".$pay["posnum"]."")
 				->setInvoiceNumber($pay["posnum"]);
 		$redirectUrls = new RedirectUrls();
-		$redirectUrls->setReturnUrl(SITE_URL.'/?m=payment&p=return&lb=paypal&success=true')->setCancelUrl(SITE_URL.'/?m=payment&p=return&lb=paypal&success=false');
+		$redirectUrls->setReturnUrl(SITE_URL.Route::Link("payment","return","lb=paypal&success=true"))->setCancelUrl(SITE_URL.Route::Link("payment","return","lb=paypal&success=false"));
 		$payment = new Payment();
 		$payment->setIntent('sale')
 				->setPayer($payer)

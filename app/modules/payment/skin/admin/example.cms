@@ -14,7 +14,7 @@
 								<i class="fa fa-angle-double-right"></i>
 							</li>
 							<li class="nav-item">
-								<a href="?m=<{$module}>"><{$title}></a>
+								<a href="<{url=>Link($module)}>"><{$title}></a>
 							</li>
 							<li class="separator">
 								<i class="fa fa-angle-double-right"></i>
@@ -35,7 +35,7 @@
 										<h4 class="card-title">支付表单</h4>
 									</div>
 								</div>
-								<form action="<{$appurl}>/?m=<{$module}>" method="post" name="form" id="add" target="_blank">
+								<form action="<{$appurl}><{url=>Link($module)}>" method="post" name="form" id="add" target="_blank">
 								<div class="row form-group form-floating-label">
                                                                 <div class="col-md-6">
 									<input type="text" class="form-control input-border-bottom" name="uid" value="0" required="">
@@ -86,7 +86,7 @@
 									</div>
 								</div>
 								<div class="p-3">
-									<p>POST地址：<{$appurl}>/?m=payment</p>
+									<p>POST地址：<{$appurl}><{url=>Link("payment")}></p>
 									<p>
 									POST参数：<br>
                                                                         uid 用户ID，需要时传入，默认为0<br>
@@ -102,7 +102,7 @@
 									<p>示例代码：</p>
 									<p>
 									<code>
-								&lt;form action="<{$appurl}>/?m=<{$module}>" method="post" name="form" id="add" target="_blank"&gt;<br>
+								&lt;form action="<{$appurl}><{url=>Link($module)}>" method="post" name="form" id="add" target="_blank"&gt;<br>
                                                                 用户ID：&lt;input type="text" name="uid" value="0"&gt;<br>
 								平台：&lt;input type="radio" name="form" value="1" checked&gt;支付宝<br>
 								&lt;input type="radio" name="form" value="2"&gt;微信<br>

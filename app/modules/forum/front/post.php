@@ -21,10 +21,10 @@ if($data[0]["close"]==1){
     $title=$data[0]["title"];
 }
 if(!empty($lookuid)):
-    $pagelink="?m=".$m."&p=".$p."&id=".$id."&uid=".$lookuid;
+    $pagelink="?id=".$id."&uid=".$lookuid;
     $where="postid='$id' and uid='$lookuid'";
 else:
-    $pagelink="?m=".$m."&p=".$p."&id=".$id;
+    $pagelink="?id=".$id;
     $where="postid='$id'";
 endif;
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
@@ -104,7 +104,7 @@ if($_GET["do"]=="file_comment"){
             "uid"=>$uid,
             "content"=>$content,
             "addtime"=>date('Y-m-d H:i:s',time())));
-        Inc::GoUrl("?m=forum&p=post&id=".$id."&page=1#filecomment","附件评价成功!"); 
+        Inc::GoUrl(Route::Link("forum","post","id=".$id."&page=1")."#filecomment","附件评价成功!"); 
     endif;
 }
 if($_GET["do"]=="report"){

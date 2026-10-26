@@ -21,7 +21,7 @@
                  <tbody>
                     <{loop=>$data $rows}>
                         <tr>
-                                <td><a target="_blank" href="?m=forum&p=post&id=<{$rows->id}>"><{$rows->title}></a></td>
+                                <td><a target="_blank" href="<{url=>Link("forum","post","id=".$rows["id"])}>"><{$rows->title}></a></td>
                                 <td class="text-center"><{$rows->hit}></td>
                                 <td class="text-center"><{db=>QueryData("forum_reply","id","postid='".$rows["id"]."'","","")["querynum"]}></td>
                         </tr>

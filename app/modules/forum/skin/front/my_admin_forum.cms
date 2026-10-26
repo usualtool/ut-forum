@@ -35,11 +35,11 @@
                         </div>
                         <div class="form-group form-group-default">
                                 <label>排序（越大靠前）</label>
-                                <input name="forum_number" type="text" class="form-control">
+                                <input name="forum_number" type="text" class="form-control" value="1">
                         </div>
                         <button class="btn btn-success">创建</button>
                 <{else}>
-                        <form action="?m=forum&p=my_admin_forum&do=m" method="post" name="form" id="mon">
+                        <form action="<{url=>Link("forum","my_admin_forum","do=m")}>" method="post" name="form" id="mon">
                     <{loop=>$data $rows}>
                         <input type="hidden" name="id" value="<{$rows->id}>">
                         <div class="form-group form-group-default">

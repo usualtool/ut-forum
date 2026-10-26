@@ -3,6 +3,7 @@ require dirname(__FILE__).'/'.'power.php';
 require dirname(__FILE__).'/'.'session.php';
 use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
+use usualtool\Lib\Route;
 if($utype!=99999):
     Inc::GoUrl("-1","权限不足!"); 
 endif;
@@ -15,7 +16,7 @@ $config_file=$plugin_dir."/usualtool.config";
 $code=is_file($config_file) ? Inc::StrSubstr("<code><![CDATA[","]]></code>",file_get_contents($config_file)) : "";
 if(!empty($code) && $code!="0"){
     $code=preg_replace(array('/^\s*\?>/','/^\r?\n/'),'',$code);
-    $code=str_replace("?m=ut-plugin&p=plugin_view","?m=forum&p=my_admin_plugin_view",$code);
+    $code=str_replace("?m=ut-plugin&p=plugin_view",Route::Link("forum","my_admin_plugin_view"),$code);
     $sign=md5($code);
     $text=is_file($plugin_file) ? file_get_contents($plugin_file) : "";
     $marked=preg_match('/\/\*'.$pid.'-md5:([0-9a-f]{32})\*\//',$text,$m) ? $m[1] : "";

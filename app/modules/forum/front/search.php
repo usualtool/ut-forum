@@ -3,7 +3,7 @@ use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
 $key=Inc::SqlCheck(urldecode($_GET["key"]));
 $tags=Data::QueryData("cms_search","hit,keyword","","hit desc","20")["querydata"];
-$pagelink="?m=forum&p=search&key=".$key;
+$pagelink="?key=".urlencode($key);
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);

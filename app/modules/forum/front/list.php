@@ -5,7 +5,7 @@ use usualtool\Lib\Data;
 $id=Inc::SqlCheck($_GET["id"]);
 $forum_name=Data::QueryData("forum","forum_name","id='$id'","","")["querydata"][0]["forum_name"];
 $forum=Data::QueryData("forum","","bid=0","forum_number desc","")["querydata"];
-$pagelink="?m=".$m."&p=".$p."&id=".$id;
+$pagelink="?id=".$id;
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);

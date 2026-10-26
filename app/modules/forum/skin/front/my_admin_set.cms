@@ -73,11 +73,11 @@
 									<div class="row form-group">
 									    <div class="col-md-6 form-floating-label">
                                         <label>同步通知地址</label>
-										<input type="text" class="form-control input-square" name="ali_return_url" value="<{if empty($row["ali_return_url"])}><{$appurl}>/?m=payment&p=return&lb=alipay<{else}><{$row->ali_return_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="ali_return_url" value="<{if empty($row["ali_return_url"])}><{$appurl}><{url=>Link("payment","return","lb=alipay")}><{else}><{$row->ali_return_url}><{/if}>">
 										</div>
 									    <div class="col-md-6 form-floating-label">
                                         <label>异步通知地址</label>
-										<input type="text" class="form-control input-square" name="ali_notify_url" value="<{if empty($row["ali_notify_url"])}><{$appurl}>/?m=payment&p=notify&lb=alipay<{else}><{$row->ali_notify_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="ali_notify_url" value="<{if empty($row["ali_notify_url"])}><{$appurl}><{url=>Link("payment","notify","lb=alipay")}><{else}><{$row->ali_notify_url}><{/if}>">
 										</div>
                                     </div>
                                     <div class="form-group">
@@ -110,7 +110,7 @@
 										</div>
                                         <div class="col-md-6 form-floating-label">
                                         <label>异步通知地址</label>
-										<input type="text" class="form-control input-square" name="wx_notify_url" value="<{if empty($row["wx_notify_url"])}><{$appurl}>/?m=payment&p=notify&lb=wechat<{else}><{$row->wx_notify_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="wx_notify_url" value="<{if empty($row["wx_notify_url"])}><{$appurl}><{url=>Link("payment","notify","lb=wechat")}><{else}><{$row->wx_notify_url}><{/if}>">
 										</div>
                                     </div>
                                     <div class="form-group">
@@ -146,11 +146,11 @@
 									<div class="row form-group">
 									    <div class="col-md-6 form-floating-label">
                                         <label>同步通知地址</label>
-										<input type="text" class="form-control input-square" name="pp_return_url" value="<{if empty($row["pp_return_url"])}><{$appurl}>/?m=payment&p=return&lb=paypal<{else}><{$row->pp_return_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="pp_return_url" value="<{if empty($row["pp_return_url"])}><{$appurl}><{url=>Link("payment","return","lb=paypal")}><{else}><{$row->pp_return_url}><{/if}>">
 										</div>
 									    <div class="col-md-6 form-floating-label">
                                         <label>异步通知地址</label>
-										<input type="text" class="form-control input-square" name="pp_notify_url" value="<{if empty($row["pp_notify_url"])}><{$appurl}>/?m=payment&p=notify&lb=paypal<{else}><{$row->pp_notify_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="pp_notify_url" value="<{if empty($row["pp_notify_url"])}><{$appurl}><{url=>Link("payment","notify","lb=paypal")}><{else}><{$row->pp_notify_url}><{/if}>">
 										</div>
                                     </div>
                                     <div class="form-group">
@@ -209,7 +209,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="squareInput">回调地址</label>
-                                                    <input type="text" class="form-control input-square" name="qq_reurl" value="<{if !empty($row["qq_reurl"])}><{$row->qq_reurl}><{else}><{$appurl}>/?m=authlogin&p=auth_qq<{/if}>">
+                                                    <input type="text" class="form-control input-square" name="qq_reurl" value="<{if !empty($row["qq_reurl"])}><{$row->qq_reurl}><{else}><{$appurl}><{url=>Link("authlogin","auth_qq")}><{/if}>">
                                                 </div>
                                                 <div class="form-group">
                                                     <button class="btn btn-info">保存设置</button>
@@ -229,7 +229,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="squareInput">回调地址</label>
-                                                    <input type="text" class="form-control input-square" name="wb_reurl" value="<{if !empty($row["wb_reurl"])}><{$row->wb_reurl}><{else}><{$appurl}>/?m=authlogin&p=auth_weibo<{/if}>">
+                                                    <input type="text" class="form-control input-square" name="wb_reurl" value="<{if !empty($row["wb_reurl"])}><{$row->wb_reurl}><{else}><{$appurl}><{url=>Link("authlogin","auth_weibo")}><{/if}>">
                                                 </div>
                                                 <div class="form-group">
                                                     <button class="btn btn-info">保存设置</button>
@@ -249,7 +249,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="squareInput">回调地址</label>
-                                                    <input type="text" class="form-control input-square" name="wx_reurl" value="<{if !empty($row["wx_reurl"])}><{$row->wx_reurl}><{else}><{$appurl}>/?m=authlogin&p=auth_wechat<{/if}>">
+                                                    <input type="text" class="form-control input-square" name="wx_reurl" value="<{if !empty($row["wx_reurl"])}><{$row->wx_reurl}><{else}><{$appurl}><{url=>Link("authlogin","auth_wechat")}><{/if}>">
                                                 </div>
                                                 <div class="form-group">
                                                     <button class="btn btn-info">保存设置</button>

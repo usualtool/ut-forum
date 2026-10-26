@@ -4,7 +4,7 @@
             <div class="col-md-4 bg-light p-3 flex-column align-items-center">
             </div>
             <div class="col-md-8 bg-light p-3">
-                  <form method="post" action="?m=forum&p=auth&do=opensave" class="form-validate">
+                  <form method="post" action="<{url=>Link("forum","auth","do=opensave")}>" class="form-validate">
                   <input type="hidden" name="openid" value="<{php=>echo$_COOKIE["auth_openid"];}>">
                   <input type="hidden" name="avatar" value="<{php=>echo$_COOKIE["auth_avatar"];}>">
                   <input type="hidden" name="name" value="<{php=>echo$_COOKIE["auth_name"];}>">
@@ -19,7 +19,7 @@
                     <button id="login" type="submit" class="btn btn-primary pl-3 pr-3">保存信息，一键登录</button>
                   </form>
                   <br />
-                  <small>已有账号?</small><a href="?m=forum&p=login" class="signup"><small>&nbsp;Sign in</small></a>
+                  <small>已有账号?</small><a href="<{url=>Link("forum","login")}>" class="signup"><small>&nbsp;Sign in</small></a>
             </div>
           </div>
       </div>

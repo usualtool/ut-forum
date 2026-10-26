@@ -14,7 +14,7 @@
 								<i class="fa fa-angle-double-right"></i>
 							</li>
 							<li class="nav-item">
-								<a href="?m=<{$module}>"><{$title}></a>
+								<a href="<{url=>Link($module)}>"><{$title}></a>
 							</li>
 							<li class="separator">
 								<i class="fa fa-angle-double-right"></i>
@@ -36,20 +36,20 @@
                                 <div class="col-md-7">
 									<ul class="nav nav-pills nav-secondary" id="pills-tab" role="tablist">
 										<li class="nav-item submenu">
-											<a href="?m=authlogin&l=qq" class="nav-link <{if empty($l) || $l=="qq"}>active show<{/if}>">QQ登录</a>
+											<a href="<{url=>Link("authlogin","index","l=qq")}>" class="nav-link <{if empty($l) || $l=="qq"}>active show<{/if}>">QQ登录</a>
 										</li>
                                         <li class="nav-item submenu">
-											<a href="?m=authlogin&l=weibo" class="nav-link <{if $l=="weibo"}>active show<{/if}>">微博登录</a>
+											<a href="<{url=>Link("authlogin","index","l=weibo")}>" class="nav-link <{if $l=="weibo"}>active show<{/if}>">微博登录</a>
 										</li>
                                         <li class="nav-item submenu">
-											<a href="?m=authlogin&l=wechat" class="nav-link <{if $l=="wechat"}>active show<{/if}>">微信登录</a>
+											<a href="<{url=>Link("authlogin","index","l=wechat")}>" class="nav-link <{if $l=="wechat"}>active show<{/if}>">微信登录</a>
 										</li>
 									</ul>
                                     <{loop=>$data $row}>
 									<div class="tab-content mt-2 mb-3">
                                         <{if empty($l) || $l=="qq"}>
 										<div class="tab-pane fade active show">
-                                                <form action="?m=authlogin&do=update&l=qq" method="post" id=form1 name=form1>
+                                                <form action="<{url=>Link("authlogin","index","do=update&l=qq")}>" method="post" id=form1 name=form1>
                                                 <input type="hidden" name="id" value="<{$row->id}>" />
                                                 <div class="form-group">
                                                     <label for="squareInput">APPID</label>
@@ -61,7 +61,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="squareInput">回调地址</label>
-                                                    <input type="text" class="form-control input-square" name="qq_reurl" value="<{if !empty($row["qq_reurl"])}><{$row->qq_reurl}><{else}><{$appurl}>/?m=authlogin&p=auth_qq<{/if}>">
+                                                    <input type="text" class="form-control input-square" name="qq_reurl" value="<{if !empty($row["qq_reurl"])}><{$row->qq_reurl}><{else}><{$appurl}><{url=>Link("authlogin","auth_qq")}><{/if}>">
                                                 </div>
                                                 <div class="form-group">
                                                     <button class="btn btn-info">保存设置</button>
@@ -71,7 +71,7 @@
                                         <{/if}>
                                         <{if $l=="weibo"}>
 										<div class="tab-pane fade active show" id="weibo" role="tabpanel" aria-labelledby="weibo-tab">
-                                                <form action="?m=authlogin&do=update&l=weibo" method="post" id=form2 name=form2>
+                                                <form action="<{url=>Link("authlogin","index","do=update&l=weibo")}>" method="post" id=form2 name=form2>
                                                 <input type="hidden" name="id" value="<{$row->id}>" />
                                                 <div class="form-group">
                                                     <label for="squareInput">APPID</label>
@@ -83,7 +83,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="squareInput">回调地址</label>
-                                                    <input type="text" class="form-control input-square" name="wb_reurl" value="<{if !empty($row["wb_reurl"])}><{$row->wb_reurl}><{else}><{$appurl}>/?m=authlogin&p=auth_weibo<{/if}>">
+                                                    <input type="text" class="form-control input-square" name="wb_reurl" value="<{if !empty($row["wb_reurl"])}><{$row->wb_reurl}><{else}><{$appurl}><{url=>Link("authlogin","auth_weibo")}><{/if}>">
                                                 </div>
                                                 <div class="form-group">
                                                     <button class="btn btn-info">保存设置</button>
@@ -93,7 +93,7 @@
                                         <{/if}>
                                         <{if $l=="wechat"}>
 										<div class="tab-pane fade active show" id="wechat" role="tabpanel" aria-labelledby="wechat-tab">
-                                                <form action="?m=authlogin&do=update&l=wechat" method="post" id=form3 name=form3>
+                                                <form action="<{url=>Link("authlogin","index","do=update&l=wechat")}>" method="post" id=form3 name=form3>
                                                 <input type="hidden" name="id" value="<{$row->id}>" />
                                                 <div class="form-group">
                                                     <label for="squareInput">APPID</label>
@@ -105,7 +105,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="squareInput">回调地址</label>
-                                                    <input type="text" class="form-control input-square" name="wx_reurl" value="<{if !empty($row["wx_reurl"])}><{$row->wx_reurl}><{else}><{$appurl}>/?m=authlogin&p=auth_wechat<{/if}>">
+                                                    <input type="text" class="form-control input-square" name="wx_reurl" value="<{if !empty($row["wx_reurl"])}><{$row->wx_reurl}><{else}><{$appurl}><{url=>Link("authlogin","auth_wechat")}><{/if}>">
                                                 </div>
                                                 <div class="form-group">
                                                     <button class="btn btn-info">保存设置</button>

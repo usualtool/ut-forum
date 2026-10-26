@@ -14,7 +14,7 @@
                     </div>
                     <div class="form-group">
                       <input name="code" type="text" required placeholder="验证码" class="input-material col-md-6"> 
-                      <img onclick='this.src=this.src+"&"+Math.random()' src="?m=forum&p=captcha">
+                      <img onclick='this.src=this.src+((this.src.indexOf("?")>-1)?"&":"?")+Math.random()' src="<{url=>Link("forum","captcha")}>">
                     </div>
                     <button id="login" type="submit" class="btn btn-primary pl-3 pr-3">登录</button>
                   </form>

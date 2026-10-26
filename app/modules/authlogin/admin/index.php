@@ -1,6 +1,7 @@
 <?php
 use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
+use usualtool\Lib\Route;
 $l=$_GET["l"];
 $do=$_GET["do"];
 if($do=="update"){
@@ -44,7 +45,7 @@ if($do=="update"){
             Data::InsertData("cms_connect",array("qr_appid"=>$qr_appid,"qr_appkey"=>$qr_appkey,"qr_reurl"=>$qr_reurl));
         endif;
     }
-        echo "<script>window.location.href='?m=authlogin&u=a_auth.php&l=$l'</script>";
+        echo "<script>window.location.href='".Route::Link("authlogin","index","u=a_auth.php&l=".$l)."'</script>";
 }
 $row=Data::QueryData("cms_connect","","","","1","0")["querydata"][0];
     $id=$row["id"];
@@ -74,7 +75,7 @@ $row=Data::QueryData("cms_connect","","","","1","0")["querydata"][0];
 </div>
 <div class="items">
     <div id="qq">
-        <form action="?m=authlogin&u=a_auth.php&do=update&l=qq" method="post" id=form1 name=form1 onsubmit="return check();">
+        <form action="<?php echo Route::Link("authlogin","index","u=a_auth.php&do=update&l=qq")?>" method="post" id=form1 name=form1 onsubmit="return check();">
         <input type="hidden" name="id" value="<?php echo$id;?>" />
         <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tablebasic">
             <tr>
@@ -97,7 +98,7 @@ $row=Data::QueryData("cms_connect","","","","1","0")["querydata"][0];
         </form>
     </div>
     <div id="wb">
-        <form action="?m=authlogin&u=a_auth.php&do=update&l=wb" method="post" id=form2 name=form2 onsubmit="return check();">
+        <form action="<?php echo Route::Link("authlogin","index","u=a_auth.php&do=update&l=wb")?>" method="post" id=form2 name=form2 onsubmit="return check();">
         <input type="hidden" name="id" value="<?php echo$id;?>" />
         <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tablebasic">
             <tr>
@@ -120,7 +121,7 @@ $row=Data::QueryData("cms_connect","","","","1","0")["querydata"][0];
         </form>
     </div>
     <div id="ww">
-        <form action="?m=authlogin&u=a_auth.php&do=update&l=ww" method="post" id=form3 name=form3 onsubmit="return check();">
+        <form action="<?php echo Route::Link("authlogin","index","u=a_auth.php&do=update&l=ww")?>" method="post" id=form3 name=form3 onsubmit="return check();">
         <input type="hidden" name="id" value="<?php echo$id;?>" />
         <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tablebasic">
             <tr>
@@ -143,7 +144,7 @@ $row=Data::QueryData("cms_connect","","","","1","0")["querydata"][0];
         </form>
     </div>
     <div id="sm">
-        <form action="?m=authlogin&u=a_auth.php&do=update&l=sm" method="post" id=form4 name=form4 onsubmit="return check();">
+        <form action="<?php echo Route::Link("authlogin","index","u=a_auth.php&do=update&l=sm")?>" method="post" id=form4 name=form4 onsubmit="return check();">
         <input type="hidden" name="id" value="<?php echo$id;?>" />
         <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tablebasic">
             <tr>

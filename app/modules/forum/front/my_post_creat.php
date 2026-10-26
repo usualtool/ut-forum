@@ -32,8 +32,8 @@ if($_GET["do"]=="creat"){
     $look=Inc::SqlCheck($_POST["look"]);
     $title=Inc::SqlCheck($_POST["title"]);
     $content=Inc::SqlCheck($_POST["ut-editor"]);
-    $payfiles=Inc::SqlCheck($_POST["payfiles"]);
-    $files=implode(",",Inc::SqlChecks($_POST["files"]));
+    $payfiles=($_POST["payfiles"]==="")?0:Inc::SqlCheck($_POST["payfiles"]);
+    $files=implode(",",Inc::SqlCheck($_POST["files"]));
             $pid=Data::InsertData("forum_post",array(
             "uid"=>$uid,
             "fid"=>$fid,

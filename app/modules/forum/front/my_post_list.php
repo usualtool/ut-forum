@@ -4,7 +4,7 @@ require dirname(__FILE__).'/'.'session.php';
 use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
 use usualtool\Lib\Route;
-$pagelink="?m=".$m."&p=".$p;
+$pagelink="";
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);

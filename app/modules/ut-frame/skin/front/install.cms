@@ -62,7 +62,7 @@
                         })
                     </script>
                <{else if $do=="config"}>
-               <form action="?m=ut-frame&do=db-save" method="post" name="form">
+               <form action="<{url=>Link("ut-frame","index","do=db-save")}>" method="post" name="form">
                <div class="row">
                   <div class="form-group col-md-6">
                      <label for="email">应用域名/IP（请带HTTP）:</label>
@@ -126,7 +126,7 @@
                      }
                   }
                   }>
-                  <form action="?m=ut-frame&do=sql&t=db-sql" method="post" name="form">
+                  <form action="<{url=>Link("ut-frame","index","do=sql&t=db-sql")}>" method="post" name="form">
                   <button type="submit" class="btn btn-success">导入数据</button>
                   </form>
                   <{/if}>

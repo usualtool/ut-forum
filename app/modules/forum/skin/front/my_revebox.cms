@@ -28,7 +28,7 @@
                                 <td style="font-size:12px;"><{db=>QueryData("forum_member","username","id='".$rows["senduid"]."'","","")["querydata"][0]["username"]}></td>
                                 <td style="font-size:12px;"><{$rows->sendtime}></td>
                                 <td style="font-size:12px;"><{inc=>DeSqlCheck($rows["content"])}></td>
-                                <td><a href="?m=forum&p=my_message&reveuid=<{$rows->senduid}>">回复</a></td>
+                                <td><a href="<{url=>Link("forum","my_message","reveuid=".$rows["senduid"])}>">回复</a></td>
                         </tr>
                     <{/loop}>
                 </tbody>

@@ -1,7 +1,8 @@
 <?php
 use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
-$pagelink="?m=".$m."&p=".$p;
+use usualtool\Lib\Route;
+$pagelink="";
 $page=empty($_GET["page"]) ? 1 : $_GET["page"];
 $pagenum=10;
 $minid=$pagenum*($page-1);
@@ -16,11 +17,11 @@ if($_GET["do"]=="del"){
         $ids=implode("','",Inc::SqlCheck($_GET["id"]));
         $result=Data::DelData("cms_pay_log","id in ('$ids')");
         if(!$result):
-            Inc::GoUrl("?m=payment&p=log","删除失败!");
+            Inc::GoUrl(Route::Link("payment","log"),"删除失败!");
         else:
-            Inc::GoUrl("?m=payment&p=log","删除成功!");
+            Inc::GoUrl(Route::Link("payment","log"),"删除成功!");
         endif;
     else:
-        Inc::GoUrl("?m=payment&p=log","选中项为空!");
+        Inc::GoUrl(Route::Link("payment","log"),"选中项为空!");
     endif;
 }

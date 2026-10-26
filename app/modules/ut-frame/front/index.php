@@ -9,7 +9,7 @@ if(Inc::SearchFile(UTF_ROOT."/usualtool.lock")):
     $users=Data::QueryData("forum_member","","","creattime desc","0,10")["querydata"];
     $newtopic=Data::QueryData("forum_post","","close=0 and notice=0","posttime desc","0,5")["querydata"];
     $topstar=Data::QueryData("forum_member","","id in (Select uid from forum_post group by uid order by count(id) desc)","","0,3")["querydata"];
-    $pagelink="?m=".$m."&p=".$p;
+    $pagelink="";
     $page=empty($_GET["page"]) ? 1 : $_GET["page"];
         $pagenum=10;
     $minid=$pagenum*($page-1);
@@ -41,7 +41,7 @@ else:
            $info = preg_replace("/{$k}=(.*)/","{$k}={$v}",$info); 
        endforeach;
        file_put_contents(UTF_ROOT."/.ut.config",$info);
-       Inc::GoUrl("?m=ut-frame&do=sql","数据库配置成功!");
+       Inc::GoUrl(Route::Link("ut-frame","index","do=sql"),"数据库配置成功!");
     endif;
     $app->Runin(array("v","do"),array($v,$do));
     $app->Open("install.cms");
