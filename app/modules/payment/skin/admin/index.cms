@@ -22,7 +22,7 @@
 							<li class="nav-item">
 								支付设置
 							</li>
-							<li class="nav-item pl-3 pr-3">
+							<li class="nav-item">
                                 <{item=>$module,$backitem}>
                             </li>
 						</ul>

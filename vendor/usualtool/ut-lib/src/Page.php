@@ -253,39 +253,64 @@ class Page{
         $subPageCss1Str.="</ul></div>";
         return $subPageCss1Str; 
     }
+    private function CompactPages($size=3){ 
+        $nums=array(); 
+        $total=intval($this->pagenums); 
+        $current=intval($this->current_page); 
+        if($total<=0){ 
+            return $nums; 
+        } 
+        if($total<=$size){ 
+            for($i=1;$i<=$total;$i++){ 
+                $nums[]=$i; 
+            } 
+            return $nums; 
+        } 
+        $start=$current; 
+        if($start<1){ 
+            $start=1; 
+        } 
+        if($start+$size-1>$total){ 
+            $start=$total-$size+1; 
+        } 
+        for($i=0;$i<$size;$i++){ 
+            $nums[]=$start+$i; 
+        } 
+        return $nums; 
+    }
     /**
      * 分页类型2
      */
     function PageListTwo(){ 
-	    $subPageCss2Str="<div class='dataTables_paginate paging_simple_numbers'><ul class='pagination'>"; 
+	    $subPageCss2Str="<div class='dataTables_paginate paging_simple_numbers'><ul class='pagination ut-pager'>"; 
 	    $subPageCss2Str.="<li class='paginate_button page-item disabled'><a class='page-link ut-disabled'>".$this->_lang['current_page'] . $this->current_page."/" . $this->pagenums."</a></li>"; 
 	    if($this->current_page > 1){ 
 		    $firstPageUrl=$this->subpage_link."1"; 
 		    $prewPageUrl=$this->subpage_link.($this->current_page-1); 
-		    $subPageCss2Str.="<li class='paginate_button page-item'><a href='$firstPageUrl' class='page-link'>{$this->_lang['index_page']}</a></li>"; 
-		    $subPageCss2Str.="<li class='paginate_button page-item'><a href='$prewPageUrl' class='page-link'>{$this->_lang['pre_page']}</a></li>"; 
+		    $subPageCss2Str.="<li class='paginate_button page-item'><a href='$firstPageUrl' class='page-link ut-pager-link' title='".strip_tags($this->_lang['index_page'])."'>&laquo;</a></li>"; 
+		    $subPageCss2Str.="<li class='paginate_button page-item'><a href='$prewPageUrl' class='page-link ut-pager-link' title='".strip_tags($this->_lang['pre_page'])."'>&lsaquo;</a></li>"; 
 	    }else { 
-		    $subPageCss2Str.="<li class='paginate_button page-item disabled'><a class='page-link ut-disabled'>{$this->_lang['index_page']}</a></li>"; 
-		    $subPageCss2Str.="<li class='paginate_button page-item disabled'><a class='page-link ut-disabled'>{$this->_lang['pre_page']}</a></li>"; 
+		    $subPageCss2Str.="<li class='paginate_button page-item disabled'><a class='page-link ut-disabled' title='".strip_tags($this->_lang['index_page'])."'>&laquo;</a></li>"; 
+		    $subPageCss2Str.="<li class='paginate_button page-item disabled'><a class='page-link ut-disabled' title='".strip_tags($this->_lang['pre_page'])."'>&lsaquo;</a></li>"; 
 	    } 
-	    $a=$this->ConstructNumPage(); 
+	    $a=$this->CompactPages(3); 
 	    for($i=0;$i<count($a);$i++){ 
 		    $s=$a[$i]; 
 		    if($s == $this->current_page){ 
-		        $subPageCss2Str.="<li class='paginate_button page-item active'><a class='page-link'>{$s}</a></li>"; 
+		        $subPageCss2Str.="<li class='paginate_button page-item active'><a class='page-link ut-pager-link ut-pager-active'>{$s}</a></li>"; 
 		    }else{ 
 		        $url=$this->subpage_link.$s; 
-		        $subPageCss2Str.="<li class='paginate_button page-item'><a class='page-link' href='{$url}'>{$s}</a></li>"; 
+		        $subPageCss2Str.="<li class='paginate_button page-item'><a class='page-link ut-pager-link' href='{$url}'>{$s}</a></li>"; 
 		    } 
 	    } 
 	    if($this->current_page < $this->pagenums){ 
 		    $lastPageUrl=$this->subpage_link.$this->pagenums; 
 		    $nextPageUrl=$this->subpage_link.($this->current_page+1); 
-		    $subPageCss2Str.="<li class='paginate_button page-item'><a class='page-link' href='$nextPageUrl'>{$this->_lang['next_page']}</a></li>"; 
-		    $subPageCss2Str.="<li class='paginate_button page-item'><a class='page-link' href='$lastPageUrl'>{$this->_lang['last_page']}</a></li>"; 
+		    $subPageCss2Str.="<li class='paginate_button page-item'><a class='page-link ut-pager-link' href='$nextPageUrl' title='".strip_tags($this->_lang['next_page'])."'>&rsaquo;</a></li>"; 
+		    $subPageCss2Str.="<li class='paginate_button page-item'><a class='page-link ut-pager-link' href='$lastPageUrl' title='".strip_tags($this->_lang['last_page'])."'>&raquo;</a></li>"; 
 	    }else{ 
-		    $subPageCss2Str.="<li class='paginate_button page-item disabled'><a class='page-link ut-disabled'>{$this->_lang['next_page']}</a></li>"; 
-	        $subPageCss2Str.="<li class='paginate_button page-item disabled'><a class='page-link ut-disabled'>{$this->_lang['last_page']}</a></li>"; 
+		    $subPageCss2Str.="<li class='paginate_button page-item disabled'><a class='page-link ut-disabled' title='".strip_tags($this->_lang['next_page'])."'>&rsaquo;</a></li>"; 
+	        $subPageCss2Str.="<li class='paginate_button page-item disabled'><a class='page-link ut-disabled' title='".strip_tags($this->_lang['last_page'])."'>&raquo;</a></li>"; 
 	    } 
         $subPageCss2Str.="</ul></div>";
 	    return $subPageCss2Str; 

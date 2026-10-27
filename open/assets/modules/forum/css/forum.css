@@ -228,28 +228,38 @@ input.ut-button[type="file"]::file-selector-button {
 .card-category{
     font-size:13px;  
 }
+.ut-pager .page-item {
+	flex: 0 0 auto;
+}
+.ut-pager .page-link {
+	white-space: nowrap;
+	padding: 0.4rem 0.6rem;
+}
 @media(max-width:640px) {
-.none {
-	display:none;
-}
-#ut-auto{
-    width: 100%;
-    overflow: scroll;
-    white-space: nowrap;
-}
-.itemblock {
-	width:100%;
-	display:block;
-}
-#col-right {
-	position:inherit;
-	padding-right:0;
-	max-width:100%;
-}
-.dt-buttons {
-	display:none;
-}
-#ut-table_filter {
-	float:left;
-}
+	.none {
+		display:none;
+	}
+	#ut-auto{
+		width: 100%;
+		overflow: scroll;
+		white-space: nowrap;
+	}
+	.itemblock {
+		width:100%;
+		display:block;
+	}
+	#col-right {
+		position:inherit;
+		padding-right:0;
+		max-width:100%;
+	}
+	.dt-buttons {
+		display:none;
+	}
+	#ut-table_filter {
+		float:left;
+	}
+	.ut-pager .page-link {
+		padding: 0.4rem 0.5rem;
+	}
 }
