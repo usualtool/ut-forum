@@ -35,7 +35,7 @@ class Page{
         'current_show' => '<ut data-localize="l.currentpage">当前显示</ut>:', 
         'total_record' => '<ut data-localize="l.totalnum">总记录数</ut>:'
     ); 
-    function __construct($total_page,$current_page,$sub_pages=10,$subpage_link,$subpage_type=2){ 
+    function __construct($total_page,$current_page,$sub_pages,$subpage_link,$subpage_type=2){ 
         $this->Pager($total_page,$current_page,$sub_pages,$subpage_link,$subpage_type); 
     }
     /**

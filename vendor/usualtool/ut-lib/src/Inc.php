@@ -552,7 +552,7 @@ class Inc{
         if (is_null($chars)){
             $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         }  
-        mt_srand(10000000*(double)microtime());
+        mt_srand(10000000*(float)microtime());
         for($i = 0, $str = '', $lc = strlen($chars)-1; $i < $length; $i++){
             $str .= $chars[mt_rand(0, $lc)];
         }
@@ -731,7 +731,11 @@ class Inc{
             curl_setopt($curl, CURLOPT_ENCODING, "gzip" );
         }
         $output = curl_exec($curl);
-        curl_close($curl);
+        if(is_resource($curl)){
+            curl_close($curl);
+        }else{
+            unset($curl);
+        }
         return $output;
     }
     /**
@@ -750,7 +754,11 @@ class Inc{
                 curl_setopt($curl, CURLOPT_ENCODING, "gzip" );
             }
             $output = curl_exec($curl);
-            curl_close($curl);
+            if(is_resource($curl)){
+                curl_close($curl);
+            }else{
+                unset($curl);
+            }
             return $output;
         }else{
             $output=file_get_contents($url);
@@ -772,7 +780,6 @@ class Inc{
         curl_setopt($ch,CURLOPT_URL,$url);
         curl_exec($ch);
         return curl_getinfo($ch,CURLINFO_HTTP_CODE);
-        curl_close($ch);
     }
     /**
      * 获取当前域名（协议+域名+端口）
@@ -854,8 +861,13 @@ class Inc{
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);  
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);  
             $content = curl_exec($ch);  
-            curl_close($ch);  
-        } else {  
+            
+            if(is_resource($ch)){
+                curl_close($ch);
+            }else{
+                unset($ch);
+            }
+        }else{  
             ob_start();  
             readfile($url);  
             $content = ob_get_contents();  

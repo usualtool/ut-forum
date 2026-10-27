@@ -90,66 +90,68 @@ class Temp{
      */
     public function TempReplace($content){
         $pattern=array(
-        '/<\{\s*nav\s*=>\s*(.+?),(.+?)\s*\}>/i',
-        '/<\{\s*item\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
-        '/<\{\s*plugin\s*=>\s*(.+?)\s*\}>/i',
-        '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),"(.+?)",([0-9]*)\s*\}>/i',
-        '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),"(.+?)",all\s*\}>(.+?)<\{\s*\/split\s*\}>/is',
-        '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z0-9_\x7f-\xff]*),"(.+?)",([0-9]*)\s*\}>/i',
-        '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z0-9_\x7f-\xff]*),"(.+?)",all\s*\}>(.+?)<\{\s*\/split\s*\}>/is',
-        '/<\{\s*substr\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?),([0-9]*),([0-9]*)\s*\}>/i',
-        '/<\{\s*substr\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),([0-9]*),([0-9]*)\s*\}>/i',
-        '/<\{\s*(loop|foreach)\s*=>\s*\$(\S+)(\s*|\s*as\s*)\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>(.+?)<\{\s*\/(loop|foreach)\s*\}>/is',
-        '/<\{\s*(loop|foreach)\s*=>\s*\$(\S+)(\s*|\s*as\s*)\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->\$(\S+)\s*\}>(.+?)<\{\s*\/(loop|foreach)\s*\}>/is',
-        '/<\{\s*datatree\s*=>\s*([0-9]*),\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),(.+?)(\s*|\s*^[^,]*(?=,)\s*)\s*\}>/is',
-        '/<\{\s*lang\s*=>\s*set->(.+?),(.+?)\s*\}>/is',
-        '/<\{\s*lang\s*=>\s*(.+?)\s*\}>/i',
-        '/<\{\s*lang\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?)\s*\}>/i',
-        '/<\{\s*modlang\s*=>\s*(.+?)\s*\}>/i',
-        '/<\{\s*modlang\s*=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?)\s*\}>/i',
-        '/<\{\s*page\s*=>\s*(.+?),(.+?),(.+?),(.+?)\s*\}>/i',
-        '/<\{\s*pager\s*=>\s*(.+?),(.+?),(.+?),(.+?),([0-9]*)\s*\}>/i',
-        '/<\{\s*eval\s*=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
-        '/<\{\s*(get|GET)\s*=>\s*(.+?)\s*\}>/is',
-        '/<\{\s*(post|POST)\s*=>\s*(.+?)\s*\}>/is',
-        '/<\{\s*php\s*=>\s*(.+?)\s*\}>/is',
-        '/\s*return=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/i',
-        '/\s*return=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/i',
-        '/<\{\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*->\s*(.+?)\s*\}>/i',
-        '/<\{\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
-        '/<\{\s*else\s*\}>/i',
-        '/<\{\s*\/if\s*\}>/i'
+            '/<\{\s*nav\s*=>\s*(.+?),(.+?)\s*\}>/i',
+            '/<\{\s*item\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
+            '/<\{\s*plugin\s*=>\s*(.+?)\s*\}>/i',
+            '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),"(.+?)",([0-9]*)\s*\}>/i',
+            '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),"(.+?)",all\s*\}>(.+?)<\{\s*\/split\s*\}>/is',
+            '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z0-9_\x7f-\xff]*),"(.+?)",([0-9]*)\s*\}>/i',
+            '/<\{\s*split=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z0-9_\x7f-\xff]*),"(.+?)",all\s*\}>(.+?)<\{\s*\/split\s*\}>/is',
+            '/<\{\s*substr\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?),([0-9]*),([0-9]*)\s*\}>/i',
+            '/<\{\s*substr\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),([0-9]*),([0-9]*)\s*\}>/i',
+            '/<\{\s*(loop|foreach)\s*=>\s*\$(\S+)(\s*|\s*as\s*)\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>(.+?)<\{\s*\/(loop|foreach)\s*\}>/is',
+            '/<\{\s*(loop|foreach)\s*=>\s*\$(\S+)(\s*|\s*as\s*)\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->\$(\S+)\s*\}>(.+?)<\{\s*\/(loop|foreach)\s*\}>/is',
+            '/<\{\s*datatree\s*=>\s*([0-9]*),\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*),(.+?)(\s*|\s*^[^,]*(?=,)\s*)\s*\}>/is',
+            '/<\{\s*lang\s*=>\s*set->(.+?),(.+?)\s*\}>/is',
+            '/<\{\s*lang\s*=>\s*(.+?)\s*\}>/i',
+            '/<\{\s*lang\s*=>\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?)\s*\}>/i',
+            '/<\{\s*modlang\s*=>\s*(.+?)\s*\}>/i',
+            '/<\{\s*modlang\s*=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->(.+?)\s*\}>/i',
+            '/<\{\s*page\s*=>\s*(.+?),(.+?),(.+?),(.+?)\s*\}>/i',
+            '/<\{\s*pager\s*=>\s*(.+?),(.+?),(.+?),(.+?),([0-9]*)\s*\}>/i',
+            '/<\{\s*eval\s*=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
+            '/<\{\s*(get|GET)\s*=>\s*(.+?)\s*\}>/is',
+            '/<\{\s*(post|POST)\s*=>\s*(.+?)\s*\}>/is',
+            '/<\{\s*php\s*=>\s*(.+?)\s*\}>/is',
+            '/\s*return=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)->([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/i',
+            '/\s*return=>\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/i',
+            '/<\{\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)((?:\s*\[\s*["\']([0-9a-zA-Z_\x7f-\xff]*)["\']\s*\])+)\s*\}>/i',
+            '/<\{\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*->\s*(.+?)\s*\}>/i',
+            '/<\{\s*\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\}>/i',
+            '/<\{\s*else\s*\}>/i',
+            '/<\{\s*\/if\s*\}>/i'
         );
         $replacement=array(
-        '<?php if("${1}"=="null"):if(usualtool\Lib\Inc::IsHome()):echo"${2}";endif;else:if(usualtool\Lib\Inc::Contain("${1}",usualtool\Lib\Inc::CurPageUrl())):echo"${2}";endif;endif;?>',
-        '<?php echo"<div class=\"ut-item-menu\"><a class=\"ut-item-link\">Column</a><div class=\"ut-item-menu-small\">";$item=explode(",",$this->tplvars["${2}"]);for($i=0;$i<count($item);$i++):echo"<a class=\"ut-item-link-samll\" href=".usualtool\Lib\Route::Link($this->tplvars["${1}"],explode(":",$item[$i])[1]).">".explode(":",$item[$i])[0]."</a>";endfor;echo"</div></div>";?>',
-        '<?php $plugin=explode(",","${1}");usualtool\Lib\Inc::Plugin(...$plugin);?>',
-        '<?php $split=explode("${2}",$this->tplvars["${1}"]);echo $split[${3}];?>',
-        '<?php $${1}=explode("${2}",$this->tplvars["${1}"]);for($i=0;$i<count($${1});$i++){?>${3}<?php }?>',
-        '<?php $split=explode("${3}",$this->tplvars["${1}"]["${2}"]);echo $split[${4}];?>',
-        '<?php $${1}=explode("${3}",$this->tplvars["${1}"]["${2}"]);for($i=0;$i<count($${1});$i++){?>${4}<?php }?>',
-        '<?php echo usualtool\Lib\Inc::CutSubstr(usualtool\Lib\Inc::DeleteHtml($this->tplvars["${1}"]["${2}"]),${3},${4}); ?>',
-        '<?php echo usualtool\Lib\Inc::CutSubstr(usualtool\Lib\Inc::DeleteHtml($this->tplvars["${1}"]),${2},${3}); ?>',
-        '<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"]) { ?>${5}<?php }}?>',
-        '<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"] => $this->tplvars["${5}"]) { ?>${6}<?php }}?>', 
-        '<?php $tree=new usualtool\Lib\Tree();$tree->Init($this->tplvars["${2}"]);if(${1}==0):echo$tree->SubClass(${3},${4});elseif(${1}==1):$string="<option value=\\\$id \\\$selected \\\$disabled>\\\$spacer\\\$name</option>";echo$tree->GetTree(0,$string,${3},${4});elseif(${1}==2):$url=usualtool\Lib\Inc::ClearParam("id",usualtool\Lib\Inc::ClearParam("do",$_SERVER["QUERY_STRING"]));$string="<div class=\"ut-tree-menu\"><div class=\"ut-tree-left\" data-id=\\\$id data-name=\\\$name>\\\$spacer\\\$name</div><div class=\"ut-tree-right\"><a id=\'ut-tree-mon\' class=\'mr-2\' href=?".$url."&id=\\\$id&do=mon>Edit</a> <a id=\'ut-tree-del\' href=?".$url."&id=\\\$id&do=del>Del</a></div></div>";echo$tree->GetTree(0,$string,${3});endif;?>',
-        '<?php echo usualtool\Lib\Lang::LangSet("${1}",${2});?>',
-        '<?php echo usualtool\Lib\Lang::LangData("${1}");?>',
-        '<?php echo usualtool\Lib\Lang::LangData($this->tplvars["${1}"]["${2}"]);?>',
-        '<?php if(usualtool\Lib\Inc::Contain(",","${1}")):$langdata=explode(",","${1}");echo usualtool\Lib\Lang::ModLangData($langdata[0],$langdata[1]);else:echo usualtool\Lib\Lang::ModLangData("${1}");endif;?>',
-        '<?php echo usualtool\Lib\Lang::ModLangData($this->tplvars["${1}"]["${2}"]);?>',
-        '<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],2);echo$Page->ShowPager();?>',
-        '<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],${5});echo$Page->ShowPager();?>',
-        '<?php eval("?>".preg_replace("/^\\s*\\?>/","",$this->tplvars["${1}"]));?>',
-        '<?php echo$_GET["${2}"];?>',
-        '<?php echo$_POST["${2}"];?>',
-        '<?php ${1}?>',
-        '$this->tplvars["${1}"]["${2}"]',
-        '$this->tplvars["${1}"]',
-        '<?php echo $this->tplvars["${1}"]["${2}"]; ?>',
-        '<?php echo $this->tplvars["${1}"]; ?>',
-        '<?php }else{?>',
-        '<?php }?>'        
+            '<?php if("${1}"=="null"):if(usualtool\Lib\Inc::IsHome()):echo"${2}";endif;else:if(usualtool\Lib\Inc::Contain("${1}",usualtool\Lib\Inc::CurPageUrl())):echo"${2}";endif;endif;?>',
+            '<?php echo"<div class=\"ut-item-menu\"><a class=\"ut-item-link\">Column</a><div class=\"ut-item-menu-small\">";$item=explode(",",$this->tplvars["${2}"]);for($i=0;$i<count($item);$i++):echo"<a class=\"ut-item-link-samll\" href=".usualtool\Lib\Route::Link($this->tplvars["${1}"],explode(":",$item[$i])[1]).">".explode(":",$item[$i])[0]."</a>";endfor;echo"</div></div>";?>',
+            '<?php $plugin=explode(",","${1}");usualtool\Lib\Inc::Plugin(...$plugin);?>',
+            '<?php $split=explode("${2}",$this->tplvars["${1}"]);echo $split[${3}];?>',
+            '<?php $${1}=explode("${2}",$this->tplvars["${1}"]);for($i=0;$i<count($${1});$i++){?>${3}<?php }?>',
+            '<?php $split=explode("${3}",$this->tplvars["${1}"]["${2}"]);echo $split[${4}];?>',
+            '<?php $${1}=explode("${3}",$this->tplvars["${1}"]["${2}"]);for($i=0;$i<count($${1});$i++){?>${4}<?php }?>',
+            '<?php echo usualtool\Lib\Inc::CutSubstr(usualtool\Lib\Inc::DeleteHtml($this->tplvars["${1}"]["${2}"]),${3},${4}); ?>',
+            '<?php echo usualtool\Lib\Inc::CutSubstr(usualtool\Lib\Inc::DeleteHtml($this->tplvars["${1}"]),${2},${3}); ?>',
+            '<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"]) { ?>${5}<?php }}?>',
+            '<?php if(empty($this->tplvars["${2}"])!=true){foreach($this->tplvars["${2}"] as $this->tplvars["${4}"] => $this->tplvars["${5}"]) { ?>${6}<?php }}?>', 
+            '<?php $tree=new usualtool\Lib\Tree();$tree->Init($this->tplvars["${2}"]);if(${1}==0):echo$tree->SubClass(${3},${4});elseif(${1}==1):$string="<option value=\\\$id \\\$selected \\\$disabled>\\\$spacer\\\$name</option>";echo$tree->GetTree(0,$string,${3},${4});elseif(${1}==2):$url=usualtool\Lib\Inc::ClearParam("id",usualtool\Lib\Inc::ClearParam("do",$_SERVER["QUERY_STRING"]));$string="<div class=\"ut-tree-menu\"><div class=\"ut-tree-left\" data-id=\\\$id data-name=\\\$name>\\\$spacer\\\$name</div><div class=\"ut-tree-right\"><a id=\'ut-tree-mon\' class=\'mr-2\' href=?".$url."&id=\\\$id&do=mon>Edit</a> <a id=\'ut-tree-del\' href=?".$url."&id=\\\$id&do=del>Del</a></div></div>";echo$tree->GetTree(0,$string,${3});endif;?>',
+            '<?php echo usualtool\Lib\Lang::LangSet("${1}",${2});?>',
+            '<?php echo usualtool\Lib\Lang::LangData("${1}");?>',
+            '<?php echo usualtool\Lib\Lang::LangData($this->tplvars["${1}"]["${2}"]);?>',
+            '<?php if(usualtool\Lib\Inc::Contain(",","${1}")):$langdata=explode(",","${1}");echo usualtool\Lib\Lang::ModLangData($langdata[0],$langdata[1]);else:echo usualtool\Lib\Lang::ModLangData("${1}");endif;?>',
+            '<?php echo usualtool\Lib\Lang::ModLangData($this->tplvars["${1}"]["${2}"]);?>',
+            '<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],2);echo$Page->ShowPager();?>',
+            '<?php $Page=new usualtool\Lib\Page($this->tplvars["${1}"],$this->tplvars["${2}"],$this->tplvars["${3}"],$this->tplvars["${4}"],${5});echo$Page->ShowPager();?>',
+            '<?php eval("?>".preg_replace("/^\\s*\\?>/","",$this->tplvars["${1}"]));?>',
+            '<?php echo$_GET["${2}"];?>',
+            '<?php echo$_POST["${2}"];?>',
+            '<?php ${1}?>',
+            '$this->tplvars["${1}"]["${2}"]',
+            '$this->tplvars["${1}"]',
+            '<?php echo $this->tplvars["${1}"]${2}; ?>',
+            '<?php echo $this->tplvars["${1}"]["${2}"]; ?>',
+            '<?php echo $this->tplvars["${1}"]; ?>',
+            '<?php }else{?>',
+            '<?php }?>'
         );
         $content=preg_replace_callback(
             "/<\{\s*include\s+[\"\'](.+?)[\"\']?\s*\}>/i",
@@ -157,7 +159,7 @@ class Temp{
                 $rule='/\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/i';
                 if(Inc::Contain("$",$matches[1])){
                     preg_match($rule,$matches[1],$matche);
-                    $tempurl=preg_replace($rule,$this->tplvars[$matche[1]],$matches[1]);
+                    $tempurl=preg_replace($rule,(string)($this->tplvars[$matche[1]] ?? ''),$matches[1]);
                     return file_get_contents($tempurl);
                 }else{
                     return file_get_contents($this->tempdir."$matches[1]");
@@ -192,11 +194,16 @@ class Temp{
             },
             $content
         );
-        $repcontent=preg_replace($pattern,$replacement,$content);
-        if(preg_match('/<\{([^(\}>)]{1,})\}>/',$repcontent)){
-            $repcontent=$this->TempReplace($repcontent);
+        $req=preg_replace($pattern,$replacement,$content);
+        if(preg_match('/<\{([^(\}>)]{1,})\}>/',$req)){
+            static $depth=0;
+            if($depth<10){
+                $depth++;
+                $req=$this->TempReplace($req);
+                $depth--;
+            }
         }
-        return $repcontent;
+        return $req;
     }
     /**
      * 标签转换

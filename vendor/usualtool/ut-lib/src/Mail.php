@@ -26,7 +26,7 @@ class Mail{
     public $debug;
     public $logfile;
     private $sock;
-    public function __construct($host,$port=25,$auth=false,$user,$pass){
+    public function __construct($host,$port,$auth,$user,$pass){
         $this->relayhost = $host;
         $this->hostname = "localhost";
         $this->port = $port;
@@ -39,7 +39,7 @@ class Mail{
         $this->logfile = "";
         $this->sock = FALSE;
     }
-    public function SendMail($to,$from,$subject="",$body="",$mailtype,$cc="",$bcc="",$additional_headers =""){
+    public function SendMail($to,$from,$subject,$body,$mailtype,$cc="",$bcc="",$additional_headers=""){
         $mailfrom = $this->GetAddress($this->StripComment($from));
         $body = preg_replace("/(^|(\r\n))(\.)/", "\1.\3", $body);
         $header = "MIME-Version:1.0\r\n";

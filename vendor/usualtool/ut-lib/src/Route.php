@@ -160,7 +160,7 @@ class Route{
         $m = empty($module) ? $config["DEFAULT_MOD"] : $module;
         $m = self::Alias($m);
         $p = empty($page) ? $config["DEFAULT_PAGE"] : str_replace(".php","",$page);
-        $dev = (strpos($_SERVER["REQUEST_URI"],$config["DEVELOP"])===0);
+        $dev = (strpos(($_SERVER["REQUEST_URI"] ?? ''),($config["DEVELOP"] ?? ''))===0);
         if($entry==="front"){$dev=false;}
         if($entry==="admin"){$dev=true;}
         $place = $dev ? $config["DEVELOP"] : "";

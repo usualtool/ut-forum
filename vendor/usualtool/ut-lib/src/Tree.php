@@ -281,7 +281,7 @@ class Tree{
      * @param string $titlink 内容链接前缀
      * @return string
      */
-    public function SubClassList($id='0',$catlink,$table,$catfield,$titfield,$querynum='5',$titlink=''){
+    public function SubClassList($id,$catlink,$table,$catfield,$titfield,$querynum='5',$titlink=''){
         if(strpos($catlink,'?')!==false){
             $catlink=str_replace("&&&","&",str_replace("&&","&",$catlink."&"));
         }else{
@@ -322,7 +322,7 @@ class Tree{
      * @param string $titlink 内容链接前缀
      * @return string
      */
-    public function SubDataList($id='0',$table,$catfield,$titfield,$querynum='5',$titlink=''){
+    public function SubDataList($id,$table,$catfield,$titfield,$querynum='5',$titlink=''){
         if(strpos($titlink,'?')!==false){
             $titlink=str_replace("&&&","&",str_replace("&&","&",$titlink."&"));
         }else{
