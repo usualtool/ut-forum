@@ -26,6 +26,10 @@ class Mysql{
      * 连接Mysqli
      */    
     public static function GetMysql(){
+        static $db=null;
+        if($db instanceof \mysqli){
+            return $db;
+        }
         $config=self::GetConfig();
         if(empty($config["MYSQL_DB"]) || empty($config["MYSQL_USER"])){
             $msg="请检查.ut.config Mysql数据库配置";
@@ -77,12 +81,12 @@ class Mysql{
      * @return bool
      */
     public static function ModTable($table){
-        $db=self::GetMysql();
-        if(mysqli_num_rows($db->query("SHOW TABLES LIKE '". $table."'"))==1){
-            return true;
-        }else{
-            return false;
+        static $mods=array();
+        if(!isset($mods[$table])){
+            $db=self::GetMysql();
+            $mods[$table]=mysqli_num_rows($db->query("SHOW TABLES LIKE '". $table."'"))==1 ? true : false;
         }
+        return $mods[$table];
     }
     /**
      * Mysqli批量任务

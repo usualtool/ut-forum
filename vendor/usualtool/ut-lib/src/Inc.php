@@ -519,7 +519,7 @@ class Inc{
     public static function Auth($api){
         $config=self::GetConfig();
         $file=UTF_ROOT."/log/auth/".$api.".log";
-        $cache=in_array($api,array("module","plugin","temp","app","message","language","robot"))?true:false;
+        $cache=in_array($api,array("module","plugin","temp","app","message","language","robot","moduleorder","pluginorder","temporder","apporder")) ? true : false;
         if($cache && is_file($file) && (time()-filemtime($file))<86400){
             $content=file_get_contents($file);
         }else{
@@ -675,8 +675,11 @@ class Inc{
      * @param string $str 字符串
      */
     public static function StrSubstr($start,$end,$str){
-        $temp = explode($start, $str, 2);
-        $content = explode($end, $temp[1], 2);
+        $temp=explode((string)$start,(string)$str,2);
+        if(!isset($temp[1])){
+            return "";
+        }
+        $content = explode((string)$end,$temp[1],2);
         return $content[0];
     }
     /**
