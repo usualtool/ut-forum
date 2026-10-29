@@ -13,6 +13,16 @@ use \PayPal\Api\Payment;
 use \PayPal\Exception\PayPalConnectionException;
 $lb=Inc::SqlCheck($_GET["lb"]);
 $posnum=Inc::SqlCheck($_GET["posnum"]);
+$payset=Data::QueryData("cms_pay","","","","1")["querydata"][0];
+if($lb=="alipay" && (empty($payset["ali_appid"]) || empty($payset["ali_private_key"]) || empty($payset["ali_public_key"]))):
+    Inc::GoUrl(Route::Link("takeout"),"Alipay ERROR!");
+endif;
+if($lb=="wechat" && (empty($payset["wx_appid"]) || empty($payset["wx_mchid"]) || empty($payset["wx_key"]))):
+    Inc::GoUrl(Route::Link("takeout"),"Wechat ERROR!");
+endif;
+if($lb=="paypal" && (empty($payset["pp_clientid"]) || empty($payset["pp_secret"]))):
+    Inc::GoUrl(Route::Link("takeout"),"Paypal ERROR!");
+endif;
 if($lb=="alipay"):
     require_once MODULE_PATH.'/payment/alipay/Config.php';
     $amount=Data::QueryData("cms_pay_log","amount","posnum='$posnum'","","")["querydata"][0]["amount"];
@@ -156,7 +166,7 @@ elseif($lb=="wechat"):
 						echo '    <script>' . "\n";
 						echo '    $(function(){setInterval(function(){check()}, 5000);})' . "\n";
 						echo '        function check(){' . "\n";
-						echo '            var url = "' . Route::Link("payment","query","lb=wechat") . '";' . "\n";
+						echo '            var url = Route::Link("payment", "query", "lb=wechat");' . "\n";
 						echo '            var param = {\'out_trade_no\':\'' . $posnum . '\'};' . "\n";
 						echo '            $.post(url, param, function(data){' . "\n";
 						echo '                data = JSON.parse(data);' . "\n";
@@ -178,7 +188,7 @@ elseif($lb=="wechat"):
 						echo '<body>' . "\n";
 						echo '<div style="margin:0 auto;width:80%;font-size:18px;text-align:center;padding:10% 0;">' . "\n";
 						echo '    <p>支付订单:' . $posnum . '</p>' . "\n";
-						echo '    <p><img alt="Qrcode Pay" src="' . Route::Link("payment","qrcode","data=".urlencode($url2)) . '" style="width:200px;height:200px;"/></p>' . "\n";
+						echo '    <p><img alt="Qrcode Pay" src=Route::Link("payment", "qrcode", "data=' . urlencode($url2) . '") style="width:200px;height:200px;"/></p>' . "\n";
 						echo '</div>' . "\n";
 						echo '</body>' . "\n";
 						echo '</html>';
@@ -211,7 +221,7 @@ elseif($lb=="paypal"):
 				->setDescription("Pay ".$pay["posnum"]."")
 				->setInvoiceNumber($pay["posnum"]);
 		$redirectUrls = new RedirectUrls();
-		$redirectUrls->setReturnUrl(SITE_URL.Route::Link("payment","return","lb=paypal&success=true"))->setCancelUrl(SITE_URL.Route::Link("payment","return","lb=paypal&success=false"));
+		$redirectUrls->setReturnUrl(SITE_URL.Route::Link("payment", "return", "lb=paypal&success=true"))->setCancelUrl(SITE_URL.Route::Link("payment", "return", "lb=paypal&success=false"));
 		$payment = new Payment();
 		$payment->setIntent('sale')
 				->setPayer($payer)

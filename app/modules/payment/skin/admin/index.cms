@@ -34,23 +34,23 @@
                                 <div class="card-body">
 									<ul class="nav nav-pills nav-secondary" id="pills-tab" role="tablist">
 										<li class="nav-item submenu">
-											<a class="nav-link <{if empty($l) || $l=="alipay"}>active show<{/if}>" href="<{url=>Link($module,"index","l=alipay")}>" role="tab" aria-controls="alipay" aria-selected="true">支付宝接口</a>
+											<a class="nav-link <{if empty($l) || $l=="alipay"}>active show<{/if}>" href="<{url=>Link($module, "", "l=alipay")}>" role="tab" aria-controls="alipay" aria-selected="true">支付宝接口</a>
 										</li>
                                         <li class="nav-item submenu">
-											<a class="nav-link <{if $l=="wechat"}>active show<{/if}>" href="<{url=>Link($module,"index","l=wechat")}>" role="tab" aria-controls="wechat" aria-selected="false">微信接口</a>
+											<a class="nav-link <{if $l=="wechat"}>active show<{/if}>" href="<{url=>Link($module, "", "l=wechat")}>" role="tab" aria-controls="wechat" aria-selected="false">微信接口</a>
 										</li>
                                         <li class="nav-item submenu">
-											<a class="nav-link <{if $l=="paypal"}>active show<{/if}>" href="<{url=>Link($module,"index","l=paypal")}>" role="tab" aria-controls="paypal" aria-selected="false">贝宝接口</a>
+											<a class="nav-link <{if $l=="paypal"}>active show<{/if}>" href="<{url=>Link($module, "", "l=paypal")}>" role="tab" aria-controls="paypal" aria-selected="false">贝宝接口</a>
 										</li>
                                         <li class="nav-item submenu">
-											<a class="nav-link <{if $l=="url"}>active show<{/if}>" href="<{url=>Link($module,"index","l=url")}>" role="tab" aria-controls="url" aria-selected="false">跳转地址</a>
+											<a class="nav-link <{if $l=="url"}>active show<{/if}>" href="<{url=>Link($module, "", "l=url")}>" role="tab" aria-controls="url" aria-selected="false">跳转地址</a>
 										</li>
 									</ul>
 							<{loop=>$data $row}>
 							<div class="tab-content mt-2 mb-3" id="pills-tabContent">
 								<{if empty($l) || $l=="alipay"}>
 								<div class="tab-pane fade active show" id="alipay" role="tabpanel" aria-labelledby="alipay-tab">
-								<form action="<{url=>Link("payment","index","do=update&l=alipay")}>" method="post" name="alipay">
+								<form action="<{url=>Link("payment", "", "do=update"."&"."l=alipay")}>" method="post" name="alipay">
 									<input type="hidden" name="id" value="<{$row->id}>">
 									<div class="row form-group">
 									    <div class="col-md-6 form-floating-label">
@@ -73,11 +73,11 @@
 									<div class="row form-group">
 									    <div class="col-md-6 form-floating-label">
                                         <label>同步通知地址</label>
-										<input type="text" class="form-control input-square" name="ali_return_url" value="<{if empty($row["ali_return_url"])}><{$appurl}><{url=>Link("payment","return","lb=alipay")}><{else}><{$row->ali_return_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="ali_return_url" value="<{if empty($row["ali_return_url"])}><{$appurl}><{url=>Link("payment", "return", "lb=alipay")}><{else}>$row["ali_return_url"]<{/if}>">
 										</div>
 									    <div class="col-md-6 form-floating-label">
                                         <label>异步通知地址</label>
-										<input type="text" class="form-control input-square" name="ali_notify_url" value="<{if empty($row["ali_notify_url"])}><{$appurl}><{url=>Link("payment","notify","lb=alipay")}><{else}><{$row->ali_notify_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="ali_notify_url" value="<{if empty($row["ali_notify_url"])}><{$appurl}><{url=>Link("payment", "notify", "lb=alipay")}><{else}>$row["ali_notify_url"]<{/if}>">
 										</div>
                                     </div>
                                     <div class="card-action p-2">
@@ -87,7 +87,7 @@
 								</div>
                                 <{else if $l=="wechat"}>
 								<div class="tab-pane active show" id="wechat" role="tabpanel" aria-labelledby="wechat-tab">
-								<form action="<{url=>Link("payment","index","do=update&l=wechat")}>" method="post" name="wechat">
+								<form action="<{url=>Link("payment", "", "do=update"."&"."l=wechat")}>" method="post" name="wechat">
 									<input type="hidden" name="id" value="<{$row->id}>">
                                     <div class="row form-group">
 									    <div class="col-md-6 form-floating-label">
@@ -112,7 +112,7 @@
 										</div>
                                         <div class="col-md-6 form-floating-label">
                                         <label>异步通知地址</label>
-										<input type="text" class="form-control input-square" name="wx_notify_url" value="<{if empty($row["wx_notify_url"])}><{$appurl}><{url=>Link("payment","notify","lb=wechat")}><{else}><{$row->wx_notify_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="wx_notify_url" value="<{if empty($row["wx_notify_url"])}><{$appurl}><{url=>Link("payment", "notify", "lb=wechat")}><{else}>$row["wx_notify_url"]<{/if}>">
 										</div>
                                     </div>
                                     <div class="card-action p-2">
@@ -122,7 +122,7 @@
 								</div>
                                 <{else if $l=="paypal"}>
 								<div class="tab-pane active show" id="paypal" role="tabpanel" aria-labelledby="paypal-tab">
-                                <form action="<{url=>Link("payment","index","do=update&l=paypal")}>" method="post" name="paypal">
+                                <form action="<{url=>Link("payment", "", "do=update"."&"."l=paypal")}>" method="post" name="paypal">
 									<input type="hidden" name="id" value="<{$row->id}>">
 									<div class="row form-group">
                                         <div class="col-md-6">
@@ -150,11 +150,11 @@
 									<div class="row form-group">
 									    <div class="col-md-6 form-floating-label">
                                         <label>同步通知地址</label>
-										<input type="text" class="form-control input-square" name="pp_return_url" value="<{if empty($row["pp_return_url"])}><{$appurl}><{url=>Link("payment","return","lb=paypal")}><{else}><{$row->pp_return_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="pp_return_url" value="<{if empty($row["pp_return_url"])}><{$appurl}><{url=>Link("payment", "return", "lb=paypal")}><{else}>$row["pp_return_url"]<{/if}>">
 										</div>
 									    <div class="col-md-6 form-floating-label">
                                         <label>异步通知地址</label>
-										<input type="text" class="form-control input-square" name="pp_notify_url" value="<{if empty($row["pp_notify_url"])}><{$appurl}><{url=>Link("payment","notify","lb=paypal")}><{else}><{$row->pp_notify_url}><{/if}>">
+										<input type="text" class="form-control input-square" name="pp_notify_url" value="<{if empty($row["pp_notify_url"])}><{$appurl}><{url=>Link("payment", "notify", "lb=paypal")}><{else}>$row["pp_notify_url"]<{/if}>">
 										</div>
                                     </div>
                                     <div class="card-action p-2">
@@ -164,7 +164,7 @@
 								</div>
 								<{else if $l=="url"}>
 								<div class="tab-pane active show" id="url" role="tabpanel" aria-labelledby="url-tab">
-                                <form action="<{url=>Link("payment","index","do=update&l=url")}>" method="post" name="url">
+                                <form action="<{url=>Link("payment", "", "do=update"."&"."l=url")}>" method="post" name="url">
 									<input type="hidden" name="id" value="<{$row->id}>">
 									<div class="row form-group">
 									    <div class="col-md-6 form-floating-label">

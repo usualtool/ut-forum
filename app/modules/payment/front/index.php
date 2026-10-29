@@ -21,11 +21,11 @@ $result=Data::InsertData("cms_pay_log",array(
     "postime"=>date('Y-m-d H:i:s',time())));  
 if($result){
     if($form==1 || $form=="alipay"){
-        Inc::GoUrl(Route::Link("payment","pay","lb=alipay&posnum=".$posnum),"");   
+        Inc::GoUrl(Route::Link("payment", "pay", "lb=alipay&posnum=".$posnum),"");   
     }elseif($form==2 || $form=="wechat"){
-        Inc::GoUrl(Route::Link("payment","pay","lb=wechat&posnum=".$posnum),"");   
+        Inc::GoUrl(Route::Link("payment", "pay", "lb=wechat&posnum=".$posnum),"");   
     }elseif($form==3 || $form=="paypal"){
-        Inc::GoUrl(Route::Link("payment","pay","lb=paypal&posnum=".$posnum),"");
+        Inc::GoUrl(Route::Link("payment", "pay", "lb=paypal&posnum=".$posnum),"");
     }
 }else{
     Inc::GoUrl("","支付错误,请重试!");

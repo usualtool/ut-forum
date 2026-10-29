@@ -91,11 +91,11 @@ elseif($lb=="wechat"):
 						set_time_limit(0);
 						$data = curl_exec($ch);
 						if ($data) {
-								curl_close($ch);
+								if(PHP_VERSION_ID < 80000) curl_close($ch);
 								return $data;
 						} else {
 								$error = curl_errno($ch);
-								curl_close($ch);
+								if(PHP_VERSION_ID < 80000) curl_close($ch);
 								throw new WxPayException("curl 出错，错误码:$error");
 						}
 				}

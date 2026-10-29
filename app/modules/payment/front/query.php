@@ -41,9 +41,6 @@ if($lb=="alipay"):
 		endif;
 elseif($lb=="wechat"):
     require_once MODULE_PATH.'/payment/wechat/lib/WxPay.Api.php';
-    require_once MODULE_PATH.'/payment/wechat/Log.php';
-    $logHandler= new CLogFileHandler("../logs/wechat_".date('Y-m-d').'.log');
-    $log = Log::Init($logHandler, 15);
     if(isset($_REQUEST["transaction_id"]) && $_REQUEST["transaction_id"] != ""):
         $transaction_id = Inc::SqlCheck($_REQUEST["transaction_id"]);
         $input = new WxPayOrderQuery();

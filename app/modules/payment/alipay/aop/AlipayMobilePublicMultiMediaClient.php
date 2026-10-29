@@ -7,7 +7,7 @@
  */
 
 //namespace alipay\api ;
-require_once dirname(__FILE__)."/AlipayMobilePublicMultiMediaExecute.php");
+require_once dirname ( __FILE__ ).'/AlipayMobilePublicMultiMediaExecute.php';
 class AlipayMobilePublicMultiMediaClient{
 
     private				$DEFAULT_CHARSET = 'UTF-8';
@@ -90,7 +90,7 @@ class AlipayMobilePublicMultiMediaClient{
 
 		$output = curl_exec($ch);
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch);
+		if(PHP_VERSION_ID < 80000) curl_close($ch);
 
 		echo $output;
 

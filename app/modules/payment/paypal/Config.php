@@ -1,5 +1,5 @@
 <?php
-require "lib/autoload.php";
+require dirname( __FILE__ )."/lib/autoload.php";
 use usualtool\Lib\Data;
 $set=Data::QueryData("cms_pay","","","","1")["querydata"][0];
 define('SITE_URL',$config["APPURL"]);

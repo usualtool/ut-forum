@@ -79,9 +79,9 @@ if($_GET["do"]=="update"){
         endif;
     }
     if($sql):
-        Inc::GoUrl(Route::Link("payment","index","l=".$l),"操作成功!");
+        Inc::GoUrl(Route::Link("payment", "", "l=".$l),"操作成功!");
     else:
-        Inc::GoUrl(Route::Link("payment","index","l=".$l),"操作失败!");
+        Inc::GoUrl(Route::Link("payment", "", "l=".$l),"操作失败!");
     endif;
 }
 $app->Open("index.cms");

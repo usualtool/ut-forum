@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__)."/lib/WxPay.Api.php";
+require_once dirname( __FILE__ )."/lib/WxPay.Api.php";
 /**
  * 
  * JSAPI支付实现类
@@ -109,7 +109,7 @@ class JsApiPay
 		}
 		//运行curl，结果以jason形式返回
 		$res = curl_exec($ch);
-		curl_close($ch);
+		if(PHP_VERSION_ID < 80000) curl_close($ch);
 		//取出openid
 		$data = json_decode($res,true);
 		$this->data = $data;

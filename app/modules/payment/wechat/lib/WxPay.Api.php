@@ -556,11 +556,11 @@ class WxPayApi
 		$data = curl_exec($ch);
 		//返回结果
 		if($data){
-			curl_close($ch);
+			if(PHP_VERSION_ID < 80000) curl_close($ch);
 			return $data;
 		} else { 
 			$error = curl_errno($ch);
-			curl_close($ch);
+			if(PHP_VERSION_ID < 80000) curl_close($ch);
 			throw new WxPayException("curl出错，错误码:$error");
 		}
 	}

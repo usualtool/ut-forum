@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__)."/AopEncrypt.php";
+require_once dirname ( __FILE__ ).'/AopEncrypt.php';
 
 class AopClient {
 	//应用ID
@@ -239,7 +239,7 @@ class AopClient {
 			}
 		}
 
-		curl_close($ch);
+		if(PHP_VERSION_ID < 80000) curl_close($ch);
 		return $reponse;
 	}
 

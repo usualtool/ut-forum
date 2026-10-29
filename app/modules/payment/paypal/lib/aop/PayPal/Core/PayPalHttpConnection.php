@@ -145,7 +145,7 @@ class PayPalHttpConnection
                 curl_error($ch),
                 curl_errno($ch)
             );
-            curl_close($ch);
+            if(PHP_VERSION_ID < 80000) curl_close($ch);
             throw $ex;
         }
 
@@ -162,7 +162,7 @@ class PayPalHttpConnection
         $this->logger->debug("Response Headers\t: " . str_replace("\r\n", ", ", $responseHeaders));
 
         //Close the curl request
-        curl_close($ch);
+        if(PHP_VERSION_ID < 80000) curl_close($ch);
 
         //More Exceptions based on HttpStatus Code
         if (in_array($httpStatus, self::$retryCodes)) {
