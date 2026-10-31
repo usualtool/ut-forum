@@ -1,20 +1,16 @@
 <?php
-use usualtool\Lib\Data;
-$set=Data::QueryData("forum_set","","","","1")["querydata"];
-$cookname=$set[0]["cookname"];
-if(isset($_SESSION[$cookname."uid"]) && isset($_SESSION[$cookname."username"])):
-    $uid=$_SESSION[$cookname."uid"];
-    $username=$_SESSION[$cookname."username"];
-    $user=Data::QueryData("forum_member","","id='$uid'","","")["querydata"];
-    $utype=$user[0]["utype"];
-    $money=$user[0]["money"];
-    $app->Runin(
-        array("rate","user","uid","utype","username","money","avatar"),
-        array($set[0]["rate"],$user,$user[0]["id"],$utype,$user[0]["username"],$money,$user[0]["avatar"])
-    );
-else:
-    $app->Runin(
-        array("rate","user","uid","utype","username","money","avatar"),
-        array($set[0]["rate"],"","0","0","","0","")
-    );
-endif;
+namespace Controller\Forum\Front;
+use Model\Forum\Session as SessionModel;
+class Session{
+    public function __call($name,$args){
+        $this->index();
+    }
+    public function index(){
+        global $app;
+        $session=(new SessionModel())->Check();
+        $app->Runin(
+            array("rate","user","uid","utype","username","money","avatar"),
+            array($session["rate"],$session["user"],$session["uid"],$session["utype"],$session["username"],$session["money"],$session["avatar"])
+        );
+    }
+}

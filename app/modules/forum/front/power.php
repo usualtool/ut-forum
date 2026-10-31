@@ -1,8 +1,16 @@
 <?php
+namespace Controller\Forum\Front;
 use usualtool\Lib\Inc;
-use usualtool\Lib\Data;
 use usualtool\Lib\Route;
-$cookname=Data::QueryData("forum_set","","","","1")["querydata"][0]["cookname"];
-if(!isset($_SESSION[$cookname."uid"]) || !isset($_SESSION[$cookname."username"])):
-    Inc::GoUrl(Route::Link("forum","login","goto=".urlencode(base64_encode(Inc::CurPageUrl()))),"请登陆!");
-endif;
+use Model\Forum\Power as PowerModel;
+class Power{
+    public function __call($name,$args){
+        $this->index();
+    }
+    public function index(){
+        $power=(new PowerModel())->Check();
+        if(empty($power["login"])):
+            Inc::GoUrl(Route::Link("forum","login","goto=".urlencode(base64_encode(Inc::CurPageUrl()))),"请登陆!");
+        endif;
+    }
+}

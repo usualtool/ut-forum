@@ -3,7 +3,7 @@
         'name' => 'usualtool/framework',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'a18bd75307e5586006b2ec2742791028819bbd0e',
+        'reference' => 'ff7097467f2af4f5a6955b973b6324510e501839',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'usualtool/framework' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'a18bd75307e5586006b2ec2742791028819bbd0e',
+            'reference' => 'ff7097467f2af4f5a6955b973b6324510e501839',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

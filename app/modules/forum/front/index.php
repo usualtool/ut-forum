@@ -1,20 +1,35 @@
 <?php
-require dirname(__FILE__).'/'.'session.php';
-use usualtool\Lib\Data;
-$notice=Data::QueryData("forum_post","","close=0 and notice=1","posttime desc","")["querydata"];
-$forum=Data::QueryData("forum","","bid=0","forum_number desc","")["querydata"];
-$users=Data::QueryData("forum_member","","","creattime desc","0,10")["querydata"];
-$newtopic=Data::QueryData("forum_post","","close=0 and notice=0","posttime desc","0,5")["querydata"];
-$topstar=Data::QueryData("forum_member","","id in (Select uid from forum_post group by uid order by count(id) desc)","","0,3")["querydata"];
-$pagelink="";
-$page=empty($_GET["page"]) ? 1 : $_GET["page"];
-$pagenum=10;
-$minid=$pagenum*($page-1);
-$forum_post=Data::QueryData("forum_post","","close=0 and notice=0","ding desc,posttime desc","$minid,$pagenum");
-$querynum=$forum_post["querynum"];
-$querydata=$forum_post["querydata"];
-$totalpage=ceil($querynum/$pagenum);
-$app->Runin("forum_post",$querydata);
-$app->Runin(array("total","curpage","listnum","pagelink"),array($totalpage,$page,$pagenum,$pagelink));
-$app->Runin(array("webplace","forum","notice","users","newtopic","topstar"),array("首页",$forum,$notice,$users,$newtopic,$topstar));
-$app->Open("index.cms");
+namespace Controller\Forum\Front;
+use Model\Forum\Forum as ForumModel;
+use Model\Forum\Session as SessionModel;
+class Index{
+    public function __call($name,$args){
+        $this->index();
+    }
+    public function index(){
+        global $app;
+        $model=new ForumModel();
+        $session=(new SessionModel())->Check();
+        $app->Runin(
+            array("rate","user","uid","utype","username","money","avatar"),
+            array($session["rate"],$session["user"],$session["uid"],$session["utype"],$session["username"],$session["money"],$session["avatar"])
+        );
+        $notice=$model->GetNotice();
+        $forum=$model->GetForums();
+        $users=$model->GetNewUsers();
+        $newtopic=$model->GetNewTopics();
+        $topstar=$model->GetTopStars();
+        $pagelink="";
+
+        $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+        $pagenum=10;
+        $forum_post=$model->GetPosts($page,$pagenum);
+        $querynum=$forum_post["querynum"];
+        $querydata=$forum_post["querydata"];
+        $totalpage=$querynum==0 ? 1 : ceil($querynum/$pagenum);
+        $app->Runin("forum_post",$querydata);
+        $app->Runin(array("total","curpage","listnum","pagelink"),array($totalpage,$page,$pagenum,$pagelink));
+        $app->Runin(array("webplace","forum","notice","users","newtopic","topstar"),array("首页",$forum,$notice,$users,$newtopic,$topstar));
+        $app->Open("index.cms");
+    }
+}
