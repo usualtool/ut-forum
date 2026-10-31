@@ -102,7 +102,7 @@
                </div>
                </form>
                <{else if $do=="sql"}>
-                  <p>导入UTForum初始数据结构，请保持网络通畅。</p>
+                  <p>导入UTForum初始数据结构，请将/app、/log、/update、/open/assets权限设置为可写并保持网络通畅。</p>
                   <hr/>
                   <{php=>
                   if($_GET["t"]=="db-sql"){
