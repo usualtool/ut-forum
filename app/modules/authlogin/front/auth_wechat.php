@@ -1,29 +1,36 @@
 <?php
+namespace Controller\Authlogin\Front;
 use usualtool\Lib\Inc;
-use usualtool\Lib\Data;
 use usualtool\Lib\Route;
-$auths=Data::QueryData("cms_connect","","","","1")["querydata"][0];
-$state=explode("__",Inc::SqlCheck($_GET["state"]));
-$code=Inc::SqlCheck($_GET["code"]);
-if(!empty($code)){
-    $callback=file_get_contents("https://api.weixin.qq.com/sns/oauth2/access_token?appid=".$auths["wx_appid"]."&secret=".$auths["wx_appkey"]."&code=".$code."&grant_type=authorization_code");
-    $data = json_decode($callback, true);
-    $token=$data['access_token'];
-    $openid =$data['openid']; 
-    if(!empty($token) && !empty($openid)){
-        $callback_r=file_get_contents("https://api.weixin.qq.com/sns/userinfo?access_token=".$token."&openid=".$openid);
-        $data_r = json_decode($callback_r, true);
-        setcookie("auth_openid",$data_r['openid']); 
-        setcookie("auth_name",$data_r['nickname']); 
-        setcookie("auth_avatar",$data_r['headimgurl']);
-        if(count($state)>1){
-            Inc::GoUrl(Route::Link($state[0],$state[1]),"");
-        }else{
-            Inc::GoUrl(Route::Link($state[0]),"");
-        }
-    }else{
-        Inc::GoUrl("-1","OpenId读取失败!");
+use Model\Authlogin\Authlogin as AuthloginModel;
+class Auth_wechat{
+    public function __call($name,$args){
+        $this->index();
     }
-}else{
-    Inc::GoUrl("-1","Code令牌读取失败!");
+    public function index(){
+        $model=new AuthloginModel();
+        $auths=$model->GetSet();
+        $state=explode("__",Inc::SqlCheck($_GET["state"] ?? ""));
+        $code=Inc::SqlCheck($_GET["code"] ?? "");
+        if(!empty($code)){
+            $data=$model->WechatToken($auths,$code);
+            $token=$data['access_token'] ?? "";
+            $openid=$data['openid'] ?? "";
+            if(!empty($token) && !empty($openid)){
+                $data_r=$model->WechatUser($token,$openid);
+                setcookie("auth_openid",$data_r['openid'] ?? "");
+                setcookie("auth_name",$data_r['nickname'] ?? "");
+                setcookie("auth_avatar",$data_r['headimgurl'] ?? "");
+                if(count($state)>1){
+                    Inc::GoUrl(Route::Link($state[0],$state[1]));
+                }else{
+                    Inc::GoUrl(Route::Link($state[0]));
+                }
+            }else{
+                Inc::GoUrl("-1","OpenId读取失败!");
+            }
+        }else{
+            Inc::GoUrl("-1","Code令牌读取失败!");
+        }
+    }
 }
