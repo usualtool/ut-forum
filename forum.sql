@@ -46,6 +46,7 @@ CREATE TABLE `cms_pay_log` (
   `paynum` varchar(200) DEFAULT NULL,
   `amount` decimal(10,2) DEFAULT NULL,
   `unit` varchar(50) DEFAULT NULL,
+  `returnurl` varchar(250) DEFAULT NULL,
   `remark` text DEFAULT NULL,
   `postime` datetime DEFAULT NULL,
   `paytime` datetime DEFAULT NULL,
