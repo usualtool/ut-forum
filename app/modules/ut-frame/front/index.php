@@ -67,14 +67,13 @@ class Index{
                 $arr=explode(';',$sql);
                 $total=count($arr)-1;
                 for($i=0;$i<$total;$i++):
-                    $result=Data::RunSql($arr[$i]);
-                    if($result):
-                       echo"<p class='fontsmall'>第".$k."条SQL执行成功!</p>";
-                    else:
-                       echo"<p class='fontsmall' style='color:red;'>第".$k."条SQL执行失败:".$arr[$i]."</p>";
-                    endif;
-                    Inc::GoUrl(Route::Link("ut-frame","index","do=temp"),"数据导入成功!");
+                    $one=trim($arr[$i]);
+                    if($one===""){
+                        continue;
+                    }
+                    Data::RunSql($one);
                 endfor;
+                Inc::GoUrl(Route::Link("ut-frame","index","do=temp"),"数据导入成功!");
             elseif($do=="db-temp"):
                 $tid=Inc::SqlCheck($_POST["tid"]);
                 Cli::Install(array("usualtool","install","template",$tid,"-1"));
