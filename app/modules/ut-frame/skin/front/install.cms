@@ -63,36 +63,44 @@
                     </script>
                <{else if $do=="config"}>
                <form action="<{url=>Link("ut-frame","index","do=db-save")}>" method="post" name="form">
+               <div class="form-group border-bottom pb-2 mb-3">
+                  <h4>全局配置</h4>
+                  请将/app、/log、/update、/open/assets权限设置为可写并保持网络通畅。
+               </div>
                <div class="row">
                   <div class="form-group col-md-6">
+                     <label for="email">应用名称:</label>
+                     <input class="form-control" name="APPNAME" value="<{$config->APPNAME}>">
+                  </div>
+                  <div class="form-group col-md-6">
                      <label for="email">应用域名/IP（请带HTTP）:</label>
-                     <input class="form-control" name="APPURL" id="APPURL">
+                     <input class="form-control" name="APPURL" value="<{$config->APPURL}>">
                   </div>
                </div>
                <div class="row">
                   <div class="form-group col-md-6">
                      <label for="email">数据库服务器:</label>
-                     <input class="form-control" name="MYSQL_HOST" id="MYSQL_HOST" value="localhost">
+                     <input class="form-control" name="MYSQL_HOST" value="<{if !empty($config["MYSQL_HOST"])}><{$config->MYSQL_HOST}><{else}>localhost<{/if}>">
                   </div>
                   <div class="form-group col-md-6">
                      <label for="email">端口:</label>
-                     <input class="form-control" name="MYSQL_PORT" id="MYSQL_PORT" value="3306">
+                     <input class="form-control" name="MYSQL_PORT" value="<{if !empty($config["MYSQL_PORT"])}><{$config->MYSQL_PORT}><{else}>3306<{/if}>">
                   </div>
                </div>
                <div class="row">
                   <div class="form-group col-md-6">
                      <label for="email">数据库用户:</label>
-                     <input class="form-control" name="MYSQL_USER" id="MYSQL_USER">
+                     <input class="form-control" name="MYSQL_USER" value="<{$config->MYSQL_USER}>">
                   </div>
                   <div class="form-group col-md-6">
                      <label for="email">数据库密码:</label>
-                     <input class="form-control" name="MYSQL_PASS" id="MYSQL_PASS">
+                     <input class="form-control" name="MYSQL_PASS" value="<{$config->MYSQL_PASS}>">
                   </div>
                </div>
                <div class="row">
                   <div class="form-group col-md-6">
                      <label for="email">数据库名称:</label>
-                     <input class="form-control" name="MYSQL_DB" id="MYSQL_DB">
+                     <input class="form-control" name="MYSQL_DB" value="<{$config->MYSQL_DB}>">
                   </div>
                </div>
                <div class="row">
@@ -102,34 +110,35 @@
                </div>
                </form>
                <{else if $do=="sql"}>
-                  <p>导入UTForum初始数据结构，请将/app、/log、/update、/open/assets权限设置为可写并保持网络通畅。</p>
+                  <p>
+                    <h4>初始化数据</h4>
+                    请确保数据配置正确，方能正确初始化数据。
+                  </p>
                   <hr/>
-                  <{php=>
-                  if($_GET["t"]=="db-sql"){
-                     $sql=file_get_contents(UTF_ROOT."/forum.sql");
-                     $arr=explode(';',$sql);
-                     $total=count($arr)-1;
-                     $c=0;
-                     for($i=0;$i<$total;$i++){
-                        $k=$i+1;
-                        $result=usualtool\Lib\Data::RunSql($arr[$i]);
-                        if($result){
-                           echo"<p class='fontsmall'>第".$k."条SQL执行成功!</p>";
-                        }else{
-                           $c=$c+1;
-                           echo"<p class='fontsmall' style='color:red;'>第".$k."条SQL执行失败:".$arr[$i]."</p>";
-                        }
-                        if($k==$total && $c==0){
-                           file_put_contents(UTF_ROOT."/usualtool.lock","lock");
-                           usualtool\Lib\Inc::GoUrl("./","UTForum安装成功!");
-                        }
-                     }
-                  }
-                  }>
-                  <form action="<{url=>Link("ut-frame","index","do=sql&t=db-sql")}>" method="post" name="form">
-                  <button type="submit" class="btn btn-success">导入数据</button>
+                  <form action="<{url=>Link("ut-frame","index","do=db-sql")}>" method="post" name="form">
+                  <button type="submit" class="btn btn-success">立即执行</button>
                   </form>
-                  <{/if}>
+               <{else if $do=="temp"}>
+               <form action="<{url=>Link("ut-frame","index","do=db-temp")}>" method="post" name="form">
+               <div class="form-group border-bottom pb-2 mb-3">
+                  <h4>应用模板</h4>
+                  此处仅展示公开使用的模板，未选择模板将默认使用模块化模板。
+               </div>
+               <div class="row">
+               <{loop=>$data $rows}>
+                    <div class='col-md-3 mb-2 text-center'>
+                        <img src='<{$rows->picurl}>' style='width:100%;' class='mb-2'><br/>
+                        <input type='radio' name='tid' value='<{$rows->tid}>' class='mr-1'>
+                        <{$rows->title}>
+                    </div>
+               <{/loop}>
+               </div>
+                <div class="d-flex justify-content-between border-top pt-3">
+                    <button type="submit" class="btn btn-info mr-2">安装（预计20秒）</button>
+                    <a class="btn btn-warning" href="?do=finish">跳过，下一步</a>
+                </div>
+                </form>
+               <{/if}>
               </div>
            </div>
     </div>
