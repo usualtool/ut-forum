@@ -60,7 +60,11 @@ class Power{
                         $_power_ctrl_->index();
                     }
                 }else{
+                    $_power_vars_before_=array_keys(get_defined_vars());
                     require_once $_auth_;
+                    foreach(array_diff_key(get_defined_vars(),array_flip($_power_vars_before_)) as $_power_k_=>$_power_v_){
+                        $GLOBALS[$_power_k_]=$_power_v_;
+                    }
                 }
             }else{
                 Debug::Error("view",$this->path."/".$_power_page_);

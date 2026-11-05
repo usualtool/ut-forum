@@ -2,20 +2,20 @@
     "packages": [
         {
             "name": "usualtool/ut-lib",
-            "version": "v1.4.1",
-            "version_normalized": "1.4.1.0",
+            "version": "v1.4.3",
+            "version_normalized": "1.4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/usualtool/ut-lib.git",
-                "reference": "64d536e8f61184193d2de605399b85375d1e6144"
+                "reference": "7f1baacaae0863e7ed3c503acac7b4c51fe6d974"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/usualtool/ut-lib/zipball/64d536e8f61184193d2de605399b85375d1e6144",
-                "reference": "64d536e8f61184193d2de605399b85375d1e6144",
+                "url": "https://api.github.com/repos/usualtool/ut-lib/zipball/7f1baacaae0863e7ed3c503acac7b4c51fe6d974",
+                "reference": "7f1baacaae0863e7ed3c503acac7b4c51fe6d974",
                 "shasum": ""
             },
-            "time": "2026-10-30T08:50:39+00:00",
+            "time": "2026-11-05T04:39:48+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -41,7 +41,7 @@
             ],
             "support": {
                 "issues": "https://github.com/usualtool/ut-lib/issues",
-                "source": "https://github.com/usualtool/ut-lib/tree/v1.4.1"
+                "source": "https://github.com/usualtool/ut-lib/tree/v1.4.3"
             },
             "install-path": "../usualtool/ut-lib"
         }
