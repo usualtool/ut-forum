@@ -1,5 +1,6 @@
 <?php
 namespace usualtool\Lib;
+use usualtool\Lib\HtmlFilter;
 /**
        * --------------------------------------------------------       
        *  |                  █   █ ▀▀█▀▀                    |           
@@ -69,9 +70,9 @@ class Inc{
         }
     }
     /**
-     * 严格过滤
-     * @param string $str
-     * @return string|int
+     * 字符过滤
+     * 
+     * @param string|text $str
      */
     public static function SqlCheck($str){
         if(is_array($str)){
@@ -82,20 +83,78 @@ class Inc{
             return $clean;
         }else{
             $str=trim($str ?? "");
-            $str=str_replace(['(',')'],['（','）'],$str);
             $str=htmlspecialchars($str,ENT_QUOTES);
+            $str=self::CharFilter($str);
             return $str;
         }
     }
     /**
-     * 反解析严格过滤
+     * 特殊字符转化器
      * @param string $str
      * @return string
      */
-    public static function DeSqlCheck($str){
-        $str=htmlspecialchars_decode($str);
-        $str=str_replace(['（','）'],['(',')'],$str);
+    public static function CharFilter($str){
+        $keywords = [
+            'FROM', 'OR', 'AND',
+            'UNION', 'SELECT', 'WHERE',
+            'LIKE', 'IN', 'BETWEEN',
+            'SLEEP', 'BENCHMARK', 'LOAD_FILE',
+            'INTO', 'OUTFILE', 'DUMPFILE',
+            'INFORMATION_SCHEMA', 'IS', 'WHEN', 'XOR'
+        ];
+        foreach ($keywords as $word) {
+            $pattern = '/(?<![a-zA-Z0-9_])' . preg_quote($word, '/') . '(?![a-zA-Z0-9_])/i';
+            $str = preg_replace($pattern, self::ToFullWidth($word), $str);
+        }
+        $str = str_replace(
+            [
+                " ","|", "&", "'", '"', '+', '(', ')', '@',
+                '/*', '*/', '=', '#', '%', '>', '<', ';',
+                '--', '`', '!', '^', '~', '\\', '0x'
+            ],
+            [
+                "　","｜", "＆", "＇", '＂', '＋', '（', '）', '＠',
+                '／*', '*／', '＝', '＃', '％', '＞', '＜', '；',
+                '－－', '｀', '！', '＾', '～', '＼', '０ｘ'
+            ],
+            $str
+        );
         return $str;
+    }
+    /**
+     * 全角字符转换
+     * @param string $str
+     * @return string
+     */
+    private static function ToFullWidth($str){
+        $out = '';
+        for ($i = 0; $i < strlen($str); $i++) {
+            $c = ord($str[$i]);
+            if ($c >= 0x20 && $c <= 0x7e) {
+                $cp = $c + 0xfee0;
+                $out .= chr(0xE0 | ($cp >> 12)) . chr(0x80 | (($cp >> 6) & 0x3F)) . chr(0x80 | ($cp & 0x3F));
+            } else {
+                $out .= $str[$i];
+            }
+        }
+        return $out;
+    }
+    /**
+     * 长内容安全解析
+     * @param string|text $str
+     * @return string|text
+     */
+    public static function DeSqlCheck($str){
+        $str = str_replace('　', ' ', $str);
+        $str = preg_replace_callback(
+            '/[\x{FF01}-\x{FF5E}]/u', 
+            function ($matches) {
+                $cp = mb_ord($matches[0], 'UTF-8');
+                return mb_chr($cp - 0xFEE0, 'UTF-8');
+            }, 
+            $str
+        );
+        return HtmlFilter::Sanitize(htmlspecialchars_decode($str, ENT_QUOTES));
     }
     /**
      * 清除字符中的数字
