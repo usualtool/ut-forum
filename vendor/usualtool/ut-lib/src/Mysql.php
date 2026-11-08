@@ -59,19 +59,11 @@ class Mysql{
         if(!$db){
             return "Mysqli connection error.";
         }else{
-            $db->set_charset($config["MYSQL_CHARSET"]);
-            return $db;
-        }
-    }
-    /**
-     * 测试Mysqli
-     */    
-    public static function TestDataBase($DBHOST,$DBPORT,$DBUSER,$DBPASS,$DBNAME){
-        $db=new \mysqli($DBHOST.":".$DBPORT,$DBUSER,$DBPASS,$DBNAME);
-        if(!$db){
-            return false;
-        }else{
-            $db->set_charset("utf8");
+            try{
+                $db->set_charset($config["MYSQL_CHARSET"]);
+            }catch(\mysqli_sql_exception $e){
+                error_log("[UT-SQL] ".$e->getMessage());
+            }
             return $db;
         }
     }
@@ -84,7 +76,12 @@ class Mysql{
         static $mods=array();
         if(!isset($mods[$table])){
             $db=self::GetMysql();
-            $mods[$table]=mysqli_num_rows($db->query("SHOW TABLES LIKE '". $table."'"))==1 ? true : false;
+            try{
+                $mods[$table]=mysqli_num_rows($db->query("SHOW TABLES LIKE '". $table."'"))==1 ? true : false;
+            }catch(\mysqli_sql_exception $e){
+                error_log("[UT-SQL] ".$e->getMessage());
+                $mods[$table]=false;
+            }
         }
         return $mods[$table];
     }
@@ -114,106 +111,145 @@ class Mysql{
     }
     /**
      * 获取单个或多个数据
-     * @param string $table 被查询表名
-     * @param string $field 查询字段，多个字段以‘,’分割
-     * @param string $where 查询条件
-     * @param string $order 排序方式，例：id desc/id asc
-     * @param string|int $limit 数据显示数目，例：0,5/1
-     * @param string $lang 是否开启语言识别
-     * @return array 返回数组，例：array("querydata"=>array(),"curnum"=>0,"querynum"=>0)
+     * @param string $table 表名
+     * @param string $field 字段
+     * @param string $where 条件
+     * @param string $order 排序
+     * @param string|int $limit 数目
+     * @param array $param 预处理值数组
+     * @return array
      */
-    public static function QueryData($table,$field='',$where='',$order='',$limit='',$lang='0'){
-        global $_lang_;
+    public static function QueryData($table,$field='',$where='',$order='',$limit='',$param=array()){
         $db=self::GetMysql();
         $field=empty($field) ? "*" : $field;
-        if($lang!="0"){
-            if(is_numeric($lang)){
-                $where=empty($where) ? "where lang='$_lang_'" : "where lang='$_lang_' and ".$where;
-            }else{
-                $where=empty($where) ? "where lang='$lang'" : "where lang='$lang' and ".$where;
-            }
-        }else{
-            $where=empty($where) ? "" : "where ".$where;
+        $field=self::CheckPart("field",$field);
+        if($field===false){
+            $field="*";
         }
+        if(!empty($where) && self::CheckPart("where",$where)===false){
+            return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+        }
+        if(!empty($order)){
+            $order=self::CheckPart("order",$order);
+            if($order===false){
+                $order="";
+            }
+        }
+        if(!empty($limit) && self::CheckPart("limit",$limit)===false){
+            return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+        }
+        $where=empty($where) ? "" : "where ".$where;
         $order=empty($order) ? "" : "order by ".$order;
         $limit=empty($limit) ? "" : "limit ".$limit;
         if(self::ModTable($table)){
             $sql="select ".$field." from `".$table."` ".$where." ".$order." ".$limit;
-            $query=$db->query($sql);
-            $curnum=mysqli_num_rows($query);
-            $querynum=empty($limit) ? $curnum : self::QueryNum("select ".$field." from ".$table." ".$where." ".$order);
-            $querydata=array(); 
-            $xu=0;
-            while($rows=mysqli_fetch_array($query,MYSQLI_ASSOC)){
-                $xu=$xu+1;
-                $count=count($rows);
-                for($i=0;$i<$count;$i++){
-                    unset($rows[$i]);
-                }
-                $rows['xu']=$xu;
-                array_push($querydata,$rows);
+            if(is_array($param) && !empty($param) && substr_count($sql,"?")==count($param)){
+                return self::RunYu($sql,$param);
             }
-            return array("querydata"=>$querydata,"curnum"=>$curnum,"querynum"=>$querynum);
+            try{
+                $query=$db->query($sql);
+                $curnum=mysqli_num_rows($query);
+                $querynum=empty($limit) ? $curnum : self::QueryNum("select ".$field." from ".$table." ".$where);
+                $querydata=array();
+                $n=0;
+                while($rows=mysqli_fetch_array($query,MYSQLI_ASSOC)){
+                    $n=$n+1;
+                    $count=count($rows);
+                    for($i=0;$i<$count;$i++){
+                        unset($rows[$i]);
+                    }
+                    $rows["_n_"]=$n;
+                    array_push($querydata,$rows);
+                }
+                return array("querydata"=>$querydata,"curnum"=>$curnum,"querynum"=>$querynum);
+            }catch(\mysqli_sql_exception $e){
+                error_log("[UT-SQL] ".$e->getMessage());
+                return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+            }
         }else{
             return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
         }
     }
     /**
-     * 执行SQL并返回结果集
-     * @param string $sql SQL语句
-     * @return array 返回数组，例：array("querydata"=>array(),"querynum"=>0)
-     */
-    public static function JoinQuery($sql){
-        $db=self::GetMysql();
-        $query=$db->query($sql);
-        $curnum=mysqli_num_rows($query);
-        $querynum=self::QueryNum($sql);
-        $querydata=array(); 
-        $xu=0;
-        while($rows=mysqli_fetch_array($query,MYSQLI_ASSOC)){
-            $xu=$xu+1;
-            $count=count($rows);
-            for($i=0;$i<$count;$i++){
-                unset($rows[$i]);
-            }
-            $rows['xu']=$xu;
-            array_push($querydata,$rows);
-        }
-        return array("querydata"=>$querydata,"curnum"=>$curnum,"querynum"=>$querynum);
-    }
-    /**
      * 添加数据
      * @param string $table 表名
-     * @param array $data 字段及值的数组，例：array("字段1"=>"值1","字段2"=>"值2")
-     * @return bool 当结果为真时返回最新添加的记录id
+     * @param array $data 字段/数据数组
+     * @param array $param 预处理值数组
+     * @return bool
      */
-    public static function InsertData($table,$data){
+    public static function InsertData($table,$data,$param=array()){
         $db=self::GetMysql();
-        $values=array();
-        foreach(array_values($data) as $v){
-            $values[]=mysqli_real_escape_string($db,(string)$v);
+        foreach(array_keys($data) as $k){
+            if(self::CheckPart("column",(string)$k)===false){
+                return false;
+            }
         }
-        $sql="insert into `".$table."` (".implode(',',array_keys($data)).") values ('".implode("','",$values)."')";
-        $query=$db->query($sql);
-        if($query){
-            return mysqli_insert_id($db);
-        }else{
+        $slot=0;
+        foreach(array_values($data) as $v){
+            if($v==="?"){ $slot++; }
+        }
+        $bind=is_array($param) && !empty($param) && $slot==count($param);
+        if(is_array($param) && !empty($param) && !$bind){
+            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($param)." params");
+            return false;
+        }
+        try{
+            $values=array();
+            foreach(array_values($data) as $v){
+                if($bind && $v==="?"){
+                    $values[]="?";
+                }elseif(is_null($v)){
+                    $values[]="NULL";
+                }else{
+                    $values[]="'".mysqli_real_escape_string($db,(string)$v)."'";
+                }
+            }
+            $valstr=empty($values) ? "''" : implode(",",$values);
+            $sql="insert into `".$table."` (".implode(',',array_keys($data)).") values (".$valstr.")";
+            if($bind){
+                return self::RunYu($sql,$param);
+            }
+            $query=$db->query($sql);
+            if($query){
+                return mysqli_insert_id($db) ?: true;
+            }else{
+                return false;
+            }
+        }catch(\mysqli_sql_exception $e){
+            error_log("[UT-SQL] ".$e->getMessage());
             return false;
         }
     }
     /**
      * 编辑数据
      * @param string $table 表名
-     * @param array $data 字段及值的数组，例：array("字段1"=>"值1","字段2"=>"值2")
+     * @param array $data 字段/数据数组
      * @param string $where 条件
+     * @param array $param 预处理值数组
      * @return bool
      */
-    public static function UpdateData($table,$data,$where){
+    public static function UpdateData($table,$data,$where,$param=array()){
         $db=self::GetMysql();
+        foreach(array_keys($data) as $k){
+            if(self::CheckPart("column",(string)$k)===false){
+                return false;
+            }
+        }
+        $slot=substr_count($where,"?");
+        foreach(array_values($data) as $v){
+            if($v==="?"){ $slot++; }
+        }
+        $bind=is_array($param) && !empty($param) && $slot==count($param);
+        if(is_array($param) && !empty($param) && !$bind){
+            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($param)." params");
+            return false;
+        }
         $updatestr='';
         if(!empty($data)){
             foreach($data as $k=>$v){
-                if(is_null($v)){
+                if($bind && $v==="?"){
+                    $updatestr.=$k."=?,";
+                }elseif(is_null($v)){
                     $updatestr.=$k."=NULL,";
                 }elseif(is_bool($v)){
                     $updatestr.=$k."=".($v ? 1 : 0).",";
@@ -225,11 +261,22 @@ class Mysql{
             }
             $updatestr=rtrim($updatestr,',');
         }
+        if(self::CheckPart("where",$where)===false){
+            return false;
+        }
         $sql="update `".$table."` set ".$updatestr." where ".$where;
-        $query=$db->query($sql);
-        if($query){
-            return true;
-        }else{
+        if($bind){
+            return self::RunYu($sql,$param);
+        }
+        try{
+            $query=$db->query($sql);
+            if($query){
+                return true;
+            }else{
+                return false;
+            }
+        }catch(\mysqli_sql_exception $e){
+            error_log("[UT-SQL] ".$e->getMessage());
             return false;
         }
     }
@@ -237,15 +284,31 @@ class Mysql{
      * 删除数据
      * @param string $table 表名
      * @param string $where 条件
+     * @param array $param 预处理值数组
      * @return bool
      */
-    public static function DelData($table,$where){
+    public static function DelData($table,$where,$param=array()){
         $db=self::GetMysql();
+        if(self::CheckPart("where",$where)===false){
+            return false;
+        }
         $sql="delete from `".$table."` where ".$where;
-        $query=$db->query($sql);
-        if($query){
-            return true;
-        }else{
+        if(is_array($param) && !empty($param)){
+            if(substr_count($where,"?")==count($param)){
+                return self::RunYu($sql,$param);
+            }
+            error_log("[UT-SQL] param mismatch: ".substr_count($where,"?")." slots / ".count($param)." params");
+            return false;
+        }
+        try{
+            $query=$db->query($sql);
+            if($query){
+                return true;
+            }else{
+                return false;
+            }
+        }catch(\mysqli_sql_exception $e){
+            error_log("[UT-SQL] ".$e->getMessage());
             return false;
         }
     }
@@ -253,101 +316,278 @@ class Mysql{
      * 复制数据
      * @param string $table 表名
      * @param string $where 条件
-     * @param string $autokey 自动编号字段
+     * @param array $param 预处理值数组
      * @return bool
      */
-    public static function CopyData($table,$where,$autokey='id'){
-        $db=self::GetMysql();
-        $sql = "SELECT * FROM `".$table."` where ".$where;
-        $query=$db->query($sql);
-        $rows=mysqli_fetch_array($query,MYSQLI_ASSOC);
-        unset($rows[$autokey]);
-        $csql="insert into `".$table."` (".implode(',',array_keys($rows)).") values ('".implode("','",array_values($rows))."')";
-        $cquery=$db->query($csql);
-        if($cquery){
-            return mysqli_insert_id($db);
-        }else{
+    public static function CopyData($table, $where = '', $param = array()) {
+        $db = self::GetMysql();
+        if (!preg_match('/^[A-Za-z0-9_]+$/', $table)) {
+            return false;
+        }
+        $where = trim((string)$where);
+        if ($where !== '' && self::CheckPart("where", $where) === false) {
+            return false;
+        }
+        if (!is_array($param)) {
+            $param = array();
+        }
+        try {
+            $result = $db->query("SHOW COLUMNS FROM `".$table."` WHERE `Extra` LIKE '%auto_increment%'");
+            $autoCols = array();
+            if($result){
+                while ($row = $result->fetch_assoc()) {
+                    $autoCols[] = $row['Field'];
+                }
+            }
+            $sql = "SELECT * FROM `".$table."`".($where === '' ? '' : " WHERE ".$where);
+            if(substr_count($sql, "?") != count($param)){
+                return false;
+            }
+            $stmt = self::YuStmt($sql, $param, $db);
+            if (!$stmt) return false;
+            if (!empty($param)) self::YuBindParam($stmt, $param);
+            if (!$stmt->execute()) { self::YuPoolDrop($stmt); return false; }
+            $query = $stmt->get_result();
+            if (!$query) { self::YuPoolDrop($stmt); return false; }
+            
+            $rowlist = array();
+            while($row = $query->fetch_assoc()){
+                $rowlist[] = $row;
+            }
+            $query->free();
+            self::YuPoolPut($stmt);
+            if (empty($rowlist)) return false;
+            $cols = array();
+            $fields = array();
+            foreach ($rowlist[0] as $key => $value) {
+                if (in_array($key, $autoCols, true)) continue;
+                $cols[] = $key;
+                $fields[] = "`".str_replace("`", "``", $key)."`";
+            }
+            if (empty($cols)) return false;
+            $vals = array();
+            foreach($rowlist as $rows){
+                $line = array();
+                foreach ($cols as $col) {
+                    $value = array_key_exists($col, $rows) ? $rows[$col] : null;
+                    if ($value === null) {
+                        $line[] = "NULL";
+                    } else {
+                        $line[] = "'".$db->real_escape_string((string)$value)."'";
+                    }
+                }
+                $vals[] = "(".implode(",", $line).")";
+            }
+            $prefix = "INSERT INTO `".$table."` (".implode(",", $fields).") VALUES ";
+            $chunkSize = 500;
+            $newids = array();
+            for($i = 0; $i < count($vals); $i += $chunkSize){
+                $batch = array_slice($vals, $i, $chunkSize);
+                $sql = $prefix . implode(",", $batch);
+                $res = self::RunSql($sql);
+                if ($res === false) continue;
+                $firstId = (int)$db->insert_id;
+                for ($j = 0; $j < count($batch); $j++) {
+                    $newids[] = $firstId + $j;
+                }
+            }
+            return empty($newids) ? false : (count($newids) === 1 ? $newids[0] : $newids);
+        } catch (\mysqli_sql_exception $e) {
+            error_log("[UT-SQL] ".$e->getMessage());
             return false;
         }
     }
 	/**
 	 * 执行预处理
-	 * @param string $sql 带?占位符的SQL语句
-	 * @param array $param 参数值数组
+	 * @param string $sql SQL语句
+     * @param array $param 预处理值数组
 	 * @return array|bool|int
 	 */
     public static function RunYu($sql,$param=[]){
         $db=self::GetMysql();
-        $trimmed=ltrim(strtoupper($sql));
-        $yutype=explode(' ',$trimmed)[0];
-        if($yutype=="SELECT"){
-            $islimit=(bool) preg_match('/\bLIMIT\b/i',$sql);
-            $total=0;
-            if($islimit){
-                $countsql=self::YuCountSql($sql);
-                if($countsql!=false){
-                    $countstmt=$db->prepare($countsql);
-                    if($countstmt){
-                        if(!empty($param)){
-                            self::YuBindParam($countstmt, $param);
-                        }
-                        $countstmt->execute();
-                        $countstmt->bind_result($total);
-                        $countstmt->fetch();
-                        $countstmt->close();
+        $trimmed=ltrim($sql);
+        $yutype=preg_match('/^([A-Za-z]+)/',$trimmed,$m) ? strtoupper($m[1]) : "";
+        if($yutype=="WITH"){
+            $yutype=preg_match('/\)\s*(insert|update|delete|replace)\b/i',$trimmed) ? "INSERT" : "SELECT";
+        }
+        try{
+            if($yutype=="SELECT"){
+                $islimit=(bool) preg_match('/\bLIMIT\b/i',$sql);
+                $limitrows=0;
+                if($islimit && preg_match('/\bLIMIT\s+(\d+)(?:\s*,\s*(\d+))?\s*$/i',$sql,$limitmatch)){
+                    if(isset($limitmatch[2])){
+                        $limitrows=((int)$limitmatch[1]==0) ? (int)$limitmatch[2] : 0;
+                    }else{
+                        $limitrows=(int)$limitmatch[1];
                     }
                 }
-            }
-            $stmt=$db->prepare($sql);
-            if(!$stmt){
-                return ["querydata" => [], "curnum" => 0, "querynum" => 0];
-            }
-            if(!empty($param)){
-                self::YuBindParam($stmt, $param);
-            }
-            $stmt->execute();
-            $result = $stmt->get_result();
-            if(!$result){
-                $stmt->close();
-                return ["querydata" => [], "curnum" => 0, "querynum" => 0];
-            }
-            $querydata = [];
-            $xu = 0;
-            while($row = $result->fetch_assoc()){
-                $row['xu'] = ++$xu;
-                $querydata[] = $row;
-            }
-            $stmt->close();
-            $curnum = count($querydata);
-            if(!$islimit){
+                $stmt=self::YuStmt($sql,$param,$db);
+                if(!$stmt){
+                    return ["querydata" => [], "curnum" => 0, "querynum" => 0];
+                }
+                if(!empty($param)){
+                    self::YuBindParam($stmt, $param);
+                }
+                if(!$stmt->execute()){
+                    self::YuPoolPut($stmt);
+                    return ["querydata" => [], "curnum" => 0, "querynum" => 0];
+                }
+                $result = $stmt->get_result();
+                if(!$result){
+                    self::YuPoolDrop($stmt);
+                    return ["querydata" => [], "curnum" => 0, "querynum" => 0];
+                }
+                $querydata = [];
+                $n = 0;
+                while($row = $result->fetch_assoc()){
+                    $row["_n_"] = ++$n;
+                    $querydata[] = $row;
+                }
+                $result->free();
+                self::YuPoolPut($stmt);
+                $curnum = count($querydata);
                 $total = $curnum;
-            }
-            return [
-                "querydata" => $querydata,
-                "curnum"    => $curnum,
-                "querynum"  => (int)$total
-            ];
-        }else{
-            $stmt = $db->prepare($sql);
-            if(!$stmt){
-                return false;
-            }
-            if(!empty($param)){
-                self::YuBindParam($stmt, $param);
-            }
-            $stmt->execute();
-            $stmt->close();
-            if($yutype=="INSERT"){
-                return $db->insert_id ?: true;
+                if($islimit && !($limitrows>0 && $curnum<$limitrows)){
+                    $total = 0;
+                    $countsql=self::YuCountSql($sql);
+                    if($countsql!=false){
+                        $countstmt=self::YuStmt($countsql,$param,$db);
+                        if($countstmt){
+                            if(!empty($param)){
+                                self::YuBindParam($countstmt, $param);
+                            }
+                            if($countstmt->execute()){
+                                $countstmt->bind_result($total);
+                                $countstmt->fetch();
+                                $countstmt->free_result();
+                            }
+                            self::YuPoolPut($countstmt);
+                        }
+                    }
+                }
+                return [
+                    "querydata" => $querydata,
+                    "curnum"    => $curnum,
+                    "querynum"  => (int)$total
+                ];
             }else{
-                return true;
+                $stmt = self::YuStmt($sql,$param,$db);
+                if(!$stmt){
+                    return false;
+                }
+                if(!empty($param)){
+                    self::YuBindParam($stmt, $param);
+                }
+                if(!$stmt->execute()){
+                    self::YuPoolPut($stmt);
+                    return false;
+                }
+                if($stmt->field_count>0){
+                    $stmt->store_result();
+                }
+                self::YuPoolPut($stmt);
+                if($yutype=="INSERT"){
+                    return $db->insert_id ?: true;
+                }else{
+                    return true;
+                }
             }
+        }catch(\Throwable $e){
+            $yucode=(int)$e->getCode();
+            if($yucode===2006 || $yucode===2013){
+                self::YuPoolClear();
+            }else{
+                self::YuPoolBusyClear();
+            }
+            error_log("[UT-SQL] ".$e->getMessage());
+            if($yutype=="SELECT"){
+                return ["querydata" => [], "curnum" => 0, "querynum" => 0];
+            }
+            return false;
         }
     }
     public static function YuCountSql($sql){
         $sql = rtrim($sql," \t\n\r;");
-        $sql = preg_replace('/\s+LIMIT\s+\d+(?:\s*,\s*\d+)?\s*$/i','',$sql);
+        $sql = preg_replace('/\s+LIMIT\s+\d+(?:\s*,\s*\d+|\s+OFFSET\s+\d+)?\s*$/i','',$sql);
         return "SELECT COUNT(*) AS total FROM ($sql) AS __count_wrapper";
+    }
+    private static $YuPool=array();
+    private static $YuBusy=array();
+    private static function YuStmt($sql,$param,$db){
+        if(!is_array($param)){
+            $param=array();
+        }
+        $types='';
+        foreach($param as $value){
+            if(is_int($value)){
+                $types.='i';
+            }elseif(is_float($value)){
+                $types.='d';
+            }else{
+                $types.='s';
+            }
+        }
+        $key=md5($sql."\0".$types."\0".spl_object_hash($db));
+        if(isset(self::$YuPool[$key])){
+            $stmt=self::$YuPool[$key];
+            unset(self::$YuPool[$key]);
+            if($stmt instanceof \mysqli_stmt && $stmt->errno===0){
+                self::$YuBusy[spl_object_hash($stmt)]=array($key,$stmt);
+                return $stmt;
+            }
+            if($stmt instanceof \mysqli_stmt){
+                $stmt->close();
+            }
+        }
+        $stmt=$db->prepare($sql);
+        if(!$stmt){
+            return false;
+        }
+        self::$YuBusy[spl_object_hash($stmt)]=array($key,$stmt);
+        return $stmt;
+    }
+    private static function YuPoolPut($stmt){
+        $id=spl_object_hash($stmt);
+        if(!isset(self::$YuBusy[$id])){
+            return;
+        }
+        $key=self::$YuBusy[$id][0];
+        unset(self::$YuBusy[$id]);
+        if(count(self::$YuPool)>=32){
+            $old=array_shift(self::$YuPool);
+            if($old instanceof \mysqli_stmt){
+                $old->close();
+            }
+        }
+        self::$YuPool[$key]=$stmt;
+    }
+    private static function YuPoolDrop($stmt){
+        unset(self::$YuBusy[spl_object_hash($stmt)]);
+        if($stmt instanceof \mysqli_stmt){
+            $stmt->close();
+        }
+    }
+    private static function YuPoolClear(){
+        foreach(self::$YuPool as $stmt){
+            if($stmt instanceof \mysqli_stmt){
+                $stmt->close();
+            }
+        }
+        foreach(self::$YuBusy as $item){
+            if($item[1] instanceof \mysqli_stmt){
+                $item[1]->close();
+            }
+        }
+        self::$YuPool=array();
+        self::$YuBusy=array();
+    }
+    private static function YuPoolBusyClear(){
+        foreach(self::$YuBusy as $item){
+            if($item[1] instanceof \mysqli_stmt){
+                $item[1]->close();
+            }
+        }
+        self::$YuBusy=array();
     }
     public static function YuBindParam($stmt,$params){
         if(empty($params)) return;
@@ -369,126 +609,56 @@ class Mysql{
         call_user_func_array([$stmt,'bind_param'],$refs);
     }
     /**
-     * 获取数据标签
-     * @param string $table 表名
-     * @param string $field 标签字段，只能为1个
-     * @param string $where 条件
-     * @param string $order 排序方式
-     * @param string $lang 是否自动开启语言，默认0关闭
-     * @return array 返回数组，例：array('tags'=>$taglist)
-     */
-    public static function TagData($table,$field='',$where='',$order='',$lang='0'){
-        global $_lang_;
-        $db=self::GetMysql();
-        $tags="";
-        $field=empty($field) ? "*" : $field;
-        if($lang!="0"){
-            if(is_numeric($lang)){
-                $where=empty($where) ? "where lang='$_lang_'" : "where lang='$_lang_' and ".$where."";
-            }else{
-                $where=empty($where) ? "where lang='$lang'" : "where lang='$lang' and ".$where."";
-            }
-        }else{
-            $where=empty($where) ? "" : "where ".$where."";
-        }
-        $order=empty($order) ? "" : "order by ".$order."";
-        if(self::ModTable($table)){
-            $sql="select ".$field." from `".$table."` ".$where." ".$order;
-            $tag=$db->query($sql);
-            while($tagrow=$tag->fetch_row()){
-                $tags="".$tags.",".$tagrow[0];
-            }
-            $taglist=join(',',array_unique(array_diff(explode(",",$tags),array(""))));
-            $taglists[]=array('tags'=>$taglist);
-            return $taglists;
-        }else{
-            return array();
-        }
-    }
-    /**
-     * 获取数据首图
-     * @param string $table 表名
-     * @param string $field 检索字段，只能为1个
-     * @param string $where 条件
-     * @return array 返回数组，在其数组中返回指定字段的第一张图片imageurl
-     */
-    public static function FigureData($table,$field,$where='',$limit=''){
-        $db=self::GetMysql();
-        $where=empty($where) ? "" : "where ".$where;
-        $limit=empty($limit) ? "" : "limit ".$limit;
-        if(self::ModTable($table)){
-            $sql="SELECT ".$field." from `".$table."` ".$where." ".$limit;
-            $query=$db->query($sql);  
-            $figuredata=array(); 
-            while($rows=mysqli_fetch_array($query,MYSQLI_ASSOC)){
-                $pattern="/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.bmp|\.png]))[\'|\"].*?[\/]?>/";
-                preg_match_all($pattern,$rows[$field],$matchcontent);
-                $rows['imageurl']=isset($matchcontent[1][0]) ? $matchcontent[1][0] : '';
-                $count=count($rows);
-                for($i=0;$i<$count;$i++){
-                    unset($rows[$i]);
-                }
-                array_push($figuredata,$rows);
-            }
-            return $figuredata;
-        }else{
-            return array();
-        }
-    }
-    /**
-     * 搜索方法
-	 * 可视化包预留
-     * @param string $keyword 关键词
-     * @return array 返回数组
-     */
-    public static function SearchData($keyword){
-        $db=self::GetMysql();
-        global $_lang_;
-        $sdata=null;
-		if(!empty($keyword)){
-			$sql="SELECT * FROM `cms_search` WHERE keyword ='$keyword'";
-			$sdata=mysqli_query($db,$sql);
-			if(mysqli_num_rows($sdata)>0){
-			    self::UpdateData("cms_search",array("hit"=>"hit+1"),"keyword ='$keyword' and lang='$_lang_'");
-			}
-		}
-		$data=array();
-		$result=$db->query("select * from `cms_search_set`");
-		while($row=mysqli_fetch_array($result)){
-		    $data[]=array("db"=>$row["dbs"],"field"=>$row["fields"],"where"=>$row["wheres"],"page"=>$row["pages"]);
-		}
-		$table="select 'search' as thepage,id,'0' as title,'0' as content from `cms_search` where id<0";
-		foreach($data as $key=>$val){
-			if(self::ModTable($val["db"])){
-				$table.=" union select '".$val["page"]."' as thepage,id,".$val["field"]." from ".$val["db"]." where ".str_replace("[keyword]","'%".$keyword."%'",$val["where"])."";
-			}
-		}
-        $search=$db->query($table);
-        $searchnum=mysqli_num_rows($search);
-        if(!empty($keyword) && $searchnum>0 && mysqli_num_rows($sdata)<=0){
-			self::InsertData("cms_search",array("lang"=>$_lang_,"keyword"=>$keyword));
-        }
-        $searchdata=array(); 
-        $xu=0;
-        while($rows=mysqli_fetch_array($search,MYSQLI_ASSOC)){
-            $xu=$xu+1;
-            $count=count($rows);
-            for($i=0;$i<$count;$i++){
-                unset($rows[$i]);
-            }
-            $rows['xu']=$xu;
-            array_push($searchdata,$rows);
-        }
-        return array("searchdata"=>$searchdata,"searchnum"=>$searchnum);	
-    }
-    /**
      * 统计记录数目
      * @param string $sql SQL语句
      * @return int
      */
     public static function QueryNum($sql){
         $db=self::GetMysql();
-        $query=$db->query($sql);
-        return mysqli_num_rows($query);
+        try{
+            $query=$db->query($sql);
+            return mysqli_num_rows($query);
+        }catch(\mysqli_sql_exception $e){
+            error_log("[UT-SQL] ".$e->getMessage());
+            return 0;
+        }
+    }
+    /**
+     * 校验SQL结构片段
+     * @param string $part 片段类型
+     * @param string|int $value 待校验片段
+     * @return string|bool
+     */
+    public static function CheckPart($part,$value){
+        $value=(string)$value;
+        switch($part){
+            case "field":
+                if(preg_match('/^\s*(\*|[A-Za-z0-9_.`]+(\s+(as\s+)?[A-Za-z0-9_`]+)?(\s*,\s*[A-Za-z0-9_.`]+(\s+(as\s+)?[A-Za-z0-9_`]+)?)*)\s*$/i',$value)){
+                    return $value;
+                }
+                break;
+            case "column":
+                if(preg_match('/^\s*(?:`[A-Za-z_][A-Za-z0-9_]*`|[A-Za-z_][A-Za-z0-9_]*)(?:\.(?:`[A-Za-z_][A-Za-z0-9_]*`|[A-Za-z_][A-Za-z0-9_]*))?\s*$/',$value)){
+                    return $value;
+                }
+                break;
+            case "where":
+                if(!preg_match('/;|--|#|\/\*/',preg_replace("/'[^']*'|\"[^\"]*\"/","",$value))){
+                    return $value;
+                }
+                break;
+            case "order":
+                if(preg_match('/^\s*[A-Za-z0-9_.`]+(\s+(asc|desc))?(\s*,\s*[A-Za-z0-9_.`]+(\s+(asc|desc))?)*\s*$/i',$value)){
+                    return $value;
+                }
+                break;
+            case "limit":
+                if(preg_match('/^\s*\d+(\s*,\s*\d+|\s+offset\s+\d+)?\s*$/i',$value)){
+                    return $value;
+                }
+                break;
+        }
+        error_log("[UT-SQL] ".$part." rejected: ".$value);
+        return false;
     }
 }
