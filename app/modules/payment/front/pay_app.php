@@ -8,7 +8,7 @@ class Pay_app{
     }
     public function index(){
         $model=new PayModel();
-    $lb=Inc::SqlCheck($_GET["lb"] ?? "");
+    $lb=$_GET["lb"] ?? "";
     /**
      * /?m=payment&p=pay_app&lb=alipay
      * /?m=payment&p=pay_app&lb=wechat
@@ -17,8 +17,8 @@ class Pay_app{
     		require_once MODULE_PATH.'/payment/alipay/Config.php';
     		require_once MODULE_PATH.'/payment/alipay/AopSdk.php';
     		$row=$model->GetRoutine();
-    		$buyerid=Inc::SqlCheck($_POST["buyerid"] ?? "");
-    		$posnum=Inc::SqlCheck($_POST["posnum"] ?? "");
+    		$buyerid=$_POST["buyerid"] ?? "";
+    		$posnum=$_POST["posnum"] ?? "";
     		$pay=$model->GetLog($posnum);
     		$aop = new \AopClient();
     		$aop->gatewayUrl = 'https://openapi.alipay.com/gateway.do';

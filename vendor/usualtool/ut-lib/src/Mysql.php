@@ -120,7 +120,6 @@ class Mysql{
      * @return array
      */
     public static function QueryData($table,$field='',$where='',$order='',$limit='',$param=array()){
-        $db=self::GetMysql();
         $field=empty($field) ? "*" : $field;
         $field=self::CheckPart("field",$field);
         if($field===false){
@@ -143,29 +142,7 @@ class Mysql{
         $limit=empty($limit) ? "" : "limit ".$limit;
         if(self::ModTable($table)){
             $sql="select ".$field." from `".$table."` ".$where." ".$order." ".$limit;
-            if(is_array($param) && !empty($param) && substr_count($sql,"?")==count($param)){
-                return self::RunYu($sql,$param);
-            }
-            try{
-                $query=$db->query($sql);
-                $curnum=mysqli_num_rows($query);
-                $querynum=empty($limit) ? $curnum : self::QueryNum("select ".$field." from ".$table." ".$where);
-                $querydata=array();
-                $n=0;
-                while($rows=mysqli_fetch_array($query,MYSQLI_ASSOC)){
-                    $n=$n+1;
-                    $count=count($rows);
-                    for($i=0;$i<$count;$i++){
-                        unset($rows[$i]);
-                    }
-                    $rows["_n_"]=$n;
-                    array_push($querydata,$rows);
-                }
-                return array("querydata"=>$querydata,"curnum"=>$curnum,"querynum"=>$querynum);
-            }catch(\mysqli_sql_exception $e){
-                error_log("[UT-SQL] ".$e->getMessage());
-                return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
-            }
+            return self::RunYu($sql,is_array($param)?$param:array());
         }else{
             return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
         }
@@ -178,47 +155,39 @@ class Mysql{
      * @return bool
      */
     public static function InsertData($table,$data,$param=array()){
-        $db=self::GetMysql();
         foreach(array_keys($data) as $k){
             if(self::CheckPart("column",(string)$k)===false){
                 return false;
             }
         }
+        $paramq=is_array($param) ? array_values($param) : array();
         $slot=0;
         foreach(array_values($data) as $v){
             if($v==="?"){ $slot++; }
         }
-        $bind=is_array($param) && !empty($param) && $slot==count($param);
-        if(is_array($param) && !empty($param) && !$bind){
-            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($param)." params");
+        if(count($paramq)!=$slot){
+            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($paramq)." params");
             return false;
         }
-        try{
-            $values=array();
-            foreach(array_values($data) as $v){
-                if($bind && $v==="?"){
-                    $values[]="?";
-                }elseif(is_null($v)){
-                    $values[]="NULL";
-                }else{
-                    $values[]="'".mysqli_real_escape_string($db,(string)$v)."'";
-                }
-            }
-            $valstr=empty($values) ? "''" : implode(",",$values);
-            $sql="insert into `".$table."` (".implode(',',array_keys($data)).") values (".$valstr.")";
-            if($bind){
-                return self::RunYu($sql,$param);
-            }
-            $query=$db->query($sql);
-            if($query){
-                return mysqli_insert_id($db) ?: true;
+        $values=array();
+        $yu=array();
+        $q=0;
+        foreach(array_values($data) as $v){
+            if($v==="?"){
+                $values[]="?";
+                $yu[]=$paramq[$q++];
+            }elseif(is_null($v)){
+                $values[]="NULL";
+            }elseif(is_bool($v)){
+                $values[]=$v ? "1" : "0";
             }else{
-                return false;
+                $values[]="?";
+                $yu[]=(string)$v;
             }
-        }catch(\mysqli_sql_exception $e){
-            error_log("[UT-SQL] ".$e->getMessage());
-            return false;
         }
+        $valstr=empty($values) ? "''" : implode(",",$values);
+        $sql="insert into `".$table."` (".implode(',',array_keys($data)).") values (".$valstr.")";
+        return self::RunYu($sql,$yu);
     }
     /**
      * 编辑数据
@@ -229,26 +198,28 @@ class Mysql{
      * @return bool
      */
     public static function UpdateData($table,$data,$where,$param=array()){
-        $db=self::GetMysql();
         foreach(array_keys($data) as $k){
             if(self::CheckPart("column",(string)$k)===false){
                 return false;
             }
         }
+        $paramq=is_array($param) ? array_values($param) : array();
         $slot=substr_count($where,"?");
         foreach(array_values($data) as $v){
             if($v==="?"){ $slot++; }
         }
-        $bind=is_array($param) && !empty($param) && $slot==count($param);
-        if(is_array($param) && !empty($param) && !$bind){
-            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($param)." params");
+        if(count($paramq)!=$slot){
+            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($paramq)." params");
             return false;
         }
         $updatestr='';
+        $yu=array();
+        $q=0;
         if(!empty($data)){
             foreach($data as $k=>$v){
-                if($bind && $v==="?"){
+                if($v==="?"){
                     $updatestr.=$k."=?,";
+                    $yu[]=$paramq[$q++];
                 }elseif(is_null($v)){
                     $updatestr.=$k."=NULL,";
                 }elseif(is_bool($v)){
@@ -256,7 +227,8 @@ class Mysql{
                 }elseif(preg_match('/^[A-Za-z_][A-Za-z0-9_]*\+\d+$/',$v)){
                     $updatestr.=$k."=".$v.",";
                 }else{
-                    $updatestr.=$k."='".mysqli_real_escape_string($db,(string)$v)."',";
+                    $updatestr.=$k."=?,";
+                    $yu[]=(string)$v;
                 }
             }
             $updatestr=rtrim($updatestr,',');
@@ -264,21 +236,11 @@ class Mysql{
         if(self::CheckPart("where",$where)===false){
             return false;
         }
+        for(;$q<count($paramq);$q++){
+            $yu[]=$paramq[$q];
+        }
         $sql="update `".$table."` set ".$updatestr." where ".$where;
-        if($bind){
-            return self::RunYu($sql,$param);
-        }
-        try{
-            $query=$db->query($sql);
-            if($query){
-                return true;
-            }else{
-                return false;
-            }
-        }catch(\mysqli_sql_exception $e){
-            error_log("[UT-SQL] ".$e->getMessage());
-            return false;
-        }
+        return self::RunYu($sql,$yu);
     }
     /**
      * 删除数据
@@ -288,29 +250,17 @@ class Mysql{
      * @return bool
      */
     public static function DelData($table,$where,$param=array()){
-        $db=self::GetMysql();
         if(self::CheckPart("where",$where)===false){
             return false;
         }
+        $paramq=is_array($param) ? $param : array();
+        $slot=substr_count($where,"?");
+        if(count($paramq)!=$slot){
+            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($paramq)." params");
+            return false;
+        }
         $sql="delete from `".$table."` where ".$where;
-        if(is_array($param) && !empty($param)){
-            if(substr_count($where,"?")==count($param)){
-                return self::RunYu($sql,$param);
-            }
-            error_log("[UT-SQL] param mismatch: ".substr_count($where,"?")." slots / ".count($param)." params");
-            return false;
-        }
-        try{
-            $query=$db->query($sql);
-            if($query){
-                return true;
-            }else{
-                return false;
-            }
-        }catch(\mysqli_sql_exception $e){
-            error_log("[UT-SQL] ".$e->getMessage());
-            return false;
-        }
+        return self::RunYu($sql,$paramq);
     }
     /**
      * 复制数据

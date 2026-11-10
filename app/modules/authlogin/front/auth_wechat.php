@@ -10,8 +10,8 @@ class Auth_wechat{
     public function index(){
         $model=new AuthloginModel();
         $auths=$model->GetSet();
-        $state=explode("__",Inc::SqlCheck($_GET["state"] ?? ""));
-        $code=Inc::SqlCheck($_GET["code"] ?? "");
+        $state=explode("__",$_GET["state"] ?? "");
+        $code=$_GET["code"] ?? "";
         if(!empty($code)){
             $data=$model->WechatToken($auths,$code);
             $token=$data['access_token'] ?? "";

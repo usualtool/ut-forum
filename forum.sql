@@ -65,25 +65,6 @@ CREATE TABLE `cms_plugin` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `cms_search`;
-CREATE TABLE `cms_search` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `hit` int(11) DEFAULT '1',
-  `keyword` varchar(100) DEFAULT NULL,
-  `lang` varchar(20) DEFAULT 'zh',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `cms_search_set`;
-CREATE TABLE `cms_search_set` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `dbs` varchar(50) DEFAULT NULL,
-  `fields` varchar(100) DEFAULT NULL,
-  `wheres` varchar(200) DEFAULT NULL,
-  `pages` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `forum`;
 CREATE TABLE IF NOT EXISTS `forum` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -206,7 +187,6 @@ CREATE TABLE IF NOT EXISTS `forum_set` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 INSERT INTO `cms_connect` VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `cms_pay` VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'sandbox', NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `cms_search_set` VALUES (1, 'forum_post', 'title,content', 'title like [keyword] or content like [keyword]', 'm=forum&p=post');
 INSERT INTO `forum_member` (`id`, `state`, `utype`, `black`, `username`, `password`, `avatar`, `email`, `fullname`, `sex`, `cardnumber`, `openid`, `other`, `creattime`) VALUES 
 (1, 0, 99999, 0, 'admin', '$2y$12$IXiotxHNFPNDQ3c.tdyvPumkb9W1d1Lr5N7ZDxWgX2cVlBx5n554W', '/assets/images/noimage.png', 'test#test.com', 'Admin', 1, NULL, NULL, NULL, '2021-11-25 00:00:00');
 INSERT INTO `forum_set` VALUES (1,10,'usualtool_');

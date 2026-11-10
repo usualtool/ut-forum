@@ -28,9 +28,9 @@ class My{
         $app->Runin(array("webplace","loginlog"),array("我的",$loginlog));
         $app->Open("my.cms");
         if(($_GET["do"] ?? "")=="payment"){
-            $paytype=Inc::SqlCheck($_POST["paytype"] ?? "");
+            $paytype=($_POST["paytype"] ?? "");
             $posnum=Inc::GetRandomString(14,"123456789");
-            $amount=Inc::SqlCheck($_POST["amount"] ?? "");
+            $amount=($_POST["amount"] ?? "");
             $remark="forum-|-".$uid."-|-Recharge/UT/1-|-".$amount;
             if($model->AddPayment(array(
                 "state"=>0,

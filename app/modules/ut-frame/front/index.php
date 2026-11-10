@@ -25,11 +25,13 @@ class Index{
             $newtopic=$model->GetNewTopics();
             $topstar=$model->GetTopStars();
             $pagelink="";
-            $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+            $page=empty($_GET["page"]) ? 1 : max(1,intval($_GET["page"]));
             $pagenum=10;
             $forum_post=$model->GetPosts($page,$pagenum);
             $querynum=$forum_post["querynum"];
             $querydata=$forum_post["querydata"];
+            $notice=$this->Enrich($notice);
+            $querydata=$this->Enrich($querydata);
             $totalpage=ceil($querynum/$pagenum);
             $app->Runin("forum_post",$querydata);
             $app->Runin(
@@ -54,11 +56,18 @@ class Index{
                     $data[]=array("tid"=>$tid[1][0],"title"=>$title[1][0],"picurl"=>$picurl[1][0],"isfree"=>$isfree[1][0]);
                 endif;
             endforeach;
-            $do=Inc::SqlCheck($_GET["do"] ?? "");
+            $do=trim((string)($_GET["do"] ?? ""));
             if($do=="db-save"):
                 $info=file_get_contents(UTF_ROOT."/.ut.config");
                 foreach($_POST as $k=>$v):
-                    $info=preg_replace("/{$k}=(.*)/","{$k}={$v}",$info);
+                    if(!is_scalar($v) || !preg_match("/^[A-Za-z0-9_]+$/",(string)$k)):
+                        continue;
+                    endif;
+                    $info=preg_replace_callback(
+                        "/^".preg_quote((string)$k,"/")."=(.*?)(?=\r?$)/m",
+                        function($m) use ($k,$v){ return $k."=".(string)$v; },
+                        $info
+                    );
                 endforeach;
                 file_put_contents(UTF_ROOT."/.ut.config",$info);
                 Inc::GoUrl(Route::Link("ut-frame","index","do=sql"),"数据库配置成功!");
@@ -75,11 +84,14 @@ class Index{
                 endfor;
                 Inc::GoUrl(Route::Link("ut-frame","index","do=temp"),"数据导入成功!");
             elseif($do=="db-temp"):
-                $tid=Inc::SqlCheck($_POST["tid"]);
+                $tid=trim((string)($_POST["tid"] ?? ""));
+                if(!preg_match("/^[A-Za-z0-9_\-]+$/",$tid)):
+                    Inc::GoUrl("-1","模板ID无效!");
+                endif;
                 Cli::Install(array("usualtool","install","template",$tid,"-1"));
                 if(is_dir(APP_ROOT."/template/".$tid)):
                     if(Data::ModTable("cms_template")):
-                        Data::UpdateData("cms_template",array("makefront"=>1),"tid='$tid'");
+                        Data::UpdateData("cms_template",array("makefront"=>1),"tid=?",array($tid));
                     endif;
                     $info=preg_replace("/TEMPFRONT=(.*)/","TEMPFRONT={$tid}",file_get_contents(UTF_ROOT."/.ut.config"));
                     file_put_contents(UTF_ROOT."/.ut.config",$info);
@@ -98,5 +110,56 @@ class Index{
             );
             $app->Open("install.cms");
         endif;
+    }
+    private function Enrich($rows){
+        if(empty($rows) || !is_array($rows)){
+            return $rows;
+        }
+        $uids=array();
+        $fids=array();
+        $pids=array();
+        foreach($rows as $row){
+            if(!empty($row["uid"])){
+                $uids[intval($row["uid"])]=intval($row["uid"]);
+            }
+            if(!empty($row["fid"])){
+                $fids[intval($row["fid"])]=intval($row["fid"]);
+            }
+            if(!empty($row["id"])){
+                $pids[intval($row["id"])]=intval($row["id"]);
+            }
+        }
+        $members=array();
+        if(!empty($uids)):
+            $members=Data::QueryData(
+                "forum_member","id,username,avatar","id in (".implode(",",array_fill(0,count($uids),"?")).")","","",array_values($uids)
+            )["querydata"];
+            $members=array_column($members,null,"id");
+        endif;
+        $forums=array();
+        if(!empty($fids)):
+            $forums=Data::QueryData(
+                "forum","id,forum_name","id in (".implode(",",array_fill(0,count($fids),"?")).")","","",array_values($fids)
+            )["querydata"];
+            $forums=array_column($forums,"forum_name","id");
+        endif;
+        $replys=array();
+        if(!empty($pids)):
+            $replys=Data::RunYu(
+                "select postid,count(id) as num from `forum_reply` where postid in (".implode(",",array_fill(0,count($pids),"?")).") group by postid",
+                array_values($pids)
+            )["querydata"] ?? array();
+            $replys=array_column($replys,"num","postid");
+        endif;
+        foreach($rows as $k=>$row){
+            $uid=intval($row["uid"] ?? 0);
+            $fid=intval($row["fid"] ?? 0);
+            $pid=intval($row["id"] ?? 0);
+            $rows[$k]["username"]=$members[$uid]["username"] ?? "";
+            $rows[$k]["avatar"]=$members[$uid]["avatar"] ?? "";
+            $rows[$k]["forum_name"]=$forums[$fid] ?? "";
+            $rows[$k]["replynum"]=intval($replys[$pid] ?? 0);
+        }
+        return $rows;
     }
 }

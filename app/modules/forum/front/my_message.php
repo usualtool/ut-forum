@@ -25,7 +25,7 @@ class My_message{
         );
         $uid=$session["uid"];
         if(!empty($_GET["reveuid"])){
-            $revid=Inc::SqlCheck($_GET["reveuid"] ?? "");
+            $revid=($_GET["reveuid"] ?? "");
             if($member->ExistsId($revid)==0):
                 Inc::GoUrl("-1","接收账户不存在!");
             else:
@@ -37,8 +37,8 @@ class My_message{
         $app->Runin("webplace","发信");
         $app->Open("my_message.cms");
         if(($_GET["do"] ?? "")=="creat"){
-            $reve=Inc::SqlCheck($_POST["reve"] ?? "");
-            $content=Inc::SqlCheck($_POST["ut-editor"] ?? "");
+            $reve=($_POST["reve"] ?? "");
+            $content=($_POST["ut-editor"] ?? "");
                 if($member->ExistsName($reve)==0):
                     Inc::GoUrl("-1","接收方账户不存在!");
                 else:

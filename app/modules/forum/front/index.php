@@ -21,7 +21,7 @@ class Index{
         $topstar=$model->GetTopStars();
         $pagelink="";
 
-        $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+        $page=empty($_GET["page"]) ? 1 : intval($_GET["page"]);
         $pagenum=10;
         $forum_post=$model->GetPosts($page,$pagenum);
         $querynum=$forum_post["querynum"];

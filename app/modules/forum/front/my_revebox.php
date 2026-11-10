@@ -24,9 +24,9 @@ class My_revebox{
         $uid=$session["uid"];
         $pagelink="";
 
-        $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+        $page=empty($_GET["page"]) ? 1 : intval($_GET["page"]);
         $pagenum=10;
-        $data=$model->GetMessages("reveuid='$uid'",$page,$pagenum);
+        $data=$model->GetMessages("reveuid=?",$page,$pagenum,array(intval($uid)));
         $querynum=$data["querynum"];
         $querydata=$data["querydata"];
         $totalpage=ceil($querynum/$pagenum);

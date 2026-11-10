@@ -13,24 +13,24 @@ class Index{
         $l=$_GET["l"] ?? "";
         $app->Runin(array("l","data"),array($l,$model->GetList()));
         if(($_GET["do"] ?? "")=="update"){
-            $id=Inc::SqlCheck($_POST["id"] ?? "");
-            $ali_appid=Inc::SqlCheck($_POST["ali_appid"] ?? "");
-            $ali_private_key=Inc::SqlCheck($_POST["ali_private_key"] ?? "");
-            $ali_public_key=Inc::SqlCheck($_POST["ali_public_key"] ?? "");
-            $ali_notify_url=Inc::SqlCheck($_POST["ali_notify_url"] ?? "");
-            $ali_return_url=Inc::SqlCheck($_POST["ali_return_url"] ?? "");
-            $wx_appid=Inc::SqlCheck($_POST["wx_appid"] ?? "");
-            $wx_mchid=Inc::SqlCheck($_POST["wx_mchid"] ?? "");
-            $wx_key=Inc::SqlCheck($_POST["wx_key"] ?? "");
-            $wx_secert=Inc::SqlCheck($_POST["wx_secert"] ?? "");
-            $wx_notify_url=Inc::SqlCheck($_POST["wx_notify_url"] ?? "");
-            $pp_mod=Inc::SqlCheck($_POST["pp_mod"] ?? "");
-            $pp_clientid=Inc::SqlCheck($_POST["pp_clientid"] ?? "");
-            $pp_secret=Inc::SqlCheck($_POST["pp_secret"] ?? "");
-            $pp_return_url=Inc::SqlCheck($_POST["pp_return_url"] ?? "");
-            $pp_notify_url=Inc::SqlCheck($_POST["pp_notify_url"] ?? "");
-            $url_ok=Inc::SqlCheck($_POST["url_ok"] ?? "");
-            $url_no=Inc::SqlCheck($_POST["url_no"] ?? "");
+            $id=$_POST["id"] ?? "";
+            $ali_appid=$_POST["ali_appid"] ?? "";
+            $ali_private_key=$_POST["ali_private_key"] ?? "";
+            $ali_public_key=$_POST["ali_public_key"] ?? "";
+            $ali_notify_url=$_POST["ali_notify_url"] ?? "";
+            $ali_return_url=$_POST["ali_return_url"] ?? "";
+            $wx_appid=$_POST["wx_appid"] ?? "";
+            $wx_mchid=$_POST["wx_mchid"] ?? "";
+            $wx_key=$_POST["wx_key"] ?? "";
+            $wx_secert=$_POST["wx_secert"] ?? "";
+            $wx_notify_url=$_POST["wx_notify_url"] ?? "";
+            $pp_mod=$_POST["pp_mod"] ?? "";
+            $pp_clientid=$_POST["pp_clientid"] ?? "";
+            $pp_secret=$_POST["pp_secret"] ?? "";
+            $pp_return_url=$_POST["pp_return_url"] ?? "";
+            $pp_notify_url=$_POST["pp_notify_url"] ?? "";
+            $url_ok=$_POST["url_ok"] ?? "";
+            $url_no=$_POST["url_no"] ?? "";
             $sql=0;
             if($l=="alipay"):
                 $sql=$model->SaveConfig(array(

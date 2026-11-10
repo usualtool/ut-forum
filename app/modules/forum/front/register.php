@@ -13,18 +13,18 @@ class Register{
         $app->Runin(array("webplace"),array("创建账户"));
         $app->Open("register.cms");
         if(($_GET["do"] ?? "")=="register"){
-            $username=Inc::SqlCheck($_POST["username"] ?? "");
-            $password=Inc::SqlCheck($_POST["password"] ?? "");
-            $passwords=Inc::SqlCheck($_POST["passwords"] ?? "");
+            $username=($_POST["username"] ?? "");
+            $password=($_POST["password"] ?? "");
+            $passwords=($_POST["passwords"] ?? "");
             if(!empty($_POST["avatar"])){
-                $avatar=Inc::SqlCheck($_POST["avatar"] ?? "");
+                $avatar=($_POST["avatar"] ?? "");
             }else{
                 $avatar=$config["APPURL"]."/assets/images/noimage.png";
             }
-            $email=Inc::SqlCheck($_POST["email"] ?? "");
-            $fullname=Inc::SqlCheck($_POST["fullname"] ?? "");
-            $telephone=Inc::SqlCheck($_POST["telephone"] ?? "");
-            $sex=Inc::SqlCheck($_POST["sex"] ?? "");
+            $email=($_POST["email"] ?? "");
+            $fullname=($_POST["fullname"] ?? "");
+            $telephone=($_POST["telephone"] ?? "");
+            $sex=($_POST["sex"] ?? "");
             if($password!=$passwords):
                 Inc::GoUrl("-1","两次输入的密码不一致!");
             else:

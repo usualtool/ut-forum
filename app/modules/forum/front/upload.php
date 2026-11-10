@@ -21,7 +21,7 @@ class Upload{
         );
         $do=empty($_GET["do"]) ? ($_POST["do"] ?? "") : ($_GET["do"] ?? "");
         if($do=="del"){
-            $img=Inc::SqlCheck(str_replace("..","",$_POST['img'] ?? ""));
+            $img=(str_replace("..","",$_POST['img'] ?? ""));
             if(in_array(substr($img,-4),array(
                 ".jpg",
                 ".png",

@@ -23,7 +23,7 @@ class My_post_creat{
         );
         $uid=$session["uid"];
         if(!empty($_GET["fid"])){
-            $app->Runin("fid",Inc::SqlCheck($_GET["fid"] ?? ""));
+            $app->Runin("fid",($_GET["fid"] ?? ""));
         }else{
             $app->Runin("fid",0);
         }
@@ -34,17 +34,17 @@ class My_post_creat{
             if(empty($_POST["ut-editor"])):
                 Inc::GoUrl("-1","内容不能为空!");
             endif;
-            $fid=Inc::SqlCheck($_POST["fid"] ?? "");
+            $fid=($_POST["fid"] ?? "");
             if(!empty($_POST["notice"])):
-                $notice=Inc::SqlCheck($_POST["notice"] ?? "");
+                $notice=($_POST["notice"] ?? "");
             else:
                 $notice=0;
             endif;
-            $look=Inc::SqlCheck($_POST["look"] ?? "");
-            $title=Inc::SqlCheck($_POST["title"] ?? "");
-            $content=Inc::SqlCheck($_POST["ut-editor"] ?? "");
-            $payfiles=Inc::SqlCheck($_POST["payfiles"] ?? "");
-            $files=implode(",",Inc::SqlCheck($_POST["files"] ?? array()));
+            $look=($_POST["look"] ?? "");
+            $title=($_POST["title"] ?? "");
+            $content=($_POST["ut-editor"] ?? "");
+            $payfiles=($_POST["payfiles"] ?? "");
+            $files=implode(",",($_POST["files"] ?? array()));
                     $pid=$model->AddPost(array(
                     "uid"=>$uid,
                     "fid"=>$fid,

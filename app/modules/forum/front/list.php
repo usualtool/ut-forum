@@ -15,12 +15,12 @@ class Forum_list{
             array("rate","user","uid","utype","username","money","avatar"),
             array($session["rate"],$session["user"],$session["uid"],$session["utype"],$session["username"],$session["money"],$session["avatar"])
         );
-        $id=Inc::SqlCheck($_GET["id"] ?? "");
+        $id=($_GET["id"] ?? "");
         $forum_name=$model->GetForumName($id);
         $forum=$model->GetForums();
         $pagelink="?&id=".$id;
 
-        $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+        $page=empty($_GET["page"]) ? 1 : intval($_GET["page"]);
         $pagenum=10;
         $forum_post=$model->GetForumPosts($id,$page,$pagenum);
         $querynum=$forum_post["querynum"];

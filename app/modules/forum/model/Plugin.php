@@ -38,7 +38,7 @@ class Plugin{
         return preg_match("/<".$tag.">(.*?)<\/".$tag.">/s",$hook,$match) ? $match[1] : "";
     }
     public function GetDetail($pid){
-        return Data::QueryData("cms_plugin","","pid='$pid'");
+        return Data::QueryData("cms_plugin","","pid=?","","",array($pid));
     }
     public function Install($pid){
         global $config;
@@ -74,7 +74,7 @@ class Plugin{
         $ver=Inc::StrSubstr("<ver>","</ver>",$plugins);
         $description=Inc::StrSubstr("<description>","</description>",$plugins);
         $installsql=Inc::StrSubstr("<installsql><![CDATA[","]]></installsql>",$plugins);
-        if(Data::QueryData("cms_plugin","","pid='$pid'","","1")["querynum"]>0):
+        if(Data::QueryData("cms_plugin","","pid=?","","1",array($pid))["querynum"]>0):
             Data::UpdateData("cms_plugin",array(
                 "type"=>$cate,
                 "auther"=>$auther,
@@ -102,7 +102,7 @@ class Plugin{
         $pconfig=APP_ROOT."/plugins/".$pid."/usualtool.config";
         $plugins=file_get_contents($pconfig);
         $uninstallsql=Inc::StrSubstr("<uninstallsql><![CDATA[","]]></uninstallsql>",$plugins);
-        Data::DelData("cms_plugin","pid='$pid'");
+        Data::DelData("cms_plugin","pid=?",array($pid));
         if($uninstallsql=='0'):
             Inc::DelDir(APP_ROOT."/plugins/".$pid);
             if(is_dir(OPEN_ROOT."/assets/plugins/".$pid)):

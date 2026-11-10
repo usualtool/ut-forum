@@ -28,14 +28,14 @@ class My_admin_forum{
         $do=$_GET["do"] ?? "";
         $datatree=$model->GetTree();
         if($do=="mon"){
-            $id=Inc::SqlCheck($_GET["id"] ?? "");
+            $id=($_GET["id"] ?? "");
             $app->Runin("id",$id);
             $app->Runin("data",$model->GetForumRow($id));
         }
         $app->Runin(array("webplace","do","datatree"),array("版块管理",$do,$datatree));
         $app->Open("my_admin_forum.cms");
         if($do=="del"){
-            $id=Inc::SqlCheck($_GET["id"] ?? "");
+            $id=($_GET["id"] ?? "");
             if($model->DeleteForum($id)){
                 Inc::GoUrl(Route::Link("forum","my_admin_forum"),"版块删除成功!");
             }else{
@@ -44,22 +44,22 @@ class My_admin_forum{
         }
         if($do=="a"){
             if($model->AddForum(array(
-                "bid"=>Inc::SqlCheck($_POST["bid"] ?? ""),
-                "forum_name"=>Inc::SqlCheck($_POST["forum_name"] ?? ""),
-                "forum_number"=>Inc::SqlCheck($_POST["forum_number"] ?? ""),
-                "forum_content"=>Inc::SqlCheck($_POST["forum_content"] ?? "")))){
+                "bid"=>($_POST["bid"] ?? ""),
+                "forum_name"=>($_POST["forum_name"] ?? ""),
+                "forum_number"=>($_POST["forum_number"] ?? ""),
+                "forum_content"=>($_POST["forum_content"] ?? "")))){
                 Inc::GoUrl(Route::Link("forum","my_admin_forum"),"版块创建成功!");
             }else{
                 Inc::GoUrl("-1","版块创建失败!");
             }
         }
         if($do=="m"){
-            $id=Inc::SqlCheck($_POST["id"] ?? "");
+            $id=($_POST["id"] ?? "");
             if($model->UpdateForum(array(
-                "bid"=>Inc::SqlCheck($_POST["bid"] ?? ""),
-                "forum_name"=>Inc::SqlCheck($_POST["forum_name"] ?? ""),
-                "forum_number"=>Inc::SqlCheck($_POST["forum_number"] ?? ""),
-                "forum_content"=>Inc::SqlCheck($_POST["forum_content"] ?? "")),"id='$id'")){
+                "bid"=>($_POST["bid"] ?? ""),
+                "forum_name"=>($_POST["forum_name"] ?? ""),
+                "forum_number"=>($_POST["forum_number"] ?? ""),
+                "forum_content"=>($_POST["forum_content"] ?? "")),"id=?",array(intval($id)))){
                 Inc::GoUrl(Route::Link("forum","my_admin_forum"),"版块编辑成功!");
             }else{
                 Inc::GoUrl("-1","版块编辑失败!");

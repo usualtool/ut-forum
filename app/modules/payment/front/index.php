@@ -9,13 +9,13 @@ class Index{
     }
     public function index(){
         $model=new PayModel();
-    $uid=empty($_POST["uid"]) ? 0 : Inc::SqlCheck($_POST["uid"] ?? "");
-    $form=empty($_POST["form"]) ? 1 : Inc::SqlCheck($_POST["form"] ?? "");
-    $posnum=empty($_POST["posnum"]) ? Inc::GetRandomString(14,"0123456789") : Inc::SqlCheck($_POST["posnum"] ?? "");
-    $amount=empty($_POST["amount"]) ? 0 : Inc::SqlCheck($_POST["amount"] ?? "");
-    $unit=empty($_POST["unit"]) ? "CNY" : Inc::SqlCheck($_POST["unit"] ?? "");
-    $remark=empty($_POST["remark"]) ? "" : Inc::SqlCheck($_POST["remark"] ?? "");
-    $returnurl=empty($_POST["returnurl"]) ? "" : Inc::SqlCheck($_POST["returnurl"] ?? "");
+    $uid=empty($_POST["uid"]) ? 0 : ($_POST["uid"] ?? "");
+    $form=empty($_POST["form"]) ? 1 : ($_POST["form"] ?? "");
+    $posnum=empty($_POST["posnum"]) ? Inc::GetRandomString(14,"0123456789") : ($_POST["posnum"] ?? "");
+    $amount=empty($_POST["amount"]) ? 0 : ($_POST["amount"] ?? "");
+    $unit=empty($_POST["unit"]) ? "CNY" : ($_POST["unit"] ?? "");
+    $remark=empty($_POST["remark"]) ? "" : ($_POST["remark"] ?? "");
+    $returnurl=empty($_POST["returnurl"]) ? "" : ($_POST["returnurl"] ?? "");
     $result=$model->AddLog(array(
         "uid"=>$uid,
         "form"=>$form,

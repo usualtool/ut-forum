@@ -23,9 +23,9 @@ class Login{
             Inc::GoUrl($gourl,"登出成功!");
         }
         if(($_GET["do"] ?? "")=="login"){
-            $username=Inc::SqlCheck($_POST["username"] ?? "");
-            $password=Inc::SqlCheck($_POST["password"] ?? "");
-            $code=Inc::SqlCheck(strtolower($_POST["code"] ?? ""));
+            $username=($_POST["username"] ?? "");
+            $password=($_POST["password"] ?? "");
+            $code=(strtolower($_POST["code"] ?? ""));
             if(($_SESSION['authcode'] ?? "")==$code){
                 if(!empty($username) && !empty($password)){
                     $rows=$member->Login($username,$password);

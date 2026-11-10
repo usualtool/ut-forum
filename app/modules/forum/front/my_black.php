@@ -24,8 +24,8 @@ class My_black{
         $app->Runin("webplace","锁定/解除限制");
         $app->Open("my_black.cms");
         if(($_GET["do"] ?? "")=="black"){
-            $black=Inc::SqlCheck($_POST["black"] ?? "");
-            $username=Inc::SqlCheck($_POST["username"] ?? "");
+            $black=($_POST["black"] ?? "");
+            $username=($_POST["username"] ?? "");
                 if($member->ExistsName($username)==0):
                     Inc::GoUrl("-1","操作账户不存在!");
                 else:

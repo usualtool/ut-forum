@@ -12,7 +12,7 @@ class Log{
         $model=new PayModel();
     $pagelink="";
 
-    $page=empty($_GET["page"]) ? 1 : ($_GET["page"] ?? 1);
+    $page=empty($_GET["page"]) ? 1 : intval($_GET["page"]);
     $pagenum=10;
     $minid=$pagenum*($page-1);
     $data=$model->GetLogPage($minid,$pagenum);
@@ -23,8 +23,9 @@ class Log{
     $app->Open("log.cms");
     if(($_GET["do"] ?? "")=="del"){
         if(!empty($_GET["id"])):
-            $ids=implode("','",Inc::SqlCheck($_GET["id"] ?? array()));
-            $result=$model->DelLog("id in ('$ids')");
+            $ids=array_map("intval",(array)($_GET["id"] ?? array()));
+            if(empty($ids)){ $ids=array(0); }
+            $result=$model->DelLog("id in (".implode(",",array_fill(0,count($ids),"?")).")",$ids);
             if(!$result):
                 Inc::GoUrl(Route::Link("payment", "log"),"删除失败!");
             else:

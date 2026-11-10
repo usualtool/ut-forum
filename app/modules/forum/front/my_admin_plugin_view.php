@@ -25,7 +25,7 @@ class My_admin_plugin_view{
         if($utype!=99999):
             Inc::GoUrl("-1","权限不足!");
         endif;
-        $pid=Inc::SqlCheck($_GET["pid"] ?? "");
+        $pid=($_GET["pid"] ?? "");
         $data=$plugin->GetDetail($pid);
         $title=$data["querydata"][0]["title"];
         $plugin_file=$plugin->Sync($pid);

@@ -34,10 +34,10 @@ class Auth{
             $app->Open("auth.cms");
         }
         if(($_GET["do"] ?? "")=="opensave"){
-            $name=Inc::SqlCheck($_POST["name"] ?? "");
+            $name=($_POST["name"] ?? "");
             $newid=$member->AddOpenid(
-                Inc::SqlCheck($_POST["openid"] ?? ""),
-                Inc::SqlCheck($_POST["avatar"] ?? ""),
+                ($_POST["openid"] ?? ""),
+                ($_POST["avatar"] ?? ""),
                 $name);
             if($newid){
                 setcookie("auth_openid","");

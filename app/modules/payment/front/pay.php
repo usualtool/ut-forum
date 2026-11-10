@@ -19,8 +19,8 @@ class Pay{
     public function index(){
         global $config;
         $model=new PayModel();
-    $lb=Inc::SqlCheck($_GET["lb"] ?? "");
-    $posnum=Inc::SqlCheck($_GET["posnum"] ?? "");
+    $lb=$_GET["lb"] ?? "";
+    $posnum=$_GET["posnum"] ?? "";
     $payset=$model->GetSet();
     if($lb=="alipay" && (empty($payset["ali_appid"]) || empty($payset["ali_private_key"]) || empty($payset["ali_public_key"]))):
         Inc::GoUrl("-1","Alipay ERROR!");

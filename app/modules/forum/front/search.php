@@ -9,11 +9,11 @@ class Search{
     public function index(){
         global $app;
         $model=new ForumModel();
-        $key=Inc::SqlCheck(urldecode($_GET["key"] ?? ""));
+        $key=(urldecode($_GET["key"] ?? ""));
         $tags=$model->GetSearchTags();
         $pagelink="?key=".$key;
 
-        $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+        $page=empty($_GET["page"]) ? 1 : intval($_GET["page"]);
         $pagenum=10;
         $data=$model->SearchPosts($key,$page,$pagenum);
         $querynum=$data["querynum"];

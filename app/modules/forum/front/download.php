@@ -16,8 +16,8 @@ class Download{
             array($session["rate"],$session["user"],$session["uid"],$session["utype"],$session["username"],$session["money"],$session["avatar"])
         );
         $uid=$session["uid"];
-        $pid=Inc::SqlCheck($_GET["pid"] ?? "");
-        $did=intval(Inc::SqlCheck($_GET["did"] ?? ""));
+        $pid=($_GET["pid"] ?? "");
+        $did=intval(($_GET["did"] ?? ""));
         $data=$model->GetPost($pid)[0];
         $postmoney=$data["payfiles"];
         $buynum=$model->CountBuy($uid,$pid);

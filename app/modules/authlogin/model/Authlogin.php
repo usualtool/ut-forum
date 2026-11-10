@@ -4,13 +4,13 @@ use usualtool\Lib\Data;
 use usualtool\Lib\Inc;
 class Authlogin{
     public function GetSet(){
-        return Data::QueryData("cms_connect","","","","1")["querydata"][0] ?? array();
+        return Data::QueryData("cms_connect","","","","1","")["querydata"][0] ?? array();
     }
     public function GetList(){
-        return Data::QueryData("cms_connect","","","","1")["querydata"];
+        return Data::QueryData("cms_connect","","","","1","")["querydata"];
     }
-    public function Update($data,$where){
-        return Data::UpdateData("cms_connect",$data,$where);
+    public function Update($data,$where,$param=array()){
+        return Data::UpdateData("cms_connect",$data,$where,$param);
     }
     public function QqToken($auths,$code){
         return file_get_contents("https://graph.qq.com/oauth2.0/token?grant_type=authorization_code&client_id=".$auths["qq_appid"]."&client_secret=".$auths["qq_appkey"]."&code=$code&redirect_uri=".$auths["qq_reurl"]);

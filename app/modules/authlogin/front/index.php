@@ -8,8 +8,8 @@ class Index{
     }
     public function index(){
         $model=new AuthloginModel();
-        $auth=Inc::SqlCheck($_GET["auth"] ?? "");
-        $state=Inc::SqlCheck($_GET["state"] ?? "");
+        $auth=$_GET["auth"] ?? "";
+        $state=$_GET["state"] ?? "";
         $auths=$model->GetSet();
         if($auth=="qq"){
             Inc::GoUrl("https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=".($auths["qq_appid"] ?? "")."&state=".$state."&redirect_uri=".URLEncode(str_replace("&amp;","&",$auths["qq_reurl"] ?? "")),"");

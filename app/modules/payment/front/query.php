@@ -8,7 +8,7 @@ class Query{
     }
     public function index(){
         $model=new PayModel();
-    $lb=Inc::SqlCheck($_GET["lb"] ?? "");
+    $lb=$_GET["lb"] ?? "";
     /**
      * /?m=payment&p=query&lb=alipay
      * /?m=payment&p=return&lb=wechat
@@ -17,7 +17,7 @@ class Query{
     		require_once MODULE_PATH.'/payment/alipay/Config.php';
     		require_once MODULE_PATH.'/payment/alipay/AopSdk.php';
     		$row=$model->GetRoutine("0");
-    		$posnum=Inc::SqlCheck($_POST["posnum"] ?? "");
+    		$posnum=$_POST["posnum"] ?? "";
     		$aop = new \AopClient();
     		$aop->gatewayUrl = 'https://openapi.alipay.com/gateway.do';
     		$aop->appId = $row["alrteid"];
@@ -49,14 +49,14 @@ class Query{
     elseif($lb=="wechat"):
         require_once MODULE_PATH.'/payment/wechat/lib/WxPay.Api.php';
         if(isset($_REQUEST["transaction_id"]) && $_REQUEST["transaction_id"] != ""):
-            $transaction_id = Inc::SqlCheck($_REQUEST["transaction_id"]);
+            $transaction_id = $_REQUEST["transaction_id"];
             $input = new \WxPayOrderQuery();
             $input->SetTransaction_id($transaction_id);
             echo json_encode(\WxPayApi::orderQuery($input));
             exit();
         endif;
         if(isset($_REQUEST["out_trade_no"]) && $_REQUEST["out_trade_no"] != ""):
-            $out_trade_no = Inc::SqlCheck($_REQUEST["out_trade_no"]);
+            $out_trade_no = $_REQUEST["out_trade_no"];
             $input = new \WxPayOrderQuery();
             $input->SetOut_trade_no($out_trade_no);
             echo json_encode(\WxPayApi::orderQuery($input));

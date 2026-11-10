@@ -10,8 +10,8 @@ class Auth_qq{
     public function index(){
         $model=new AuthloginModel();
         $auths=$model->GetSet();
-        $state=explode("__",Inc::SqlCheck($_GET["state"] ?? ""));
-        $code=Inc::SqlCheck($_GET["code"] ?? "");
+        $state=explode("__",$_GET["state"] ?? "");
+        $code=$_GET["code"] ?? "";
         if(!empty($code)){
             $thistoken=$model->QqToken($auths,$code);
             $token=Inc::StrSubstr("access_token=","&expires_in=",$thistoken);

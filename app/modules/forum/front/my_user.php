@@ -24,14 +24,14 @@ class My_user{
         $app->Runin(array("webplace"),array("更新账户"));
         $app->Open("my_user.cms");
         if(($_GET["do"] ?? "")=="save"){
-            $id=Inc::SqlCheck($_POST["id"] ?? "");
-            $avatar=Inc::SqlCheck($_POST["avatar"] ?? "");
-            $fullname=Inc::SqlCheck($_POST["fullname"] ?? "");
-            $email=Inc::SqlCheck($_POST["email"] ?? "");
-            $telephone=Inc::SqlCheck($_POST["telephone"] ?? "");
-            $sex=Inc::SqlCheck($_POST["sex"] ?? "");
-            $password=Inc::SqlCheck($_POST["password"] ?? "");
-            $passwords=Inc::SqlCheck($_POST["passwords"] ?? "");
+            $id=($_POST["id"] ?? "");
+            $avatar=($_POST["avatar"] ?? "");
+            $fullname=($_POST["fullname"] ?? "");
+            $email=($_POST["email"] ?? "");
+            $telephone=($_POST["telephone"] ?? "");
+            $sex=($_POST["sex"] ?? "");
+            $password=($_POST["password"] ?? "");
+            $passwords=($_POST["passwords"] ?? "");
             if(!empty($password) && !empty($passwords)):
                 if($password!=$passwords):
                     Inc::GoUrl("-1","两次密码不一致");
@@ -43,7 +43,7 @@ class My_user{
                         "fullname"=>$fullname,
                         "telephone"=>$telephone,
                         "email"=>$email,
-                        "sex"=>$sex),"id='$id'");
+                        "sex"=>$sex),"id=?",array(intval($id)));
                 endif;
             else:
                 $sql=$member->Update(array(
@@ -51,7 +51,7 @@ class My_user{
                     "fullname"=>$fullname,
                     "email"=>$email,
                     "telephone"=>$telephone,
-                    "sex"=>$sex),"id='$id'");
+                    "sex"=>$sex),"id=?",array(intval($id)));
             endif;
             if($sql):
                 Inc::GoUrl(Route::Link("forum","my_user"),"更新资料成功!");

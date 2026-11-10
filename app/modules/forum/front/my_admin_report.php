@@ -28,7 +28,7 @@ class My_admin_report{
         $do=$_GET["do"] ?? "";
         $pagelink="";
 
-        $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+        $page=empty($_GET["page"]) ? 1 : intval($_GET["page"]);
         $pagenum=10;
         $data=$model->GetReports($page,$pagenum);
         $querynum=$data["querynum"];
@@ -38,7 +38,7 @@ class My_admin_report{
         $app->Runin(array("webplace","total","curpage","listnum","pagelink"),array("举报列表",$totalpage,$page,$pagenum,$pagelink));
         $app->Open("my_admin_report.cms");
         if($do=="del"){
-            $id=Inc::SqlCheck($_GET["id"] ?? "");
+            $id=($_GET["id"] ?? "");
             if($model->DeleteReport($id)){
                 Inc::GoUrl(Route::Link("forum","my_admin_report"),"删除成功!");
             }else{
@@ -46,8 +46,8 @@ class My_admin_report{
             }
         }
         if($do=="del_post"){
-            $id=Inc::SqlCheck($_GET["id"] ?? "");
-            $postid=Inc::SqlCheck($_GET["postid"] ?? "");
+            $id=($_GET["id"] ?? "");
+            $postid=($_GET["postid"] ?? "");
             if($model->DeletePost($postid)){
                 $model->DeleteReport($id);
                 Inc::GoUrl(Route::Link("forum","my_admin_report"),"删除成功!");
@@ -56,8 +56,8 @@ class My_admin_report{
             }
         }
         if($do=="del_reply"){
-            $id=Inc::SqlCheck($_GET["id"] ?? "");
-            $replyid=Inc::SqlCheck($_GET["replyid"] ?? "");
+            $id=($_GET["id"] ?? "");
+            $replyid=($_GET["replyid"] ?? "");
             if($model->DeleteReply($replyid)){
                 $model->DeleteReport($id);
                 Inc::GoUrl(Route::Link("forum","my_admin_report"),"删除成功!");

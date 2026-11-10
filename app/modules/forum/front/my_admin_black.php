@@ -27,7 +27,7 @@ class My_admin_black{
         endif;
         $pagelink="";
 
-        $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+        $page=empty($_GET["page"]) ? 1 : intval($_GET["page"]);
         $pagenum=10;
         $data=$model->GetClosedPosts($page,$pagenum);
         $querynum=$data["querynum"];

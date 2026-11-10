@@ -9,8 +9,8 @@ class Forum{
     public function GetCookieName(){
         return Data::QueryData("forum_set","","","","1")["querydata"][0]["cookname"];
     }
-    public function UpdateSet($data,$where){
-        return Data::UpdateData("forum_set",$data,$where);
+    public function UpdateSet($data,$where,$param=array()){
+        return Data::UpdateData("forum_set",$data,$where,$param);
     }
     public function GetNotice(){
         return Data::QueryData("forum_post","","close=0 and notice=1","posttime desc","")["querydata"];
@@ -36,28 +36,28 @@ class Forum{
     }
     public function GetForumPosts($fid,$page=1,$size=10){
         $minid=$size*($page-1);
-        return Data::QueryData("forum_post","","fid='$fid' and close=0 and notice=0","ding desc,posttime desc","$minid,$size");
+        return Data::QueryData("forum_post","","fid=? and close=0 and notice=0","ding desc,posttime desc","$minid,$size",array(intval($fid)));
     }
     public function GetClosedPosts($page=1,$size=10){
         $minid=$size*($page-1);
         return Data::QueryData("forum_post","","close=1","posttime desc","$minid,$size");
     }
-    public function GetMemberPosts($where,$page=1,$size=10){
+    public function GetMemberPosts($where,$page=1,$size=10,$param=array()){
         $minid=$size*($page-1);
-        return Data::QueryData("forum_post","",$where,"posttime desc","$minid,$size");
+        return Data::QueryData("forum_post","",$where,"posttime desc","$minid,$size",$param);
     }
     public function SearchPosts($key,$page=1,$size=10){
         $minid=$size*($page-1);
-        return Data::QueryData("forum_post","","title like '%$key%' or content like '%$key%'","posttime desc","$minid,$size");
+        return Data::QueryData("forum_post","","title like ? or content like ?","posttime desc","$minid,$size",array("%".$key."%","%".$key."%"));
     }
     public function GetSearchTags(){
         return Data::QueryData("cms_search","hit,keyword","","hit desc","20")["querydata"];
     }
     public function GetForumName($id){
-        return Data::QueryData("forum","forum_name","id='$id'","","")["querydata"][0]["forum_name"];
+        return Data::QueryData("forum","forum_name","id=?","","",array(intval($id)))["querydata"][0]["forum_name"];
     }
     public function GetForumRow($id){
-        return Data::QueryData("forum","","id='$id'","","")["querydata"];
+        return Data::QueryData("forum","","id=?","","",array(intval($id)))["querydata"];
     }
     public function GetTree(){
         $datatree=array();
@@ -73,62 +73,62 @@ class Forum{
     public function AddForum($data){
         return Data::InsertData("forum",$data);
     }
-    public function UpdateForum($data,$where){
-        return Data::UpdateData("forum",$data,$where);
+    public function UpdateForum($data,$where,$param=array()){
+        return Data::UpdateData("forum",$data,$where,$param);
     }
     public function DeleteForum($id){
-        return Data::DelData("forum","id='$id'");
+        return Data::DelData("forum","id=?",array(intval($id)));
     }
     public function GetPost($id){
-        return Data::QueryData("forum_post","","id='$id'","","")["querydata"];
+        return Data::QueryData("forum_post","","id=?","","",array(intval($id)))["querydata"];
     }
     public function GetMyPost($id,$uid){
-        return Data::QueryData("forum_post","","id='$id' and uid='$uid'","","")["querydata"];
+        return Data::QueryData("forum_post","","id=? and uid=?","","",array(intval($id),intval($uid)))["querydata"];
     }
     public function GetPostFid($id){
-        return Data::QueryData("forum_post","fid","id='$id'","","")["querydata"][0]["fid"];
+        return Data::QueryData("forum_post","fid","id=?","","",array(intval($id)))["querydata"][0]["fid"];
     }
     public function AddPost($data){
         return Data::InsertData("forum_post",$data);
     }
-    public function UpdatePost($data,$where){
-        return Data::UpdateData("forum_post",$data,$where);
+    public function UpdatePost($data,$where,$param=array()){
+        return Data::UpdateData("forum_post",$data,$where,$param);
     }
     public function DeletePost($id){
-        return Data::DelData("forum_post","id='$id'");
+        return Data::DelData("forum_post","id=?",array(intval($id)));
     }
     public function DeleteMemberPost($uid,$id){
-        return Data::DelData("forum_post","uid='$uid' and id='$id'");
+        return Data::DelData("forum_post","uid=? and id=?",array(intval($uid),intval($id)));
     }
     public function AddHit($id){
-        return Data::UpdateData("forum_post",array("hit"=>"hit+1"),"id='$id'");
+        return Data::UpdateData("forum_post",array("hit"=>"hit+1"),"id=?",array(intval($id)));
     }
     public function AddDown($id){
-        return Data::UpdateData("forum_post",array("downnum"=>"downnum+1"),"id='$id'");
+        return Data::UpdateData("forum_post",array("downnum"=>"downnum+1"),"id=?",array(intval($id)));
     }
     public function SetDing($id,$ding){
-        return Data::UpdateData("forum_post",array("ding"=>$ding),"id='$id'");
+        return Data::UpdateData("forum_post",array("ding"=>$ding),"id=?",array(intval($id)));
     }
     public function SetClose($id,$close){
-        return Data::UpdateData("forum_post",array("close"=>$close),"id='$id'");
+        return Data::UpdateData("forum_post",array("close"=>$close),"id=?",array(intval($id)));
     }
     public function SetNotice($id){
-        return Data::UpdateData("forum_post",array("notice"=>0),"id='$id'");
+        return Data::UpdateData("forum_post",array("notice"=>0),"id=?",array(intval($id)));
     }
     public function GetMyReplyNum($id,$uid){
-        $my_rnum=Data::QueryData("forum_reply","","postid='$id' and uid='$uid'","","")["querynum"];
-        $my_pnum=Data::QueryData("forum_post","","id='$id' and uid='$uid'","","")["querynum"];
+        $my_rnum=Data::QueryData("forum_reply","","postid=? and uid=?","","",array(intval($id),intval($uid)))["querynum"];
+        $my_pnum=Data::QueryData("forum_post","","id=? and uid=?","","",array(intval($id),intval($uid)))["querynum"];
         return $my_rnum+$my_pnum;
     }
-    public function GetReplies($where,$page=1,$size=5){
+    public function GetReplies($where,$page=1,$size=5,$param=array()){
         $minid=$size*($page-1);
-        return Data::QueryData("forum_reply","",$where,"replytime asc","$minid,$size");
+        return Data::QueryData("forum_reply","",$where,"replytime asc","$minid,$size",$param);
     }
     public function AddReply($data){
         return Data::InsertData("forum_reply",$data);
     }
     public function DeleteReply($id){
-        return Data::DelData("forum_reply","id='$id'");
+        return Data::DelData("forum_reply","id=?",array(intval($id)));
     }
     public function BuyFiles($id,$uid,$postmoney,$postuid,$money){
         if(round($money,2)<round($postmoney,2)){
@@ -143,8 +143,8 @@ class Forum{
             "pid"=>$id,
             "amount"=>$postmoney,
             "addtime"=>date('Y-m-d H:i:s',time())));
-        if(Data::UpdateData("forum_member",array("money"=>$jianmoney),"id='$uid'")):
-            $postuidmoney=Data::QueryData("forum_member","money","id='$postuid'","","")["querydata"][0]["money"];
+        if(Data::UpdateData("forum_member",array("money"=>$jianmoney),"id=?",array(intval($uid)))):
+            $postuidmoney=Data::QueryData("forum_member","money","id=?","","",array(intval($postuid)))["querydata"][0]["money"];
             $jiamoney=round($postuidmoney,2)+round($postmoney,2);
             Data::InsertData("forum_payment",array(
                 "types"=>2,
@@ -154,7 +154,7 @@ class Forum{
                 "pid"=>$id,
                 "amount"=>$postmoney,
                 "addtime"=>date('Y-m-d H:i:s',time())));
-            Data::UpdateData("forum_member",array("money"=>$jiamoney),"id='$postuid'");
+            Data::UpdateData("forum_member",array("money"=>$jiamoney),"id=?",array(intval($postuid)));
         endif;
         return true;
     }
@@ -169,33 +169,33 @@ class Forum{
         return Data::QueryData("forum_report","","","addtime desc","$minid,$size");
     }
     public function DeleteReport($id){
-        return Data::DelData("forum_report","id='$id'");
+        return Data::DelData("forum_report","id=?",array(intval($id)));
     }
-    public function GetMessages($where,$page=1,$size=10){
+    public function GetMessages($where,$page=1,$size=10,$param=array()){
         $minid=$size*($page-1);
-        return Data::QueryData("forum_message","",$where,"sendtime desc","$minid,$size");
+        return Data::QueryData("forum_message","",$where,"sendtime desc","$minid,$size",$param);
     }
     public function AddMessage($data){
         return Data::InsertData("forum_message",$data);
     }
-    public function GetPayments($where,$page=1,$size=10){
+    public function GetPayments($where,$page=1,$size=10,$param=array()){
         $minid=$size*($page-1);
-        return Data::QueryData("forum_payment","",$where,"addtime desc","$minid,$size");
+        return Data::QueryData("forum_payment","",$where,"addtime desc","$minid,$size",$param);
     }
     public function AddPayment($data){
         return Data::InsertData("forum_payment",$data);
     }
     public function GetPaymentState($posnum){
-        return Data::QueryData("forum_payment","state","posnum='$posnum'","","")["querydata"][0]["state"];
+        return Data::QueryData("forum_payment","state","posnum=?","","",array($posnum))["querydata"][0]["state"];
     }
     public function SetPaymentState($posnum){
-        return Data::UpdateData("forum_payment",array("state"=>1),"posnum='$posnum'");
+        return Data::UpdateData("forum_payment",array("state"=>1),"posnum=?",array($posnum));
     }
     public function CountBuy($uid,$pid){
-        return Data::QueryData("forum_payment","","uid='$uid' and pid='$pid'","","")["querynum"];
+        return Data::QueryData("forum_payment","","uid=? and pid=?","","",array(intval($uid),intval($pid)))["querynum"];
     }
     public function GetPayLog($posnum){
-        return Data::QueryData("cms_pay_log","","posnum='$posnum'","","")["querydata"][0];
+        return Data::QueryData("cms_pay_log","","posnum=?","","",array($posnum))["querydata"][0];
     }
     public function GetPayConfig(){
         return Data::QueryData("cms_pay","","","","1")["querydata"];
@@ -212,25 +212,25 @@ class Forum{
                     "ali_private_key"=>$data["ali_private_key"],
                     "ali_public_key"=>$data["ali_public_key"],
                     "ali_notify_url"=>$data["ali_notify_url"],
-                    "ali_return_url"=>$data["ali_return_url"]),"id='$id'");
+                    "ali_return_url"=>$data["ali_return_url"]),"id=?",array(intval($id)));
             elseif($l=="wechat"):
                 $sql=Data::UpdateData("cms_pay",array(
                     "wx_appid"=>$data["wx_appid"],
                     "wx_mchid"=>$data["wx_mchid"],
                     "wx_key"=>$data["wx_key"],
                     "wx_secert"=>$data["wx_secert"],
-                    "wx_notify_url"=>$data["wx_notify_url"]),"id='$id'");
+                    "wx_notify_url"=>$data["wx_notify_url"]),"id=?",array(intval($id)));
             elseif($l=="paypal"):
                 $sql=Data::UpdateData("cms_pay",array(
                     "pp_mod"=>$data["pp_mod"],
                     "pp_clientid"=>$data["pp_clientid"],
                     "pp_secret"=>$data["pp_secret"],
                     "pp_return_url"=>$data["pp_return_url"],
-                    "pp_notify_url"=>$data["pp_notify_url"]),"id='$id'");
+                    "pp_notify_url"=>$data["pp_notify_url"]),"id=?",array(intval($id)));
             elseif($l=="url"):
                 $sql=Data::UpdateData("cms_pay",array(
                     "url_ok"=>$data["url_ok"],
-                    "url_no"=>$data["url_no"]),"id='$id'");
+                    "url_no"=>$data["url_no"]),"id=?",array(intval($id)));
             endif;
         }else{
             if($l=="alipay"):
@@ -264,13 +264,13 @@ class Forum{
     }
     public function SaveConnect($id,$c,$data){
         if($c=="qq"):
-            Data::UpdateData("cms_connect",array("qq_appid"=>$data["qq_appid"],"qq_appkey"=>$data["qq_appkey"],"qq_reurl"=>$data["qq_reurl"]),"id='$id'");
+            Data::UpdateData("cms_connect",array("qq_appid"=>$data["qq_appid"],"qq_appkey"=>$data["qq_appkey"],"qq_reurl"=>$data["qq_reurl"]),"id=?",array(intval($id)));
         endif;
         if($c=="weibo"):
-            Data::UpdateData("cms_connect",array("wb_appid"=>$data["wb_appid"],"wb_appkey"=>$data["wb_appkey"],"wb_reurl"=>$data["wb_reurl"]),"id='$id'");
+            Data::UpdateData("cms_connect",array("wb_appid"=>$data["wb_appid"],"wb_appkey"=>$data["wb_appkey"],"wb_reurl"=>$data["wb_reurl"]),"id=?",array(intval($id)));
         endif;
         if($c=="wechat"):
-            Data::UpdateData("cms_connect",array("wx_appid"=>$data["wx_appid"],"wx_appkey"=>$data["wx_appkey"],"wx_reurl"=>$data["wx_reurl"]),"id='$id'");
+            Data::UpdateData("cms_connect",array("wx_appid"=>$data["wx_appid"],"wx_appkey"=>$data["wx_appkey"],"wx_reurl"=>$data["wx_reurl"]),"id=?",array(intval($id)));
         endif;
     }
 }

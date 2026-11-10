@@ -18,9 +18,9 @@ class Post{
         );
         $uid=$session["uid"];
         $money=$session["money"];
-        $id=Inc::SqlCheck($_GET["id"] ?? "");
-        $rid=Inc::SqlCheck($_GET["rid"] ?? "");
-        $lookuid=Inc::SqlCheck($_GET["uid"] ?? "");
+        $id=($_GET["id"] ?? "");
+        $rid=($_GET["rid"] ?? "");
+        $lookuid=($_GET["uid"] ?? "");
         if(!empty($uid)):
             $my_replynum=$model->GetMyReplyNum($id,$uid);
         else:
@@ -36,15 +36,15 @@ class Post{
         if(!empty($lookuid)):
             $pagelink="?&id=".$id."&uid=".$lookuid;
 
-            $where="postid='$id' and uid='$lookuid'";
+            $where="postid=? and uid=?"; $param=array(intval($id),intval($lookuid));
         else:
             $pagelink="?&id=".$id;
 
-            $where="postid='$id'";
+            $where="postid=?"; $param=array(intval($id));
         endif;
-        $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+        $page=empty($_GET["page"]) ? 1 : intval($_GET["page"]);
         $pagenum=5;
-        $data_reply=$model->GetReplies($where,$page,$pagenum);
+        $data_reply=$model->GetReplies($where,$page,$pagenum,$param);
         $querynum=$data_reply["querynum"];
         $querydata=$data_reply["querydata"];
         $totalpage=ceil($querynum/$pagenum);
@@ -56,10 +56,10 @@ class Post{
             if(empty($_POST["ut-editor"])):
                 Inc::GoUrl("-1","内容不能为空!");
             endif;
-            $page=Inc::SqlCheck($_POST["page"] ?? "");
-            $postid=Inc::SqlCheck($_POST["postid"] ?? "");
-            $replyid=Inc::SqlCheck($_POST["replyid"] ?? "");
-            $content=Inc::SqlCheck($_POST["ut-editor"] ?? "");
+            $page=($_POST["page"] ?? "");
+            $postid=($_POST["postid"] ?? "");
+            $replyid=($_POST["replyid"] ?? "");
+            $content=($_POST["ut-editor"] ?? "");
             $rid=$model->AddReply(array(
                     "uid"=>$uid,
                     "postid"=>$postid,
@@ -82,7 +82,7 @@ class Post{
             Inc::GoUrl(Route::Link("forum","post","id=".$id),"购买附件成功!");
         }
         if(($_GET["do"] ?? "")=="file_comment"){
-            $content=Inc::SqlCheck($_POST["file_content"] ?? "");
+            $content=($_POST["file_content"] ?? "");
             if(empty($content)):
                 Inc::GoUrl("-1","评语不能为空!");
             else:
@@ -96,9 +96,9 @@ class Post{
             endif;
         }
         if(($_GET["do"] ?? "")=="report"){
-            $ptype=Inc::SqlCheck($_POST["ptype"] ?? "");
-            $postid=Inc::SqlCheck($_POST["postid"] ?? "");
-            $content=Inc::SqlCheck($_POST["file_content"] ?? "");
+            $ptype=($_POST["ptype"] ?? "");
+            $postid=($_POST["postid"] ?? "");
+            $content=($_POST["file_content"] ?? "");
             if($model->AddReport(array(
                 "ptype"=>$ptype,
                 "postid"=>$postid,

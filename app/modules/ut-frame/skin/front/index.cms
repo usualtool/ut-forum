@@ -21,9 +21,9 @@
                   <{loop=>$notice as $rows}>
                       <li class="media mb-3">
                       <figure class="figure mr-3">
-                        <img src="<{db=>QueryData("forum_member","avatar","id='".$rows["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                        <img src="<{$rows->avatar}>" class="rounded-circle border" style="width:60px;height:60px;">
                         <figcaption class="figure-caption text-center">
-                            <{db=>QueryData("forum_member","username","id='".$rows["uid"]."'","","")["querydata"][0]["username"]}>
+                            <{$rows->username}>
                         </figcaption>
                       </figure>
                       <div class="media-body">
@@ -34,7 +34,7 @@
                               <i class="fas fa-calendar" aria-hidden="true"></i> <{php=>echo date("Y-m-d",strtotime(return=>$rows["posttime"]))}> 
                           </span>
                           <span class="right">
-                              <a href="<{url=>Link("forum","post","id=".$rows["id"])}>#reply">回复</a>(<{db=>QueryData("forum_reply","id","postid='".$rows["id"]."'","","")["querynum"]}>) | 浏览 <{$rows->hit}>
+                              <a href="<{url=>Link("forum","post","id=".$rows["id"])}>#reply">回复</a>(<{$rows->replynum}>) | 浏览 <{$rows->hit}>
                           </span>
                           </p>
                         </div>
@@ -48,9 +48,9 @@
                   <{loop=>$forum_post as $rows}>
                       <li class="media mb-3">
                       <figure class="figure mr-3">
-                        <img src="<{db=>QueryData("forum_member","avatar","id='".$rows["uid"]."'","","")["querydata"][0]["avatar"]}>" class="rounded-circle border" style="width:60px;height:60px;">
+                        <img src="<{$rows->avatar}>" class="rounded-circle border" style="width:60px;height:60px;">
                         <figcaption class="figure-caption text-center splitword" style="line-height:15px;">
-                            <{db=>QueryData("forum_member","username","id='".$rows["uid"]."'","","")["querydata"][0]["username"]}>
+                            <{$rows->username}>
                         </figcaption>
                       </figure>
                       <div class="media-body">
@@ -66,10 +66,10 @@
                               <i class="fas fa-calendar" aria-hidden="true"></i> <{php=>echo date("Y-m-d",strtotime(return=>$rows["posttime"]))}> 
                           </span>
                           <span class="ml-3 mr-3">
-                              <a href="<{url=>Link("forum","list","id=".$rows["fid"])}>"><{db=>QueryData("forum","forum_name","id='".$rows["fid"]."'","","")["querydata"][0]["forum_name"]}></a>
+                              <a href="<{url=>Link("forum","list","id=".$rows["fid"])}>"><{$rows->forum_name}></a>
                           </span>
                           <span class="right">
-                              <a href="<{url=>Link("forum","post","id=".$rows["id"])}>#reply">回复</a>(<{db=>QueryData("forum_reply","id","postid='".$rows["id"]."'","","")["querynum"]}>) | 浏览 <{$rows->hit}>
+                              <a href="<{url=>Link("forum","post","id=".$rows["id"])}>#reply">回复</a>(<{$rows->replynum}>) | 浏览 <{$rows->hit}>
                           </span>
                           </p>
                         </div>

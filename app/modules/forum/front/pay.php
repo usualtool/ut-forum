@@ -19,7 +19,7 @@ class Pay{
             array($session["rate"],$session["user"],$session["uid"],$session["utype"],$session["username"],$session["money"],$session["avatar"])
         );
         $set=$session["set"];
-        $posnum=empty($_GET["posnum"]) ? Inc::SqlCheck($_POST["posnum"] ?? "") : Inc::SqlCheck($_GET["posnum"] ?? "");
+        $posnum=empty($_GET["posnum"]) ? ($_POST["posnum"] ?? "") : ($_GET["posnum"] ?? "");
         if(!empty($posnum)){
             $data=$model->GetPayLog($posnum);
             $uid=$data["uid"];
@@ -31,7 +31,7 @@ class Pay{
         }
         if(!empty($_GET["posnum"])){
             if($data["state"]==1 && $state==0){
-                $member->Update(array("money"=>$newmoney),"id='$uid'");
+                $member->Update(array("money"=>$newmoney),"id=?",array(intval($uid)));
                 $model->SetPaymentState($posnum);
                 Inc::GoUrl(Route::Link("forum","my"),"充值成功!");
             }else{
@@ -40,7 +40,7 @@ class Pay{
         }
         if(!empty($_POST["posnum"])){
             if($data["state"]==1 && $state==0){
-                $member->Update(array("money"=>$newmoney),"id='$uid'");
+                $member->Update(array("money"=>$newmoney),"id=?",array(intval($uid)));
                 $model->SetPaymentState($posnum);
             }
         }

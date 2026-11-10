@@ -15,7 +15,7 @@ class Pay_return{
     public function index(){
         global $config;
         $model=new PayModel();
-    $lb=Inc::SqlCheck($_GET["lb"] ?? "");
+    $lb=$_GET["lb"] ?? "";
     /**
      * /?m=payment&p=return&lb=alipay
      * /?m=payment&p=return&lb=wechat
@@ -28,9 +28,9 @@ class Pay_return{
     		$alipaySevice = new \AlipayTradeService($alipay); 
     		$result = $alipaySevice->check($arr);
     		if($result):
-    				$posnum = Inc::SqlCheck(trim($_GET["out_trade_no"] ?? ""));
-    				$paynum = Inc::SqlCheck(trim($_GET["trade_no"] ?? ""));
-    				$amount = Inc::SqlCheck(trim($_GET["total_amount"] ?? ""));
+    				$posnum = trim($_GET["out_trade_no"] ?? "");
+    				$paynum = trim($_GET["trade_no"] ?? "");
+    				$amount = trim($_GET["total_amount"] ?? "");
     				$model->MarkPaid($posnum,$paynum);
     				$return=$model->GetReturnUrl($posnum);
     				if(!empty($return)):
@@ -44,8 +44,8 @@ class Pay_return{
     elseif($lb=="paypal"):
         require_once MODULE_PATH.'/payment/paypal/Config.php';
     		if(isset($_GET['success']) && $_GET['success'] == 'true'):
-    				$paymentID = Inc::SqlCheck($_GET['paymentId'] ?? "");
-    				$payerId = Inc::SqlCheck($_GET['PayerID'] ?? "");
+    				$paymentID = $_GET['paymentId'] ?? "";
+    				$payerId = $_GET['PayerID'] ?? "";
     				$payment = Payment::get($paymentID, $paypal);
     				$execute = new PaymentExecution();
     				$execute->setPayerId($payerId);

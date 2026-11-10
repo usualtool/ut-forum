@@ -16,9 +16,9 @@
     </div>
     <div class="col-md-4 pl-0 pr-0">
         <div class="ut-background p-4">
-            <form form="search" action="<{$appurl}>" method="get">
-            <input type="hidden" name="m"" value="forum">
-            <input type="hidden" name="p"" value="search">
+            <form id="search" action="<{$appurl}>" method="get">
+            <input type="hidden" name="m" value="forum">
+            <input type="hidden" name="p" value="search">
                 <div class="form-group row">
                     <div class="col-sm-8 pb-2">
                         <input type=text name="key" class="form-control">

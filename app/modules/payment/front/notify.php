@@ -15,7 +15,7 @@ class Notify{
     public function index(){
         global $config;
         $model=new PayModel();
-    $lb=Inc::SqlCheck($_GET["lb"] ?? "");
+    $lb=$_GET["lb"] ?? "";
     /**
      * /?m=payment&p=notify&lb=alipay
      * /?m=payment&p=notify&lb=wechat
@@ -29,10 +29,10 @@ class Notify{
     		$alipaySevice->writeLog(var_export($_POST,true));
     		$result = $alipaySevice->check($arr);
     		if($result):
-    				$posnum = Inc::SqlCheck(trim($_POST['out_trade_no'] ?? ""));
-    				$paynum = Inc::SqlCheck(trim($_POST['trade_no'] ?? ""));
-    				$status = Inc::SqlCheck(trim($_POST['trade_status'] ?? ""));
-    				$amount = Inc::SqlCheck(trim($_POST["total_amount"] ?? ""));
+    				$posnum = trim($_POST['out_trade_no'] ?? "");
+    				$paynum = trim($_POST['trade_no'] ?? "");
+    				$status = trim($_POST['trade_status'] ?? "");
+    				$amount = trim($_POST["total_amount"] ?? "");
     				if($status == 'TRADE_FINISHED'):
     				    echo "success";
     				elseif($status == 'TRADE_SUCCESS'):
@@ -55,9 +55,9 @@ class Notify{
     		$WxPayNotifyReply = new \WxPayNotifyReply();
     		$result = \WxPayResults::Init($xml);
     		$service_do_reslult = true;
-    		$posnum = Inc::SqlCheck($result["out_trade_no"]);
-    		$paynum = Inc::SqlCheck($result["transaction_id"]);
-    		$amount = round(Inc::SqlCheck($result["total_fee"])/100,2); 
+    		$posnum = $result["out_trade_no"];
+    		$paynum = $result["transaction_id"];
+    		$amount = round($result["total_fee"]/100,2); 
     		$model->MarkPaid($posnum,$paynum);
     		$return=$model->GetReturnUrl($posnum);
     		    if(!empty($return)):
@@ -76,8 +76,8 @@ class Notify{
     elseif($lb=="paypal"):
     		require_once MODULE_PATH.'/payment/paypal/Config.php';
     		if(isset($_POST['success']) && $_POST['success'] == 'true'):
-    				$paymentID = Inc::SqlCheck($_POST['paymentId'] ?? "");
-    				$payerId = Inc::SqlCheck($_POST['PayerID'] ?? "");
+    				$paymentID = $_POST['paymentId'] ?? "";
+    				$payerId = $_POST['PayerID'] ?? "";
     				$payment = Payment::get($paymentID, $paypal);
     				$execute = new PaymentExecution();
     				$execute->setPayerId($payerId);

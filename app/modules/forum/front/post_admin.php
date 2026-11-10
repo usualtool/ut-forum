@@ -22,12 +22,12 @@ class Post_admin{
             array($session["rate"],$session["user"],$session["uid"],$session["utype"],$session["username"],$session["money"],$session["avatar"])
         );
         $utype=$session["utype"];
-        $id=Inc::SqlCheck($_GET["id"] ?? "");
-        $rid=Inc::SqlCheck($_GET["rid"] ?? "");
+        $id=($_GET["id"] ?? "");
+        $rid=($_GET["rid"] ?? "");
         $fid=$model->GetPostFid($id);
         if($utype==99999 || $utype==$fid){
             if(($_GET["do"] ?? "")=="ding"){
-                $ding=Inc::SqlCheck($_GET["ding"] ?? "");
+                $ding=($_GET["ding"] ?? "");
                     if($model->SetDing($id,$ding)):
                         Inc::GoUrl(Route::Link("forum","post","id=".$id),"置顶状态操作成功!");
                     else:
@@ -35,7 +35,7 @@ class Post_admin{
                     endif;
             }
             if(($_GET["do"] ?? "")=="close"){
-                $close=Inc::SqlCheck($_GET["close"] ?? "");
+                $close=($_GET["close"] ?? "");
                     if($model->SetClose($id,$close)):
                         Inc::GoUrl(Route::Link("forum","post","id=".$id),"屏蔽状态操作成功!");
                     else:

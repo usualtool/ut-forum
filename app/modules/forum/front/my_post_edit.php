@@ -22,24 +22,24 @@ class My_post_edit{
             array($session["rate"],$session["user"],$session["uid"],$session["utype"],$session["username"],$session["money"],$session["avatar"])
         );
         $uid=$session["uid"];
-        $id=Inc::SqlCheck($_GET["id"] ?? "");
+        $id=($_GET["id"] ?? "");
         $datatree=$model->GetTree();
         $data=$model->GetMyPost($id,$uid);
         $app->Runin(array("webplace","datatree","id","data"),array("编辑主题",$datatree,$id,$data));
         if(($_GET["do"] ?? "")=="edit"){
-            $look=Inc::SqlCheck($_POST["look"] ?? "");
-            $fid=Inc::SqlCheck($_POST["fid"] ?? "");
-            $title=Inc::SqlCheck($_POST["title"] ?? "");
-            $content=Inc::SqlCheck($_POST["ut-editor"] ?? "");
-            $payfiles=Inc::SqlCheck($_POST["payfiles"] ?? "");
-            $files=implode(",",Inc::SqlCheck($_POST["files"] ?? array()));
+            $look=($_POST["look"] ?? "");
+            $fid=($_POST["fid"] ?? "");
+            $title=($_POST["title"] ?? "");
+            $content=($_POST["ut-editor"] ?? "");
+            $payfiles=($_POST["payfiles"] ?? "");
+            $files=implode(",",($_POST["files"] ?? array()));
             if($model->UpdatePost(array(
                 "look"=>$look,
                 "fid"=>$fid,
                 "title"=>$title,
                 "content"=>$content,
                 "payfiles"=>$payfiles,
-                "files"=>$files),"id='$id' and uid='$uid'")):
+                "files"=>$files),"id=? and uid=?",array(intval($id),intval($uid)))):
                     Inc::GoUrl(Route::Link("forum","post","id=".$id),"编辑成功!");
                 else:
                     Inc::GoUrl("-1","编辑失败!");

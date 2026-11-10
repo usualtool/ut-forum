@@ -33,7 +33,7 @@ class My_admin_plugin{
         $app->Open("my_admin_plugin.cms");
         if($do=="install"){
             $d=$_GET["d"] ?? "";
-            $pid=str_replace(".","",Inc::SqlCheck($_GET["pid"] ?? ""));
+            $pid=str_replace(".","",($_GET["pid"] ?? ""));
             $res=$plugin->Install($pid);
             if($res=="denied"):
                 Inc::GoUrl("-1","安装权限不足!");
@@ -48,7 +48,7 @@ class My_admin_plugin{
         }
         if($do=="uninstall"){
             $d=$_GET["d"] ?? "";
-            $pid=str_replace(".","",Inc::SqlCheck($_GET["pid"] ?? ""));
+            $pid=str_replace(".","",($_GET["pid"] ?? ""));
             $res=$plugin->Uninstall($pid);
             if($res=="sql"):
                 Inc::GoUrl("-1","插件卸载失败!");

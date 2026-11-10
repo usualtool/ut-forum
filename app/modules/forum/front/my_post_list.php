@@ -24,9 +24,9 @@ class My_post_list{
         $uid=$session["uid"];
         $pagelink="";
 
-        $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+        $page=empty($_GET["page"]) ? 1 : intval($_GET["page"]);
         $pagenum=10;
-        $data=$model->GetMemberPosts("uid='$uid'",$page,$pagenum);
+        $data=$model->GetMemberPosts("uid=?",$page,$pagenum,array(intval($uid)));
         $querynum=$data["querynum"];
         $querydata=$data["querydata"];
         $totalpage=ceil($querynum/$pagenum);
@@ -34,7 +34,7 @@ class My_post_list{
         $app->Runin(array("webplace","total","curpage","listnum","pagelink"),array("主题列表",$totalpage,$page,$pagenum,$pagelink));
         $app->Open("my_post_list.cms");
         if(($_GET["do"] ?? "")=="del"){
-            $id=Inc::SqlCheck($_GET["id"] ?? "");
+            $id=($_GET["id"] ?? "");
             if($model->DeleteMemberPost($uid,$id)):
                 Inc::GoUrl(Route::Link("forum","my_post_list"),"删除成功!");
             else:

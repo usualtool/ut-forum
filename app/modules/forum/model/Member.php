@@ -4,36 +4,36 @@ use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
 class Member{
     public function Get($uid){
-        return Data::QueryData("forum_member","","id='$uid'","","")["querydata"];
+        return Data::QueryData("forum_member","","id=?","","",array(intval($uid)))["querydata"];
     }
     public function GetByOpenid($openid){
-        return Data::QueryData("forum_member","","openid='".$openid."'","","");
+        return Data::QueryData("forum_member","","openid=?","","",array($openid));
     }
     public function GetMoney($uid){
-        return Data::QueryData("forum_member","money","id='$uid'","","")["querydata"][0]["money"];
+        return Data::QueryData("forum_member","money","id=?","","",array(intval($uid)))["querydata"][0]["money"];
     }
     public function GetNameById($id){
-        return Data::QueryData("forum_member","username","id='$id'","","")["querydata"][0]["username"];
+        return Data::QueryData("forum_member","username","id=?","","",array(intval($id)))["querydata"][0]["username"];
     }
     public function GetIdByName($username){
-        return Data::QueryData("forum_member","id","username='$username'","","")["querydata"][0]["id"];
+        return Data::QueryData("forum_member","id","username=?","","",array($username))["querydata"][0]["id"];
     }
     public function ExistsId($id){
-        return Data::QueryData("forum_member","id","id='$id'","","")["querynum"];
+        return Data::QueryData("forum_member","id","id=?","","",array(intval($id)))["querynum"];
     }
     public function ExistsName($username){
-        return Data::QueryData("forum_member","","username='$username'","","")["querynum"];
+        return Data::QueryData("forum_member","","username=?","","",array($username))["querynum"];
     }
     public function CountNameOrEmail($username,$email){
-        $datanum=Data::QueryData("forum_member","","username='$username' or email='$email'","","")["querynum"];
+        $datanum=Data::QueryData("forum_member","","username=? or email=?","","",array($username,$email))["querynum"];
         if(Data::ModTable("cms_member")):
-            $ut_datanum=Data::QueryData("cms_member","","username='$username' or email='$email'","","")["querynum"];
+            $ut_datanum=Data::QueryData("cms_member","","username=? or email=?","","",array($username,$email))["querynum"];
             $datanum=$datanum+$ut_datanum;
         endif;
         return $datanum;
     }
     public function Login($username,$password){
-        $data=Data::QueryData("forum_member","","(username='$username' || email='$username' || telephone='$username') and black=0","","");
+        $data=Data::QueryData("forum_member","","(username=? || email=? || telephone=?) and black=0","","",array($username,$username,$username));
         if($data["querynum"]!=1){
             return "nouser";
         }
@@ -45,11 +45,11 @@ class Member{
         return $rows;
     }
     public function RecordLogin($uid){
-        Data::UpdateData("forum_member",array("lasttime"=>date('Y-m-d H:i:s',time())),"id='$uid'");
+        Data::UpdateData("forum_member",array("lasttime"=>date('Y-m-d H:i:s',time())),"id=?",array(intval($uid)));
         return Data::InsertData("forum_member_log",array("uid"=>$uid,"ip"=>Inc::GetIp(),"content"=>"login","addtime"=>date('Y-m-d H:i:s',time())));
     }
     public function GetLogs($uid,$size=5){
-        return Data::QueryData("forum_member_log","","uid='$uid'","addtime desc","0,$size")["querydata"];
+        return Data::QueryData("forum_member_log","","uid=?","addtime desc","0,$size",array(intval($uid)))["querydata"];
     }
     public function Register($username,$passwordx,$avatar,$email,$fullname,$sex){
         $newid=Data::InsertData("forum_member",array(
@@ -85,16 +85,16 @@ class Member{
             "creattime"=>date('Y-m-d H:i:s',time())));
     }
     public function SetBlack($username,$black){
-        return Data::UpdateData("forum_member",array("black"=>$black),"username='$username'");
+        return Data::UpdateData("forum_member",array("black"=>$black),"username=?",array($username));
     }
     public function GetBlackList(){
         return Data::QueryData("forum_member","","black=1")["querydata"];
     }
-    public function Update($data,$where){
-        return Data::UpdateData("forum_member",$data,$where);
+    public function Update($data,$where,$param=array()){
+        return Data::UpdateData("forum_member",$data,$where,$param);
     }
     public function SetUtype($id,$utype){
-        return Data::UpdateData("forum_member",array("utype"=>$utype),"id='$id'");
+        return Data::UpdateData("forum_member",array("utype"=>$utype),"id=?",array(intval($id)));
     }
     public function GetTeam($page=1,$size=5){
         $minid=$size*($page-1);
@@ -104,6 +104,6 @@ class Member{
         return Data::QueryData("forum_member","","utype='99999'","","")["querynum"];
     }
     public function Delete($id){
-        return Data::DelData("forum_member","id='$id'");
+        return Data::DelData("forum_member","id=?",array(intval($id)));
     }
 }

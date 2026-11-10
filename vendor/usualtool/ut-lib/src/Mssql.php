@@ -86,7 +86,6 @@ class Mssql{
      * @return array
      */
     public static function QueryData($table,$field='',$where='',$order='',$limit='',$param=array()){
-        $db=self::GetMssql();
         if(!preg_match('/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/',$table)){
             return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
         }
@@ -126,30 +125,7 @@ class Mssql{
             return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
         }
         $sql="select ".$top.$field." from ".$table." ".$where." ".$order.$offset;
-        if(is_array($param) && !empty($param) && substr_count($sql,"?")==count($param)){
-            return self::RunYu($sql,$param);
-        }
-        try{
-            $query=@sqlsrv_query($db,$sql);
-            if($query===false){
-                error_log("[UT-SQL] ".print_r(sqlsrv_errors(),true));
-                return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
-            }
-            $querydata=array();
-            $curnum=0;
-            while($rows=sqlsrv_fetch_array($query,\SQLSRV_FETCH_ASSOC)){
-                $rows=self::TimeToString($rows);
-                $curnum++;
-                $rows["_n_"]=$curnum;
-                $querydata[]=$rows;
-            }
-            sqlsrv_free_stmt($query);
-            $querynum=empty($limit) ? $curnum : self::QueryNum("select ".$field." from ".$table." ".$where." ".$order);
-            return array("querydata"=>$querydata,"curnum"=>$curnum,"querynum"=>$querynum);
-        }catch(\Throwable $e){
-            error_log("[UT-SQL] ".$e->getMessage());
-            return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
-        }
+        return self::RunYu($sql,is_array($param)?$param:array());
     }
     /**
      * 新增数据
@@ -159,7 +135,6 @@ class Mssql{
      * @return bool|int
      */
     public static function InsertData($table,$data,$param=array()){
-        $db=self::GetMssql();
         if(!is_array($data) || empty($data)){
             return false;
         }
@@ -171,58 +146,40 @@ class Mssql{
                 return false;
             }
         }
+        $paramq=is_array($param) ? array_values($param) : array();
         $slot=0;
         foreach(array_values($data) as $v){
             if($v==="?"){ $slot++; }
         }
-        $bind=is_array($param) && !empty($param) && $slot==count($param);
-        if(is_array($param) && !empty($param) && !$bind){
-            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($param)." params");
+        if(count($paramq)!=$slot){
+            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($paramq)." params");
             return false;
         }
-        try{
-            $cols=array();
-            foreach(array_keys($data) as $k){
-                $cols[]="[".str_replace("]","]]",trim((string)$k,' "`[]'))."]";
-            }
-            $values=array();
-            foreach(array_values($data) as $v){
-                if($bind && $v==="?"){
-                    $values[]="?";
-                }elseif($v instanceof \DateTime){
-                    $values[]="'".$v->format("Y-m-d H:i:s")."'";
-                }elseif(is_null($v)){
-                    $values[]="NULL";
-                }elseif(is_bool($v)){
-                    $values[]=$v ? "1" : "0";
-                }elseif(is_int($v) || is_float($v)){
-                    $values[]=(string)$v;
-                }else{
-                    $values[]="'".self::Escape($v)."'";
-                }
-            }
-            $sql="insert into ".$table." (".implode(",",$cols).") values (".implode(",",$values).")";
-            if($bind){
-                return self::RunYu($sql,$param);
-            }
-            $query=@sqlsrv_query($db,$sql.";SELECT SCOPE_IDENTITY() AS id;");
-            if($query===false){
-                error_log("[UT-SQL] ".print_r(sqlsrv_errors(),true));
-                return false;
-            }
-            $insertid=false;
-            if(sqlsrv_next_result($query)){
-                $rows=sqlsrv_fetch_array($query,\SQLSRV_FETCH_ASSOC);
-                if(is_array($rows) && isset($rows["id"]) && is_numeric($rows["id"])){
-                    $insertid=(int)$rows["id"];
-                }
-            }
-            sqlsrv_free_stmt($query);
-            return $insertid===false ? true : $insertid;
-        }catch(\Throwable $e){
-            error_log("[UT-SQL] ".$e->getMessage());
-            return false;
+        $cols=array();
+        foreach(array_keys($data) as $k){
+            $cols[]="[".str_replace("]","]]",trim((string)$k,' "`[]'))."]";
         }
+        $values=array();
+        $yu=array();
+        $q=0;
+        foreach(array_values($data) as $v){
+            if($v==="?"){
+                $values[]="?";
+                $yu[]=$paramq[$q++];
+            }elseif($v instanceof \DateTime){
+                $values[]="?";
+                $yu[]=$v->format("Y-m-d H:i:s");
+            }elseif(is_null($v)){
+                $values[]="NULL";
+            }elseif(is_bool($v)){
+                $values[]=$v ? "1" : "0";
+            }else{
+                $values[]="?";
+                $yu[]=(string)$v;
+            }
+        }
+        $sql="insert into ".$table." (".implode(",",$cols).") values (".implode(",",$values).")";
+        return self::RunYu($sql,$yu);
     }
     /**
      * 更新数据
@@ -233,7 +190,6 @@ class Mssql{
      * @return bool
      */
     public static function UpdateData($table,$data,$where,$param=array()){
-        $db=self::GetMssql();
         if(!is_array($data) || empty($data)){
             return false;
         }
@@ -248,54 +204,46 @@ class Mssql{
         if(trim((string)$where)===''){
             return false;
         }
+        $paramq=is_array($param) ? array_values($param) : array();
         $slot=substr_count($where,"?");
         foreach(array_values($data) as $v){
             if($v==="?"){ $slot++; }
         }
-        $bind=is_array($param) && !empty($param) && $slot==count($param);
-        if(is_array($param) && !empty($param) && !$bind){
-            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($param)." params");
+        if(count($paramq)!=$slot){
+            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($paramq)." params");
             return false;
         }
         $updatestr='';
+        $yu=array();
+        $q=0;
         foreach($data as $k=>$v){
             $col="[".str_replace("]","]]",trim((string)$k,' "`[]'))."]";
-            if($bind && $v==="?"){
+            if($v==="?"){
                 $updatestr.=$col."=?,";
+                $yu[]=$paramq[$q++];
             }elseif($v instanceof \DateTime){
-                $updatestr.=$col."='".$v->format("Y-m-d H:i:s")."',";
+                $updatestr.=$col."=?,";
+                $yu[]=$v->format("Y-m-d H:i:s");
             }elseif(is_null($v)){
                 $updatestr.=$col."=NULL,";
             }elseif(is_bool($v)){
                 $updatestr.=$col."=".($v ? 1 : 0).",";
             }elseif(is_string($v) && preg_match('/^[A-Za-z_][A-Za-z0-9_]*\+\d+$/',$v)){
                 $updatestr.=$col."=".$v.",";
-            }elseif(is_int($v) || is_float($v)){
-                $updatestr.=$col."=".$v.",";
             }else{
-                $updatestr.=$col."='".self::Escape($v)."',";
+                $updatestr.=$col."=?,";
+                $yu[]=(string)$v;
             }
         }
         $updatestr=rtrim($updatestr,',');
         if(self::CheckPart("where",$where)===false){
             return false;
         }
+        for(;$q<count($paramq);$q++){
+            $yu[]=$paramq[$q];
+        }
         $sql="update ".$table." set ".$updatestr." where ".$where;
-        if($bind){
-            return self::RunYu($sql,$param);
-        }
-        try{
-            $query=@sqlsrv_query($db,$sql);
-            if($query===false){
-                error_log("[UT-SQL] ".print_r(sqlsrv_errors(),true));
-                return false;
-            }
-            sqlsrv_free_stmt($query);
-            return true;
-        }catch(\Throwable $e){
-            error_log("[UT-SQL] ".$e->getMessage());
-            return false;
-        }
+        return self::RunYu($sql,$yu);
     }
     /**
      * 删除数据
@@ -305,7 +253,6 @@ class Mssql{
      * @return bool
      */
     public static function DelData($table,$where,$param=array()){
-        $db=self::GetMssql();
         if(!preg_match('/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/',$table)){
             return false;
         }
@@ -315,26 +262,14 @@ class Mssql{
         if(self::CheckPart("where",$where)===false){
             return false;
         }
+        $paramq=is_array($param) ? $param : array();
+        $slot=substr_count($where,"?");
+        if(count($paramq)!=$slot){
+            error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count($paramq)." params");
+            return false;
+        }
         $sql="delete from ".$table." where ".$where;
-        if(is_array($param) && !empty($param)){
-            if(substr_count($where,"?")==count($param)){
-                return self::RunYu($sql,$param);
-            }
-            error_log("[UT-SQL] param mismatch: ".substr_count($where,"?")." slots / ".count($param)." params");
-            return false;
-        }
-        try{
-            $query=@sqlsrv_query($db,$sql);
-            if($query===false){
-                error_log("[UT-SQL] ".print_r(sqlsrv_errors(),true));
-                return false;
-            }
-            sqlsrv_free_stmt($query);
-            return true;
-        }catch(\Throwable $e){
-            error_log("[UT-SQL] ".$e->getMessage());
-            return false;
-        }
+        return self::RunYu($sql,$paramq);
     }
     /**
      * 执行预处理

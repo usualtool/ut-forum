@@ -30,7 +30,7 @@ class My_admin_team{
         $datatree=$model->GetTree();
         $pagelink="";
 
-        $page=empty($_GET["page"]) ? 1 : $_GET["page"];
+        $page=empty($_GET["page"]) ? 1 : intval($_GET["page"]);
         $pagenum=5;
         $data=$member->GetTeam($page,$pagenum);
         $querynum=$data["querynum"];
@@ -40,8 +40,8 @@ class My_admin_team{
         $app->Runin(array("webplace","total","curpage","listnum","pagelink","datatree"),array("用户管理",$totalpage,$page,$pagenum,$pagelink,$datatree));
         $app->Open("my_admin_team.cms");
         if(($_GET["do"] ?? "")=="banzhu"){
-            $id=Inc::SqlCheck($_POST["id"] ?? "");
-            $utype=Inc::SqlCheck($_POST["utype"] ?? "");
+            $id=($_POST["id"] ?? "");
+            $utype=($_POST["utype"] ?? "");
                     if($member->SetUtype($id,$utype)):
                         Inc::GoUrl(Route::Link("forum","my_admin_team"),"变更版主操作成功!");
                     else:
@@ -49,8 +49,8 @@ class My_admin_team{
                     endif;
         }
         if(($_GET["do"] ?? "")=="admin"){
-            $id=Inc::SqlCheck($_GET["id"] ?? "");
-            $utype=Inc::SqlCheck($_GET["utype"] ?? "");
+            $id=($_GET["id"] ?? "");
+            $utype=($_GET["utype"] ?? "");
             if($utype==0):
                 if($member->CountAdmin()==1):
                     Inc::GoUrl("-1","最后一个管理不能取消!");
@@ -63,7 +63,7 @@ class My_admin_team{
                     endif;
         }
         if(($_GET["do"] ?? "")=="del"){
-            $id=Inc::SqlCheck($_GET["id"] ?? "");
+            $id=($_GET["id"] ?? "");
                 if($member->Delete($id)):
                     Inc::GoUrl(Route::Link("forum","my_admin_team"),"删除成功!");
                 else:

@@ -8,7 +8,7 @@ class Session{
         if(isset($_SESSION[$cookname."uid"]) && isset($_SESSION[$cookname."username"])):
             $uid=$_SESSION[$cookname."uid"] ?? "";
             $username=$_SESSION[$cookname."username"] ?? "";
-            $user=Data::QueryData("forum_member","","id='$uid'","","")["querydata"];
+            $user=Data::QueryData("forum_member","","id=?","","",array(intval($uid)))["querydata"];
             $utype=$user[0]["utype"];
             $money=$user[0]["money"];
             return array(
