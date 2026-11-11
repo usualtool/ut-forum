@@ -87,6 +87,8 @@ class Debug{
             echo "<strong>Message :</strong> This model or view doesn't exist under the module.<br/>";
         }elseif($type=="view"){
             echo "<strong>Message :</strong> This view file does not exist.<br/>";
+        }elseif($type=="action"){
+            echo "<strong>Message :</strong> This action doesn't exist under the controller.<br/>";
         }else{
             echo "<strong>Message :</strong> Unknown error.<br/>";
         }
