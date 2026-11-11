@@ -35,6 +35,18 @@ class Inc{
         return $config;
     }
     /**
+     * 取配置
+     * @param string|null $key 键名
+     * @return mixed
+     */
+    public static function Config($key=null){
+        $config=self::GetConfig();
+        if($key===null){
+            return $config;
+        }
+        return isset($config[$key]) ? $config[$key] : null;
+    }
+    /**
      * 跳转链接
      * @param string $url 跳转地址,该参数为空时直接输出文本
      * @param string $text 跳转弹出文本，该参数为空时直接跳转地址

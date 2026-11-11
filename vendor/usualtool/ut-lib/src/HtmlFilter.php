@@ -18,7 +18,7 @@ class HtmlFilter{
     /**
      * Html白名单
      */
-    private static array $whitelist = [
+    private static $whitelist = [
         'p'       => [],
         'br'      => [],
         'strong'  => [],
@@ -52,7 +52,7 @@ class HtmlFilter{
      * @return string
      */
     public static function Sanitize(string $html): string{
-        $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
+        $html = mb_encode_numericentity($html, array(0x80, 0x10FFFF, 0, ~0), 'UTF-8');
         libxml_use_internal_errors(true);
         $dom = new \DOMDocument('1.0', 'UTF-8');
         $dom->loadHTML('<body>' . $html . '</body>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);

@@ -12,6 +12,7 @@
     ],
     "require": {},
     "autoload": {
+        "files": ["src/Helper.php"],
         "psr-4": {
             "usualtool\\Lib\\": "src"
         }

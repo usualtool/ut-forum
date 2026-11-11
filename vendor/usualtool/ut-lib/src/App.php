@@ -22,6 +22,18 @@ class App{
     private static $instances=array();
     private static $resolving=array();
     /**
+     * 引导
+     * @param object $engine Temp 引擎
+     * @return void
+     */
+    public static function Boot($engine){
+        self::Set($engine);
+        defined('APP_ROOT') or define('APP_ROOT',UTF_ROOT.'/app');
+        foreach(glob(APP_ROOT."/modules/*/bind.php") ?: array() as $bind_file){
+            self::LoadBindings(include $bind_file);
+        }
+    }
+    /**
      * 配置引擎实例
      * @param object $engine Temp 引擎
      */
@@ -73,6 +85,24 @@ class App{
      */
     public static function Forget($abstract){
         unset(self::$bindings[$abstract],self::$instances[$abstract]);
+    }
+    /**
+     * 批量绑定
+     * @param array $bindings 抽象名=>实现
+     */
+    public static function LoadBindings($bindings){
+        if(!is_array($bindings)){
+            return;
+        }
+        foreach($bindings as $abstract=>$concrete){
+            if($concrete instanceof \Closure){
+                self::Bind($abstract,$concrete);
+            }elseif(is_array($concrete) && isset($concrete[1]) && $concrete[1]===true){
+                self::Singleton($abstract,$concrete[0]);
+            }else{
+                self::Bind($abstract,$concrete);
+            }
+        }
     }
     /**
      * 从容器取实例

@@ -50,10 +50,6 @@ class Controller{
      * @return mixed
      */
     protected function Config($key=null){
-        $config=Inc::GetConfig();
-        if($key===null){
-            return $config;
-        }
-        return isset($config[$key]) ? $config[$key] : null;
+        return Inc::Config($key);
     }
 }

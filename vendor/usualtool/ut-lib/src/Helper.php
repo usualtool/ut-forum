@@ -33,4 +33,14 @@ namespace{
             return \usualtool\Lib\App::Make($abstract);
         }
     }
+    if(!function_exists('config')){
+        /**
+         * 取全局配置
+         * @param string|null $key 键名
+         * @return mixed
+         */
+        function config($key=null){
+            return \usualtool\Lib\Inc::Config($key);
+        }
+    }
 }

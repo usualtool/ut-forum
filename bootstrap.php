@@ -13,20 +13,14 @@
 ini_set('display_errors','Off');
 ini_set('log_errors','On');
 ini_set('error_log',__DIR__.'/log/php_errors.log');
-error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED);
-/**
- * 系统级全局路径
- */
-defined('UTF_ROOT') or define('UTF_ROOT',__DIR__);
-defined('APP_ROOT') or define('APP_ROOT',__DIR__.'/app');
-defined('OPEN_ROOT') or define('OPEN_ROOT',__DIR__.'/open');
-/**
- * 加载类库
- */
 ini_set('session.cookie_httponly','1');
 ini_set('session.cookie_samesite','Lax');
+error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED);
 session_start();
-require UTF_ROOT.'/autoload.php';
+/**
+ * 加载依赖
+ */
+require __DIR__.'/autoload.php';
 use usualtool\Lib\Inc;
 use usualtool\Lib\Temp;
 use usualtool\Lib\Route;
@@ -72,7 +66,6 @@ if(!isset($_COOKIE["lang"])){
  * 启动引擎/全局预设
  */
 $app=new Temp($config["TEMPCACHE"],$_skin_."/".$_form_,$_cache_."/".$_form_);
-\usualtool\Lib\App::Set($app);
 $app->Runin(
     array(
         "appname",//应用名称
@@ -92,4 +85,9 @@ $app->Runin(
         $config["LANG"],
         PUB_TEMP."/".$_form_,
         $_work_."/skin/".$config["DEFAULT_MOD"]."/".$_form_
-));
+    )
+);
+/**
+ * 登记引擎/绑定服务
+ */
+\usualtool\Lib\App::Boot($app);
