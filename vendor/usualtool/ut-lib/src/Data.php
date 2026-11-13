@@ -284,4 +284,64 @@ class Data{
             return array();
         }
     }
+    public static function CheckPart($part,$value,$dialect=''){
+        $value=(string)$value;
+        if($dialect===''){
+            $dialect=self::GetDb();
+        }
+        if($dialect==='pdo'){
+            $config=Inc::GetConfig();
+            $dsn=$config['PDO_DSN'] ?? '';
+            if(strpos($dsn,'pgsql')===0){
+                $dialect='pgsql';
+            }elseif(strpos($dsn,'sqlite')===0){
+                $dialect='sqlite';
+            }elseif(strpos($dsn,'sqlsrv')!==false || strpos($dsn,'mssql')===0){
+                $dialect='mssql';
+            }else{
+                $dialect='mysql';
+            }
+        }
+        $fb=($dialect=='mysql') ? '[A-Za-z0-9_.`]' : '[A-Za-z0-9_.`\[\]]';
+        $fa=($dialect=='mysql') ? '[A-Za-z0-9_`]' : '[A-Za-z0-9_`\[\]]';
+        $forms=array('[A-Za-z_][A-Za-z0-9_]*');
+        if($dialect!='mysql'){
+            $forms[]='\[[A-Za-z_][A-Za-z0-9_]*\]';
+        }
+        if($dialect=='pgsql' || $dialect=='sqlite'){
+            $forms[]='"[A-Za-z_][A-Za-z0-9_]*"';
+        }
+        $forms[]='`[A-Za-z_][A-Za-z0-9_]*`';
+        $id='(?:'.implode('|',$forms).')';
+        switch($part){
+            case "field":
+                if(preg_match('/^\s*(\*|'.$fb.'+(\s+(as\s+)?'.$fa.'+)?(\s*,\s*'.$fb.'+(\s+(as\s+)?'.$fa.'+)?)*)\s*$/i',$value)){
+                    return $value;
+                }
+                break;
+            case "column":
+                if(preg_match('/^\s*'.$id.'(?:\.'.$id.')?\s*$/',$value)){
+                    return $value;
+                }
+                break;
+            case "where":
+                if(!preg_match('/;|--|#|\/\*/',preg_replace("/'[^']*'|\"[^\"]*\"/","",$value))){
+                    return $value;
+                }
+                break;
+            case "order":
+                if(preg_match('/^\s*'.$fb.'+(\s+(asc|desc))?(\s*,\s*'.$fb.'+(\s+(asc|desc))?)*\s*$/i',$value)){
+                    return $value;
+                }
+                break;
+            case "limit":
+                $re=($dialect=='mssql') ? '/^\s*\d+(\s*,\s*\d+)?\s*$/' : '/^\s*\d+(\s*,\s*\d+|\s+offset\s+\d+)?\s*$/i';
+                if(preg_match($re,$value)){
+                    return $value;
+                }
+                break;
+        }
+        error_log("[UT-SQL] ".$part." rejected: ".$value);
+        return false;
+    }
 }

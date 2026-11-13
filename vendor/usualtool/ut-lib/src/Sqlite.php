@@ -1,6 +1,7 @@
 <?php
 namespace usualtool\Lib;
 use usualtool\Lib\Inc;
+use usualtool\Lib\Data;
 /**
        * --------------------------------------------------------       
        *  |                  █   █ ▀▀█▀▀                    |           
@@ -543,36 +544,7 @@ class Sqlite{
      * @return string|bool
      */
     public static function CheckPart($part,$value){
-        $value=(string)$value;
-        switch($part){
-            case "field":
-                if(preg_match('/^\s*(\*|[A-Za-z0-9_.`\[\]]+(\s+(as\s+)?[A-Za-z0-9_`\[\]]+)?(\s*,\s*[A-Za-z0-9_.`\[\]]+(\s+(as\s+)?[A-Za-z0-9_`\[\]]+)?)*)\s*$/i',$value)){
-                    return $value;
-                }
-                break;
-            case "column":
-                if(preg_match('/^\s*(?:"[A-Za-z_][A-Za-z0-9_]*"|`[A-Za-z_][A-Za-z0-9_]*`|\[[A-Za-z_][A-Za-z0-9_]*\]|[A-Za-z_][A-Za-z0-9_]*)(?:\.(?:"[A-Za-z_][A-Za-z0-9_]*"|`[A-Za-z_][A-Za-z0-9_]*`|\[[A-Za-z_][A-Za-z0-9_]*\]|[A-Za-z_][A-Za-z0-9_]*))?\s*$/',$value)){
-                    return $value;
-                }
-                break;
-            case "where":
-                if(!preg_match('/;|--|#|\/\*/',preg_replace("/'[^']*'|\"[^\"]*\"/","",$value))){
-                    return $value;
-                }
-                break;
-            case "order":
-                if(preg_match('/^\s*[A-Za-z0-9_.`\[\]]+(\s+(asc|desc))?(\s*,\s*[A-Za-z0-9_.`\[\]]+(\s+(asc|desc))?)*\s*$/i',$value)){
-                    return $value;
-                }
-                break;
-            case "limit":
-                if(preg_match('/^\s*\d+(\s*,\s*\d+|\s+offset\s+\d+)?\s*$/i',$value)){
-                    return $value;
-                }
-                break;
-        }
-        error_log("[UT-SQL] ".$part." rejected: ".$value);
-        return false;
+        return Data::CheckPart($part,$value,'sqlite');
     }
     /**
      * 字符串转义，单引号翻倍

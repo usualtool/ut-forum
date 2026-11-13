@@ -1,6 +1,7 @@
 <?php
 namespace usualtool\Lib;
 use usualtool\Lib\Inc;
+use usualtool\Lib\Data;
 /**
        * --------------------------------------------------------       
        *  |                  █   █ ▀▀█▀▀                    |           
@@ -112,11 +113,30 @@ class Pdo{
      * @return array
      */
     public static function QueryData($table,$field='',$where='',$order='',$limit='',$param=array()){
+      if(!preg_match('/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/',(string)$table)){
+        return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+      }
       $field=empty($field) ? "*" : $field;
-      $where=empty($where) ? "" : "where ".$where;
-      $order=empty($order) ? "" : "order by ".$order;
+      $field=self::CheckPart("field",$field);
+      if($field===false){
+        $field="*";
+      }
+      if($where!=="" && self::CheckPart("where",$where)===false){
+        return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+      }
+      if($order!==""){
+        $order=self::CheckPart("order",$order);
+        if($order===false){
+          $order="";
+        }
+      }
       $config=Inc::GetConfig();
       $limit=(string)$limit==="" ? "" : $limit;
+      if($limit!=="" && self::CheckPart("limit",$limit)===false){
+        return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+      }
+      $where=empty($where) ? "" : "where ".$where;
+      $order=empty($order) ? "" : "order by ".$order;
       if(strpos($config['PDO_DSN'],'sqlsrv')!==false){
         $sql="select ".($limit==="" ? "" : "top ".$limit." ").$field." from ".$table." ".$where." ".$order;
       }else{
@@ -153,9 +173,17 @@ class Pdo{
      * @return bool 
      */
     public static function InsertData($table,$data,$param=array()){
+      if(!preg_match('/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/',(string)$table)){
+          return false;
+      }
       $db=Pdo::GetPdo();
       if(!is_array($data) || empty($data)){
           return false;
+      }
+      foreach(array_keys($data) as $k){
+          if(self::CheckPart("column",(string)$k)===false){
+              return false;
+          }
       }
       $values=array_values($data);
       $slot=0;
@@ -199,9 +227,20 @@ class Pdo{
      * @return bool
      */
     public static function UpdateData($table,$data,$where,$param=array()){
+        if(!preg_match('/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/',(string)$table)){
+            return false;
+        }
+        if(self::CheckPart("where",(string)$where)===false){
+            return false;
+        }
         $db=Pdo::GetPdo();
         $slot=self::YuSlots((string)$where);
         if(is_array($data)){
+            foreach(array_keys($data) as $k){
+                if(self::CheckPart("column",(string)$k)===false){
+                    return false;
+                }
+            }
             foreach(array_values($data) as $v){
                 if($v==="?"){ $slot++; }
             }
@@ -255,6 +294,12 @@ class Pdo{
      * @return bool
      */
     public static function DelData($table,$where,$param=array()){
+        if(!preg_match('/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/',(string)$table)){
+            return false;
+        }
+        if(self::CheckPart("where",(string)$where)===false){
+            return false;
+        }
         $db=Pdo::GetPdo();
         $args=array();
         if(is_array($param) && !empty($param)){
@@ -424,5 +469,8 @@ class Pdo{
             return 0;
         }
         return $querynum;
+    }
+    public static function CheckPart($part,$value){
+        return Data::CheckPart($part,$value,'pdo');
     }
 }
