@@ -16,16 +16,22 @@ use usualtool\Lib\Inc;
  * 操作Redis
  */
 class Redis{
+    private static $db=null;
+    private static $mark="@UT@";
     /**
      * 连接Redis
      */
     public static function GetRedis(){
+        if(self::$db!==null){
+            return self::$db;
+        }
         $config=Inc::GetConfig();
         $db=new \Redis();
         $db->connect($config["REDIS_HOST"],$config["REDIS_PORT"]);
         if($config["REDIS_PASS"]!="UT"){
             $db->auth($config["REDIS_PASS"]);
         }
+        self::$db=$db;
         return $db;
     }
     /**
@@ -51,9 +57,17 @@ class Redis{
     public static function QueryData($key,$type='0'){
         $db=self::GetRedis();
         if($type==0){
-            return json_decode($db->get($key),true);
+            return self::Decode($db->get($key));
         }else{
-            return json_decode($db->mget(json_encode($key)),true);
+            $raw=$db->mget(is_array($key) ? array_values($key) : array($key));
+            if(!is_array($raw)){
+                return array();
+            }
+            $data=array();
+            foreach($raw as $value){
+                $data[]=self::Decode($value);
+            }
+            return $data;
         }
     }
     /**
@@ -65,13 +79,9 @@ class Redis{
      */
     public static function InsertData($key,$data,$time='0'){
         $db=self::GetRedis();
-        $data=is_array($data) ? json_encode($data) : $data;
-        $config=Inc::GetConfig();
-        if($time==0){
-            $db->set($key,$data);
-        }else{
-            $db->set($key,$data,$config["DBCACHE_TIME"]);
-        }
+        $value=self::Encode($data);
+        $ttl=$time==0 ? 0 : self::Ttl();
+        return $ttl>0 ? $db->set($key,$value,$ttl) : $db->set($key,$value);
     }
     /**
      * 编辑数据
@@ -82,17 +92,12 @@ class Redis{
      */
     public static function UpdateData($key,$data,$time='0'){
         $db=self::GetRedis();
-        $data=is_array($data) ? json_encode($data) : $data;
-        $config=Inc::GetConfig();
-        if(!self::ModTable($key)){
+        if(!$db->exists($key)){
             return false;
-        }else{
-            if($time==0){
-                $db->set($key,$data);
-            }else{
-                $db->set($key,$data,$config["DBCACHE_TIME"]);
-            }
         }
+        $value=self::Encode($data);
+        $ttl=$time==0 ? 0 : self::Ttl();
+        return $ttl>0 ? $db->set($key,$value,$ttl) : $db->set($key,$value);
     }
     /**
      * 删除数据
@@ -100,7 +105,7 @@ class Redis{
      */
     public static function DelData($key){
         $db=self::GetRedis();
-        $db->del($key);
+        return $db->del($key)>0;
     }
     /**
      * 批量删除指定前缀的键
@@ -108,27 +113,21 @@ class Redis{
      */
     public static function DelKeys($pix){
         $db=self::GetRedis();
-        $keys=$db->keys($pix.'*');
-        if(!empty($keys)){
-            foreach($keys as $key){
-                $db->del($key);
-            }
-            return true;
-        }else{
+        $keys=self::ScanKeys($pix.'*');
+        if(empty($keys)){
             return false;
         }
+        foreach(array_chunk($keys,500) as $chunk){
+            $db->del($chunk);
+        }
+        return true;
     }
     /**
      * 查询所有键及键前缀模糊查询
      * @return array
      */
     public static function QueryKey($key=''){
-        $db=self::GetRedis();
-        if(!empty($key)){
-            return $db->keys($key."*");
-        }else{
-            return $db->keys("*");
-        }
+        return self::ScanKeys(empty($key) ? "*" : $key."*");
     }
     /**
      * 查询Hash数据
@@ -194,5 +193,63 @@ class Redis{
     public static function Clear(){
         $db=self::GetRedis();
         return $db->flushdb();
+    }
+    public static function Close(){
+        if(self::$db!==null){
+            try{
+                self::$db->close();
+            }catch(\Throwable $e){
+            }
+            self::$db=null;
+        }
+    }
+    private static function Ttl(){
+        $config=Inc::GetConfig();
+        $ttl=isset($config["DBCACHE_TIME"]) ? (int)$config["DBCACHE_TIME"] : 0;
+        return $ttl>0 ? $ttl : 0;
+    }
+    private static function Encode($data){
+        return self::$mark.json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+    }
+    private static function Decode($raw){
+        if(is_array($raw)){
+            return $raw;
+        }
+        if($raw===false || $raw===null){
+            return null;
+        }
+        $raw=(string)$raw;
+        $len=strlen(self::$mark);
+        if(strncmp($raw,self::$mark,$len)===0){
+            return json_decode(substr($raw,$len),true);
+        }
+        return json_decode($raw,true);
+    }
+    private static function ScanKeys($pattern){
+        $db=self::GetRedis();
+        if(!method_exists($db,'scan')){
+            return $db->keys($pattern);
+        }
+        $keys=array();
+        $it=null;
+        $guard=0;
+        while(true){
+            if($guard++>100000){
+                break;
+            }
+            $res=$db->scan($it,$pattern,500);
+            if($res===false){
+                break;
+            }
+            if(is_array($res) && !empty($res)){
+                foreach($res as $key){
+                    $keys[]=$key;
+                }
+            }
+            if(empty($it)){
+                break;
+            }
+        }
+        return $keys;
     }
 }

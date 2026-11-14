@@ -2,6 +2,7 @@
 namespace usualtool\Lib;
 use usualtool\Lib\Inc;
 use usualtool\Lib\Data;
+use usualtool\Lib\Route;
 use usualtool\Lib\Cache;
 use usualtool\Lib\Ai;
 /**
@@ -518,6 +519,138 @@ class Cli{
                     echo "下载可视包失败\r\n";
                     exit();
                 }
+            }elseif($type=="app"){
+                echo"小程序安装打包中...\r\n";
+                $tempdir=UTF_ROOT."/update/temp";
+                $downdir=UTF_ROOT."/update/down";
+                if(!is_dir($tempdir)){ Inc::MakeDir($tempdir); }
+                if(!is_dir($downdir)){ Inc::MakeDir($downdir); }
+                if($number!="-2"){
+                    $down="";
+                    if($number=="-1"){
+                        $down=Inc::Auth("app_".$name);
+                    }elseif($number=="-3"){
+                        $down=Inc::Auth("apporder_".$name);
+                    }
+                    $downurl=Inc::StrSubstr("<downurl>","</downurl>",$down);
+                    $appid=Inc::StrSubstr("<appid>","</appid>",$down);
+                    if($appid==""){ $appid=$name; }
+                    $filename=basename($downurl);
+                    $res=Inc::SaveFile($downurl,$downdir,$filename,1);
+                    if(!empty($res)){
+                        Inc::Auth("appdel-".str_replace(".zip","",$filename));
+                        $zip=new \ZipArchive;
+                        if($zip->open($downdir."/".$filename)===TRUE){
+                            $zip->extractTo($tempdir."/");
+                            $zip->close();
+                            unlink($downdir."/".$filename);
+                        }else{
+                            echo "update/down目录775权限不足\r\n";
+                            exit();
+                        }
+                    }else{
+                        echo "安装权限不足\r\n";
+                        exit();
+                    }
+                }else{
+                    $appid=$name;
+                }
+                $appdir=$tempdir."/".$appid;
+                if(!is_dir($appdir)){
+                    echo "小程序模板不存在：".$appdir."\r\n";
+                    exit();
+                }
+                $cfgfile=$appdir."/usualtool.config";
+                if(is_file($cfgfile)){
+                    $cfg=file_get_contents($cfgfile);
+                    $md=Inc::StrSubstr("<module>","</module>",$cfg);
+                    if($md!=""){
+                        $mds=explode(",",$md);
+                        foreach($mds as $m){
+                            if(!Inc::SearchDir(APP_ROOT."/modules/".$m)){
+                                Inc::DelDir($appdir);
+                                echo "小程序依赖的前置模块缺失!模块如下：".$md."\r\n";
+                                exit();
+                            }
+                        }
+                    }
+                    $installsql=Inc::StrSubstr("<installsql><![CDATA[","]]></installsql>",$cfg);
+                    if($installsql!='0' && !Data::RunSql($installsql)){
+                        echo "小程序".$appid."安装失败\r\n";
+                        exit();
+                    }
+                }
+                $set=array();
+                if(Data::ModTable("cms_routine")){
+                    $setrows=Data::QueryData("cms_routine")["querydata"];
+                    $set=isset($setrows[0]) ? $setrows[0] : array();
+                }
+                if(strpos($appid,'-al-')!==false){
+                    $rteid=trim((string)($set["alrteid"] ?? ""));
+                }elseif(strpos($appid,'-tt-')!==false){
+                    $rteid=trim((string)($set["ttrteid"] ?? ""));
+                }elseif(strpos($appid,'-bd-')!==false){
+                    $rteid=trim((string)($set["bdrteid"] ?? ""));
+                }else{
+                    $rteid=trim((string)($set["wxrteid"] ?? ""));
+                }
+                $rteid=preg_match('/^[A-Za-z0-9_\-]{1,100}$/',$rteid) ? $rteid : "";
+                $host=trim((string)parse_url($config["APPURL"],PHP_URL_HOST));
+                $useid="";
+                $appsecret="";
+                if(Data::ModTable("cms_api_app")){
+                    foreach(array($rteid,$host) as $cand){
+                        if($cand===""){ continue; }
+                        $row=Data::QueryData("cms_api_app","appsecret","appid=? and status=1","","1",array($cand));
+                        if($row["querynum"]>0){
+                            $useid=$cand;
+                            $appsecret=$row["querydata"][0]["appsecret"];
+                            break;
+                        }
+                    }
+                }
+                if($useid!==""){
+                    if(strpos($appid,'-bd-')!==false){
+                        $pfile=$appdir."/project.swan.json";
+                    }else{
+                        $pfile=$appdir."/project.config.json";
+                    }
+                    if(strpos($appid,'-al-')===false && is_file($pfile)){
+                        $pdata=json_decode(file_get_contents($pfile),true);
+                        $pdata['appid']=$rteid!=="" ? $rteid : $useid;
+                        $pdata['projectname']=$config["APPNAME"];
+                        file_put_contents($pfile,json_encode($pdata,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
+                    }
+                    $appjson=$appdir."/app.json";
+                    if(is_file($appjson)){
+                        $adata=json_decode(file_get_contents($appjson),true);
+                        if(strpos($appid,'-al-')!==false){
+                            $adata['window']['defaultTitle']=$config["APPNAME"];
+                        }else{
+                            $adata['window']['navigationBarTitleText']=$config["APPNAME"];
+                        }
+                        file_put_contents($appjson,json_encode($adata,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
+                    }
+                    $appjs=$appdir."/app.js";
+                    if(is_file($appjs)){
+                        $jdata=file_get_contents($appjs);
+                        $jdata=str_replace("ut-weburl",str_replace('/','\/',$config["APPURL"]),$jdata);
+                        $jdata=str_replace("ut-appid",$useid,$jdata);
+                        $jdata=str_replace("ut-secret",$appsecret,$jdata);
+                        $jdata=str_replace("ut-appname",addslashes($config["APPNAME"]),$jdata);
+                        file_put_contents($appjs,$jdata);
+                    }
+                }else{
+                    echo "未检测到可用的平台appid与密钥，跳过占位符替换，保留模板占位符直接打包\r\n";
+                }
+                $zipname=Inc::GetRandomString(16).".zip";
+                $zipfile=$downdir."/".$zipname;
+                if(Cli::ZipDir($appdir,$zipfile)){
+                    echo "成功打包小程序：".$appid."\r\n";
+                    echo "包路径：".str_replace("\\","/",$zipfile)."\r\n";
+                }else{
+                    echo "打包失败，请检查目录权限\r\n";
+                }
             }
         }else{
             echo"命令参数错误\r\n";
@@ -777,6 +910,42 @@ class Cli{
         $echo("对话已结束\r\n");
     }
     /**
+     * 压缩目录为zip包
+     * @param string $source 源目录
+     * @param string $target 目标zip文件
+     * @return bool
+     */
+    private static function ZipDir($source,$target){
+        if(!is_dir($source)){ return false; }
+        $zip=new \ZipArchive;
+        if($zip->open($target,\ZipArchive::CREATE|\ZipArchive::OVERWRITE)!==TRUE){ return false; }
+        $source=str_replace("\\","/",$source);
+        Cli::ZipAdd($zip,$source,strlen($source)+1);
+        $zip->close();
+        return true;
+    }
+    /**
+     * 递归添加目录内容到zip
+     * @param object $zip ZipArchive实例
+     * @param string $dir 目录
+     * @param int $base 基准长度
+     */
+    private static function ZipAdd($zip,$dir,$base){
+        $handle=opendir($dir);
+        while(false!==($f=readdir($handle))){
+            if($f=="."||$f==".."){ continue; }
+            $path=$dir."/".$f;
+            $local=substr($path,$base);
+            if(is_dir($path)){
+                $zip->addEmptyDir($local);
+                Cli::ZipAdd($zip,$path,$base);
+            }else{
+                $zip->addFile($path,$local);
+            }
+        }
+        closedir($handle);
+    }
+    /**
      * 帮助
      * @return string
      */
@@ -803,6 +972,7 @@ class Cli{
         echo"php usualtool install module [name] -[1/2/3] 安装模块\r\n";
         echo"php usualtool install plugin [name] -[1/2/3] 安装插件\r\n";
         echo"php usualtool install template [name] -[1/2/3] [front/admin] 安装整站模板工程\r\n";
+        echo"php usualtool install app [name] -[1/2/3] 安装打包小程序\r\n";
         echo"php usualtool install develop 安装可视包\r\n";
         echo"php usualtool cache rebuild 重建整站缓存\r\n";
         echo"php usualtool cache rebuild --mod=[xxx] 重建指定模块缓存\r\n";
