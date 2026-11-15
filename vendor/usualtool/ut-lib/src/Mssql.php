@@ -25,6 +25,10 @@ class Mssql{
         if(self::$MssqlDb){
             return self::$MssqlDb;
         }
+        if(!function_exists("sqlsrv_connect")){
+            error_log("[UT-SQL] PHP 未启用 sqlsrv 扩展");
+            return false;
+        }
         $config=Inc::GetConfig();
         $host=empty($config["MSSQL_PORT"]) ? $config["MSSQL_HOST"] : $config["MSSQL_HOST"].",".$config["MSSQL_PORT"];
         self::$MssqlDb=@sqlsrv_connect($host,array(

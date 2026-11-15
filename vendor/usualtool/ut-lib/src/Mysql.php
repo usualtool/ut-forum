@@ -25,48 +25,35 @@ class Mysql{
     }
     /**
      * 连接Mysqli
-     */    
+     */
     public static function GetMysql(){
         static $db=null;
         if($db instanceof \mysqli){
             return $db;
         }
         $config=self::GetConfig();
-        if(empty($config["MYSQL_DB"]) || empty($config["MYSQL_USER"])){
-            $msg="请检查.ut.config Mysql数据库配置";
-            if(PHP_SAPI==="cli"){
-                echo $msg."\r\n";
-                exit();
-            }
-            http_response_code(503);
-            header('Content-Type: text/html; charset=utf-8');
-            echo'<pre style="padding:24px;font:14px/1.8 monospace">'.$msg.'</pre>';
-            exit;
+        if(empty($config["MYSQL_HOST"]) || empty($config["MYSQL_USER"]) || empty($config["MYSQL_DB"])){
+            error_log("[UT-SQL] 请检查.ut.config Mysql数据库配置");
+            return false;
         }
         $host=empty($config["MYSQL_PORT"]) ? $config["MYSQL_HOST"] : $config["MYSQL_HOST"].":".$config["MYSQL_PORT"];
         try{
             $db=new \mysqli($host,$config["MYSQL_USER"],$config["MYSQL_PASS"],$config["MYSQL_DB"]);
         }catch(\mysqli_sql_exception $e){
-            $msg=$e->getMessage();
-            if(PHP_SAPI==="cli"){
-                echo $msg."\r\n";
-                exit();
-            }
-            http_response_code(503);
-            header('Content-Type: text/html; charset=utf-8');
-            echo'<pre style="padding:24px;font:14px/1.8 monospace">'.$msg.'</pre>';
-            exit;
+            error_log("[UT-SQL] ".$e->getMessage());
+            return false;
         }
-        if(!$db){
-            return "Mysqli connection error.";
-        }else{
-            try{
-                $db->set_charset($config["MYSQL_CHARSET"]);
-            }catch(\mysqli_sql_exception $e){
-                error_log("[UT-SQL] ".$e->getMessage());
-            }
-            return $db;
+        if($db->connect_errno){
+            error_log("[UT-SQL] ".$db->connect_error);
+            $db=null;
+            return false;
         }
+        try{
+            $db->set_charset($config["MYSQL_CHARSET"]);
+        }catch(\mysqli_sql_exception $e){
+            error_log("[UT-SQL] ".$e->getMessage());
+        }
+        return $db;
     }
     /**
      * 判断表是否存在

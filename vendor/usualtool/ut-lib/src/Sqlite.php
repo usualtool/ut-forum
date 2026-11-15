@@ -25,6 +25,10 @@ class Sqlite{
         if(self::$SqliteDb){
             return self::$SqliteDb;
         }
+        if(!class_exists("SQLite3")){
+            error_log("[UT-SQL] PHP 未启用 sqlite3 扩展");
+            return false;
+        }
         $config=Inc::GetConfig();
         $file=isset($config["SQLITE_DB"]) ? $config["SQLITE_DB"] : "";
         if($file===""){

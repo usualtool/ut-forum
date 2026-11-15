@@ -21,40 +21,33 @@ class Pdo{
      * PDO连接数据库
      */    
     public static function GetPdo(){
-    static $db=null;
-    if($db instanceof \PDO){
-        return $db;
-    }
-    $config=Inc::GetConfig();
-    $dsn=str_replace("__","=",$config['PDO_DSN']);
-    try {
-       $db=new \PDO($dsn,$config['PDO_USER'],$config['PDO_PASS']);
-    }catch(\PDOException $e){
-      error_log("[UT-SQL] ".$e->getMessage());
-      if(PHP_SAPI==="cli"){
-          echo $e->getMessage()."\r\n";
-          exit();
-      }
-      http_response_code(503);
-      header('Content-Type: text/html; charset=utf-8');
-      echo'<pre style="padding:24px;font:14px/1.8 monospace">数据库连接失败，请检查 .ut.config 的 PDO 配置</pre>';
-      exit;
-    }
-    try{
-        if(strpos($dsn,'mysql:')===0 && stripos($dsn,'charset=')===false){
-            $db->query("set names ".$config['MYSQL_CHARSET']);
-        }elseif(strpos($dsn,'pgsql:')===0){
-            $db->query("set names 'UTF8'");
-        }elseif(strpos($dsn,'sqlite:')===0){
-            $db->exec("pragma journal_mode=WAL");
-            $db->exec("pragma synchronous=NORMAL");
-            $db->exec("pragma busy_timeout=5000");
+        static $db=null;
+        if($db instanceof \PDO){
+            return $db;
         }
-    }catch(\PDOException $e){
-        error_log("[UT-SQL] ".$e->getMessage());
-    }
-    $db->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE,\PDO::FETCH_ASSOC);
-    return $db;
+        $config=Inc::GetConfig();
+        $dsn=str_replace("__","=",$config['PDO_DSN']);
+        try {
+           $db=new \PDO($dsn,$config['PDO_USER'],$config['PDO_PASS']);
+        }catch(\PDOException $e){
+          error_log("[UT-SQL] ".$e->getMessage());
+          return false;
+        }
+        try{
+            if(strpos($dsn,'mysql:')===0 && stripos($dsn,'charset=')===false){
+                $db->query("set names ".$config['MYSQL_CHARSET']);
+            }elseif(strpos($dsn,'pgsql:')===0){
+                $db->query("set names 'UTF8'");
+            }elseif(strpos($dsn,'sqlite:')===0){
+                $db->exec("pragma journal_mode=WAL");
+                $db->exec("pragma synchronous=NORMAL");
+                $db->exec("pragma busy_timeout=5000");
+            }
+        }catch(\PDOException $e){
+            error_log("[UT-SQL] ".$e->getMessage());
+        }
+        $db->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE,\PDO::FETCH_ASSOC);
+        return $db;
     }
     /**
      * 判断表是否存在
@@ -62,25 +55,28 @@ class Pdo{
      * @return bool
      */
     public static function ModTable($table){
-    static $mods=array();
-    if(!preg_match('/^[A-Za-z0-9_]+$/',(string)$table)){
-        return false;
-    }
-    if(isset($mods[$table])){
+        static $mods=array();
+        if(!preg_match('/^[A-Za-z0-9_]+$/',(string)$table)){
+            return false;
+        }
+        if(isset($mods[$table])){
+            return $mods[$table];
+        }
+        $db=Pdo::GetPdo();
+        if(!$db){
+            return false;
+        }
+        $config=Inc::GetConfig();
+        $sql=strpos($config['PDO_DSN'],'sqlsrv')!==false ? "SELECT TOP 1 1 FROM ".$table : "SELECT 1 FROM ".$table." LIMIT 1";
+        try{
+            $query=$db->prepare($sql);
+            $query->execute();
+            $mods[$table]=true;
+        }catch(\PDOException $e){
+            error_log("[UT-SQL] ".$e->getMessage());
+            $mods[$table]=false;
+        }
         return $mods[$table];
-    }
-    $db=Pdo::GetPdo();
-    $config=Inc::GetConfig();
-    $sql=strpos($config['PDO_DSN'],'sqlsrv')!==false ? "SELECT TOP 1 1 FROM ".$table : "SELECT 1 FROM ".$table." LIMIT 1";
-    try{
-        $query=$db->prepare($sql);
-        $query->execute();
-        $mods[$table]=true;
-    }catch(\PDOException $e){
-        error_log("[UT-SQL] ".$e->getMessage());
-        $mods[$table]=false;
-    }
-    return $mods[$table];
     }
     /**
     * 执行语句
@@ -88,19 +84,22 @@ class Pdo{
      * @return bool
      */    
     public static function RunSql($sql){
-    $db=Pdo::GetPdo();
-    $query=false;
-    try{
-        $query=$db->exec($sql);
-    }catch(\PDOException $e){
-        error_log("[UT-SQL] ".$e->getMessage());
+        $db=Pdo::GetPdo();
+        if(!$db){
+            return false;
+        }
         $query=false;
-    }
-    if($query===false){
-        return false;
-    }else{
-        return true;
-    }
+        try{
+            $query=$db->exec($sql);
+        }catch(\PDOException $e){
+            error_log("[UT-SQL] ".$e->getMessage());
+            $query=false;
+        }
+        if($query===false){
+            return false;
+        }else{
+            return true;
+        }
     }
     /**
      * 查询数据
@@ -113,57 +112,73 @@ class Pdo{
      * @return array
      */
     public static function QueryData($table,$field='',$where='',$order='',$limit='',$param=array()){
-      if(!preg_match('/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/',(string)$table)){
-        return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
-      }
-      $field=empty($field) ? "*" : $field;
-      $field=self::CheckPart("field",$field);
-      if($field===false){
-        $field="*";
-      }
-      if($where!=="" && self::CheckPart("where",$where)===false){
-        return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
-      }
-      if($order!==""){
-        $order=self::CheckPart("order",$order);
-        if($order===false){
-          $order="";
+        if(!preg_match('/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/',(string)$table)){
+            return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
         }
-      }
-      $config=Inc::GetConfig();
-      $limit=(string)$limit==="" ? "" : $limit;
-      if($limit!=="" && self::CheckPart("limit",$limit)===false){
-        return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
-      }
-      $where=empty($where) ? "" : "where ".$where;
-      $order=empty($order) ? "" : "order by ".$order;
-      if(strpos($config['PDO_DSN'],'sqlsrv')!==false){
-        $sql="select ".($limit==="" ? "" : "top ".$limit." ").$field." from ".$table." ".$where." ".$order;
-      }else{
-        $sql="select ".$field." from ".$table." ".$where." ".$order." ".($limit==="" ? "" : "limit ".$limit);
-      }
-      if(is_array($param) && !empty($param) && self::YuSlots($sql)==count($param)){
-        return self::RunYu($sql,$param);
-      }
-      $db=Pdo::GetPdo();
-      try{
-        $stmt=$db->prepare($sql);
-        $stmt->execute();
-        $rows=$stmt->fetchAll(\PDO::FETCH_ASSOC);
-      }catch(\PDOException $e){
-        error_log("[UT-SQL] ".$e->getMessage());
-        return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
-      }
-      $array=array();
-      $n=0;
-      foreach($rows as $row){
-        $row["_n_"]=++$n;
-        $array[]=$row;
-      }
-      $curnum=count($array);
-      $querynum=$limit==="" ? $curnum : Pdo::QueryNum("select count(*) from ".$table." ".$where);
-      $data=array("querydata"=>$array,"curnum"=>$curnum,"querynum"=>$querynum);
-      return $data;
+        $field=empty($field) ? "*" : $field;
+        $field=self::CheckPart("field",$field);
+        if($field===false){
+            $field="*";
+        }
+        if($where!=="" && self::CheckPart("where",$where)===false){
+            return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+        }
+        if($order!==""){
+            $order=self::CheckPart("order",$order);
+            if($order===false){
+                $order="";
+            }
+        }
+        $config=Inc::GetConfig();
+        $limit=(string)$limit==="" ? "" : $limit;
+        if($limit!=="" && self::CheckPart("limit",$limit)===false){
+            return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+        }
+        $where=empty($where) ? "" : "where ".$where;
+        $order=empty($order) ? "" : "order by ".$order;
+        if(strpos($config['PDO_DSN'],'sqlsrv')!==false){
+            if($limit!=="" && strpos($limit,",")!==false){
+                $limitarr=explode(",",$limit);
+                $limit="offset ".intval($limitarr[0])." rows fetch next ".intval($limitarr[1])." rows only";
+                if(empty($order)){
+                    $order="order by (select null)";
+                }
+                $sql="select ".$field." from ".$table." ".$where." ".$order." ".$limit;
+            }else{
+                $sql="select ".($limit==="" ? "" : "top ".$limit." ").$field." from ".$table." ".$where." ".$order;
+            }
+        }else{
+            if($limit!=="" && strpos($limit,",")!==false){
+                $limitarr=explode(",",$limit);
+                $limit=intval($limitarr[1])." offset ".intval($limitarr[0]);
+            }
+            $sql="select ".$field." from ".$table." ".$where." ".$order." ".($limit==="" ? "" : "limit ".$limit);
+        }
+        if(is_array($param) && !empty($param) && self::YuSlots($sql)==count($param)){
+            return self::RunYu($sql,$param);
+        }
+        $db=Pdo::GetPdo();
+        if(!$db){
+            return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+        }
+        try{
+            $stmt=$db->prepare($sql);
+            $stmt->execute();
+            $rows=$stmt->fetchAll(\PDO::FETCH_ASSOC);
+        }catch(\PDOException $e){
+            error_log("[UT-SQL] ".$e->getMessage());
+            return array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+        }
+        $array=array();
+        $n=0;
+        foreach($rows as $row){
+            $row["_n_"]=++$n;
+            $array[]=$row;
+        }
+        $curnum=count($array);
+        $querynum=$limit==="" ? $curnum : Pdo::QueryNum("select count(*) from ".$table." ".$where);
+        $data=array("querydata"=>$array,"curnum"=>$curnum,"querynum"=>$querynum);
+        return $data;
     }
     /**
      * 创建数据
@@ -173,50 +188,53 @@ class Pdo{
      * @return bool 
      */
     public static function InsertData($table,$data,$param=array()){
-      if(!preg_match('/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/',(string)$table)){
-          return false;
-      }
-      $db=Pdo::GetPdo();
-      if(!is_array($data) || empty($data)){
-          return false;
-      }
-      foreach(array_keys($data) as $k){
-          if(self::CheckPart("column",(string)$k)===false){
-              return false;
-          }
-      }
-      $values=array_values($data);
-      $slot=0;
-      foreach($values as $v){
-          if($v==="?"){ $slot++; }
-      }
-      $bind=is_array($param) && !empty($param) && $slot==count($param);
-      if(is_array($param) && !empty($param) && !$bind){
-          return false;
-      }
-      $args=array();
-      $pi=0;
-      foreach($values as $v){
-          if($bind && $v==="?"){
-              $args[]=$param[$pi++];
-          }elseif(is_null($v)){
-              $args[]=null;
-          }elseif(is_bool($v)){
-              $args[]=$v ? 1 : 0;
-          }else{
-              $args[]=(string)$v;
-          }
-      }
-      $sql="insert into ".$table." (".implode(',',array_keys($data)).") values (".implode(",",array_fill(0,count($values),"?")).")";
-      try{
-          $stmt=$db->prepare($sql);
-          $stmt->execute($args);
-      }catch(\PDOException $e){
-          error_log("[UT-SQL] ".$e->getMessage());
-          return false;
-      }
-      $query=$db->lastInsertId();
-      return $query ? (int)$query : true;
+        if(!preg_match('/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/',(string)$table)){
+            return false;
+        }
+        $db=Pdo::GetPdo();
+        if(!$db){
+            return false;
+        }
+        if(!is_array($data) || empty($data)){
+            return false;
+        }
+        foreach(array_keys($data) as $k){
+            if(self::CheckPart("column",(string)$k)===false){
+                return false;
+            }
+        }
+        $values=array_values($data);
+        $slot=0;
+        foreach($values as $v){
+            if($v==="?"){ $slot++; }
+        }
+        $bind=is_array($param) && !empty($param) && $slot==count($param);
+        if(is_array($param) && !empty($param) && !$bind){
+            return false;
+        }
+        $args=array();
+        $pi=0;
+        foreach($values as $v){
+            if($bind && $v==="?"){
+                $args[]=$param[$pi++];
+            }elseif(is_null($v)){
+                $args[]=null;
+            }elseif(is_bool($v)){
+                $args[]=$v ? 1 : 0;
+            }else{
+                $args[]=(string)$v;
+            }
+        }
+        $sql="insert into ".$table." (".implode(',',array_keys($data)).") values (".implode(",",array_fill(0,count($values),"?")).")";
+        try{
+            $stmt=$db->prepare($sql);
+            $stmt->execute($args);
+        }catch(\PDOException $e){
+            error_log("[UT-SQL] ".$e->getMessage());
+            return false;
+        }
+        $query=$db->lastInsertId();
+        return $query ? (int)$query : true;
     }
     /**
      * 更新数据
@@ -234,6 +252,9 @@ class Pdo{
             return false;
         }
         $db=Pdo::GetPdo();
+        if(!$db){
+            return false;
+        }
         $slot=self::YuSlots((string)$where);
         if(is_array($data)){
             foreach(array_keys($data) as $k){
@@ -262,12 +283,12 @@ class Pdo{
                     $updatestr.=$k."=NULL,";
                 }elseif(is_bool($v)){
                     $updatestr.=$k."=".($v ? 1 : 0).",";
-			    }elseif(is_string($v) && preg_match('/^[A-Za-z_][A-Za-z0-9_]*\+\d+$/',$v)){
-			        $updatestr.=$k."=".$v.",";
-			    }else{
+                }elseif(is_string($v) && preg_match('/^[A-Za-z_][A-Za-z0-9_]*\+\d+$/',$v)){
+                    $updatestr.=$k."=".$v.",";
+                }else{
                     $updatestr.=$k."=?,";
                     $args[]=(string)$v;
-		        }
+                }
             }
             $updatestr=rtrim($updatestr,',');
         }
@@ -301,6 +322,9 @@ class Pdo{
             return false;
         }
         $db=Pdo::GetPdo();
+        if(!$db){
+            return false;
+        }
         $args=array();
         if(is_array($param) && !empty($param)){
             if(self::YuSlots((string)$where)!=count($param)){
@@ -333,6 +357,9 @@ class Pdo{
             $yutype=preg_match('/\)\s*(insert|update|delete|replace)\b/i',$trimmed) ? "INSERT" : "SELECT";
         }
         $empty=array("querydata"=>array(),"curnum"=>0,"querynum"=>0);
+        if(!$db){
+            return $yutype=="SELECT" ? $empty : false;
+        }
         $slot=self::YuSlots($sql);
         if($slot!=count((array)$param)){
             error_log("[UT-SQL] param mismatch: ".$slot." slots / ".count((array)$param)." params");
@@ -461,6 +488,9 @@ class Pdo{
      */
     public static function QueryNum($sql){
         $db=Pdo::GetPdo();
+        if(!$db){
+            return 0;
+        }
         try{
             $query=$db->prepare($sql);
             $query->execute();

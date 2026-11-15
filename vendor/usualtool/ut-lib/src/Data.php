@@ -27,13 +27,15 @@ class Data{
     /**
      * 获取主数据库
      */
-    public static function GetDb(){
-        static $dbtype=null;
-        if($dbtype===null){
+    public static function GetDb($dbtype=""){
+        static $current=null;
+        if(!empty($dbtype)){
+            $current=$dbtype;
+        }elseif($current===null){
             $config=Inc::GetConfig();
-            $dbtype=$config["DBTYPE"];
+            $current=$config["DBTYPE"];
         }
-        return $dbtype;
+        return $current;
     }
     /**
      * 连接数据库

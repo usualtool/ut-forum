@@ -25,6 +25,10 @@ class Pgsql{
         if(self::$PgsqlDb){
             return self::$PgsqlDb;
         }
+        if(!function_exists("pg_connect")){
+            error_log("[UT-SQL] PHP 未启用 pgsql 扩展");
+            return false;
+        }
         $config=Inc::GetConfig();
         $db=@pg_connect("host=".$config["PGSQL_HOST"]." port=".$config["PGSQL_PORT"]." dbname=".$config["PGSQL_DB"]." user=".$config["PGSQL_USER"]." password=".$config["PGSQL_PASS"]);
         if(!$db){
@@ -108,7 +112,16 @@ class Pgsql{
         }
         $where=empty($where) ? "" : "where ".$where;
         $order=empty($order) ? "" : "order by ".$order;
-        $limit=empty($limit) ? "" : "limit ".$limit;
+        if(!empty($limit)){
+            if(strpos($limit,",")!==false){
+                $limitarr=explode(",",$limit);
+                $limit="limit ".intval($limitarr[1])." offset ".intval($limitarr[0]);
+            }else{
+                $limit="limit ".$limit;
+            }
+        }else{
+            $limit="";
+        }
         return self::RunYu("select ".$field." from ".$table." ".$where." ".$order." ".$limit,$param);
     }
     /**
@@ -652,8 +665,8 @@ class Pgsql{
     }
     public static function YuCountSql($sql) {
         $sql = rtrim($sql," \t\n\r;");
-        $sql = preg_replace('/\s+LIMIT\s+\d+(?:\s*,\s*\d+)?\s*$/i','',$sql);
         $sql = preg_replace('/\s+OFFSET\s+\d+\s*$/i','',$sql);
+        $sql = preg_replace('/\s+LIMIT\s+\d+(?:\s*,\s*\d+)?\s*$/i','',$sql);
         return "SELECT COUNT(*) AS total FROM ($sql) AS __count_wrapper";
     }
     /**
