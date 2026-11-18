@@ -66,7 +66,11 @@ class Ai{
             "knowledge_top_n"=>(int)($env["KNOWLEDGE_TOP_N"]??5),
             "knowledge_enable_rerank"=>!empty($env["KNOWLEDGE_ENABLE_RERANK"]),
             "knowledge_model"=>$env["KNOWLEDGE_MODEL"]??"",
-            "knowledge_enable_thinking"=>!empty($env["KNOWLEDGE_ENABLE_THINKING"])
+            "knowledge_enable_thinking"=>!empty($env["KNOWLEDGE_ENABLE_THINKING"]),
+            "image_base_url"=>$env["IMAGE_BASE_URL"]??"",
+            "image_api_key"=>$env["IMAGE_API_KEY"]??"",
+            "image_model"=>$env["IMAGE_MODEL"]??"",
+            "image_size"=>$env["IMAGE_SIZE"]??""
         );
     }
     /**
@@ -198,6 +202,49 @@ class Ai{
             "usage"=>isset($data["usage"])&&is_array($data["usage"])?$data["usage"]:array(),
             "error"=>""
         );
+    }
+    /**
+     * 文生图
+     * @param string $prompt
+     * @param string $model
+     * @param array $options 可选：size、quality、style、n、response_format、user
+     * @return array url、b64_json、error
+     */
+    public static function Image($prompt,$model="",$options=array()){
+        $fail=array("url"=>"","b64_json"=>"","items"=>array(),"error"=>"");
+        $ai=new UAi(self::RunConfig());
+        $json=$ai->Image((string)$prompt,(string)$model,is_array($options)?$options:array());
+        if(!is_string($json) || $json===""){
+            $fail["error"]="上游返回为空";
+            return $fail;
+        }
+        $data=json_decode($json,true);
+        if(!is_array($data)){
+            $fail["error"]="上游返回无法解析：".substr($json,0,300);
+            return $fail;
+        }
+        if(isset($data["error"])){
+            $e=$data["error"];
+            $fail["error"]=is_array($e)?(isset($e["message"])?$e["message"]:json_encode($e,JSON_UNESCAPED_UNICODE)):(string)$e;
+            return $fail;
+        }
+        foreach((array)($data["data"]??array()) as $item){
+            if(!is_array($item)){
+                continue;
+            }
+            $url=(string)($item["url"]??"");
+            $b64=(string)($item["b64_json"]??"");
+            if($url!=="" || $b64!==""){
+                $fail["items"][]=array("url"=>$url,"b64_json"=>$b64);
+            }
+        }
+        $first=$fail["items"][0]??array("url"=>"","b64_json"=>"");
+        $fail["url"]=(string)($first["url"]??"");
+        $fail["b64_json"]=(string)($first["b64_json"]??"");
+        if(empty($fail["items"])){
+            $fail["error"]="上游未返回图片数据";
+        }
+        return $fail;
     }
     /**
      * 流式问答
