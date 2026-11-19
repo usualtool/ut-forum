@@ -24,6 +24,11 @@ class Temp{
     var $tempdir;
     var $cachedir;
     var $tplvars;
+    /**
+     * 常驻进程模式下每请求重新执行编译缓存
+     * @var bool
+     */
+    public static $repeat=false;
     public function __construct($mode,$tempdir,$cachedir){
         $this->tempdir=rtrim($tempdir,'/').'/';
         $this->cachedir=rtrim($cachedir,'/').'/';
@@ -63,7 +68,11 @@ class Temp{
             fclose($handle);
             unset($code);
         }
-        require_once($cache);
+        if(self::$repeat){
+            require $cache;
+        }else{
+            require_once($cache);
+        }
     }
     /**
      * 缓存编译是否过期

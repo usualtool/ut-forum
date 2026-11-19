@@ -1,5 +1,6 @@
 <?php
 namespace usualtool\Lib;
+use usualtool\Lib\Kernel;
 use usualtool\Lib\HtmlFilter;
 /**
        * --------------------------------------------------------       
@@ -57,29 +58,39 @@ class Inc{
             if(!empty($url)){
                 if(is_numeric($url)){
                     echo'<script>alert("'.$text.'");window.history.go('.$url.');</script>';
-                    exit();
+                    self::Stop();
                 }else{
                     echo'<script>alert("'.$text.'");window.location.href="'.$url.'"</script>';
-                    exit();
+                    self::Stop();
                 }
             }else{
                 echo $text;
-                exit();
+                self::Stop();
             }
         }else{
             if(is_numeric($url) || $url===0){
                 echo'<script>window.location.reload();</script>';
-                exit();
+                self::Stop();
             }else{
                 $url=str_replace(array("\r","\n"),"",$url);
-                if(!headers_sent()){
-                    header("Location: ".$url);
-                    exit();
+                if(Kernel::IsLongRun() || !headers_sent()){
+                    Kernel::Header("Location: ".$url);
+                }else{
+                    echo'<script>window.location.href="'.$url.'"</script>';
                 }
-                echo'<script>window.location.href="'.$url.'"</script>';
-                exit();
+                self::Stop();
             }
         }
+    }
+    /**
+     * 终止当前请求
+     * @return void
+     */
+    public static function Stop(){
+        if(Kernel::IsLongRun()){
+            throw new Request();
+        }
+        exit();
     }
     /**
      * 字符过滤
