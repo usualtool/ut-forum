@@ -1,6 +1,7 @@
 <?php
 namespace Controller\Authlogin\Front;
 use usualtool\Lib\Inc;
+use usualtool\Lib\Kernel;
 use usualtool\Lib\Route;
 use Model\Authlogin\Authlogin as AuthloginModel;
 class Auth_wechat{
@@ -18,9 +19,9 @@ class Auth_wechat{
             $openid=$data['openid'] ?? "";
             if(!empty($token) && !empty($openid)){
                 $data_r=$model->WechatUser($token,$openid);
-                setcookie("auth_openid",$data_r['openid'] ?? "");
-                setcookie("auth_name",$data_r['nickname'] ?? "");
-                setcookie("auth_avatar",$data_r['headimgurl'] ?? "");
+                Kernel::Cookie("auth_openid",$data_r['openid'] ?? "");
+                Kernel::Cookie("auth_name",$data_r['nickname'] ?? "");
+                Kernel::Cookie("auth_avatar",$data_r['headimgurl'] ?? "");
                 if(count($state)>1){
                     Inc::GoUrl(Route::Link($state[0],$state[1]));
                 }else{

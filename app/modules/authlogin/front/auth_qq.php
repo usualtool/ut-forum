@@ -1,6 +1,7 @@
 <?php
 namespace Controller\Authlogin\Front;
 use usualtool\Lib\Inc;
+use usualtool\Lib\Kernel;
 use usualtool\Lib\Route;
 use Model\Authlogin\Authlogin as AuthloginModel;
 class Auth_qq{
@@ -20,9 +21,9 @@ class Auth_qq{
                 $openid=$data['openid'] ?? "";
                 if(!empty($openid)){
                     $data_r=$model->QqUser($auths,$token,$openid);
-                    setcookie("auth_openid",$openid);
-                    setcookie("auth_name",$data_r['nickname'] ?? "");
-                    setcookie("auth_avatar",$data_r['figureurl_qq_1'] ?? "");
+                    Kernel::Cookie("auth_openid",$openid);
+                    Kernel::Cookie("auth_name",$data_r['nickname'] ?? "");
+                    Kernel::Cookie("auth_avatar",$data_r['figureurl_qq_1'] ?? "");
                     if(count($state)>1){
                         Inc::GoUrl(Route::Link($state[0],$state[1]));
                     }else{

@@ -2,7 +2,6 @@
 namespace Model\Payment;
 use usualtool\Lib\Data;
 class Pay{
-    /* ---------- 支付通道配置 cms_pay ---------- */
     public function GetList(){
         return Data::QueryData("cms_pay","","","","1")["querydata"] ?? array();
     }
@@ -15,7 +14,6 @@ class Pay{
         }
         return Data::UpdateData("cms_pay",$data,"id=?",array(intval($id)));
     }
-    /* ---------- 支付订单 cms_pay_log ---------- */
     public function GetLog($posnum,$limit=""){
         return Data::QueryData("cms_pay_log","","posnum=?","",$limit,array($posnum))["querydata"][0] ?? array();
     }
@@ -39,12 +37,5 @@ class Pay{
     }
     public function DelLog($where,$param=array()){
         return Data::DelData("cms_pay_log",$where,$param);
-    }
-    /* ---------- 小程序/公众号基础配置 cms_routine ---------- */
-    public function GetRoutine($lang=null){
-        if($lang===null){
-            return Data::QueryData("cms_routine","","","","1")["querydata"][0] ?? array();
-        }
-        return Data::QueryData("cms_routine","","","","1",$lang)["querydata"][0] ?? array();
     }
 }

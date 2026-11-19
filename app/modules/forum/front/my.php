@@ -28,6 +28,15 @@ class My{
         $app->Runin(array("webplace","loginlog"),array("我的",$loginlog));
         $app->Open("my.cms");
         if(($_GET["do"] ?? "")=="payment"){
+            if(!file_exists(UTF_ROOT.'/vendor/usualtool/ut-pay')){
+                http_response_code(503);
+                header('Content-Type: text/html; charset=utf-8');
+                echo'<pre style="padding:24px;font:14px/1.8 monospace">';
+                    echo'缺少 usualtool/ut-pay 依赖<br/>';
+                    echo'https://github.com/usualtool/ut-pay';
+                echo'</pre>';
+                exit(1);
+            }
             $paytype=($_POST["paytype"] ?? "");
             $posnum=Inc::GetRandomString(14,"123456789");
             $amount=($_POST["amount"] ?? "");

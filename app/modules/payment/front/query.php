@@ -1,6 +1,10 @@
 <?php
 namespace Controller\Payment\Front;
 use usualtool\Lib\Inc;
+use usualtool\Payment\Alipay\Sdk as AlipaySdk;
+use usualtool\Payment\Wechat\Init as WechatInit;
+use usualtool\Payment\Load;
+use usualtool\Payment\Douyin\DouyinPay;
 use Model\Payment\Pay as PayModel;
 class Query{
     public function __call($name,$args){
@@ -12,17 +16,32 @@ class Query{
     /**
      * /?m=payment&p=query&lb=alipay
      * /?m=payment&p=return&lb=wechat
+     * /?m=payment&p=query&lb=douyin
     */
-    if($lb=="alipay"):
-    		require_once MODULE_PATH.'/payment/alipay/Config.php';
-    		require_once MODULE_PATH.'/payment/alipay/AopSdk.php';
-    		$row=$model->GetRoutine("0");
+    if($lb=="douyin"):
+            $payset=$model->GetSet();
+            $douyin=new DouyinPay($payset["dy_appid"] ?? "",$payset["dy_salt"] ?? "");
+            $posnum=$_POST["posnum"] ?? ($_GET["posnum"] ?? "");
+            if(!$douyin->Ready() || $posnum==""):
+                    echo json_encode(array("result"=>"fail"));
+            else:
+                    $res=$douyin->QueryOrder($posnum);
+                    if(($res["err_no"] ?? -1)==0 && ($res["data"]["status"] ?? "")=="SUCCESS"):
+                            $model->MarkPaid($posnum,$res["data"]["order_id"] ?? "");
+                            echo json_encode(array("result"=>"payok"));
+                    else:
+                            echo json_encode(array("result"=>"fail"));
+                    endif;
+            endif;
+    elseif($lb=="alipay"):
+    		$payset=$model->GetSet();
+    		AlipaySdk::Load($payset);
     		$posnum=$_POST["posnum"] ?? "";
     		$aop = new \AopClient();
     		$aop->gatewayUrl = 'https://openapi.alipay.com/gateway.do';
-    		$aop->appId = $row["alrteid"];
-    		$aop->rsaPrivateKey = urldecode($row["alapppubkey"]);
-    		$aop->alipayrsaPublicKey = urldecode($row["alpaypubkey"]);
+    		$aop->appId = $payset["ali_appid"] ?? "";
+    		$aop->rsaPrivateKey = urldecode($payset["ali_private_key"]);
+    		$aop->alipayrsaPublicKey = urldecode($payset["ali_public_key"]);
     		$aop->apiVersion = '1.0';
     		$aop->signType = 'RSA2';
     		$aop->postCharset='UTF-8';
@@ -47,7 +66,8 @@ class Query{
     				echo json_encode(array("result"=>"fail"));
     		endif;
     elseif($lb=="wechat"):
-        require_once MODULE_PATH.'/payment/wechat/lib/WxPay.Api.php';
+        WechatInit::Start($model->GetSet());
+        Load::Sdk("Wechat/lib/WxPay.Api.php");
         if(isset($_REQUEST["transaction_id"]) && $_REQUEST["transaction_id"] != ""):
             $transaction_id = $_REQUEST["transaction_id"];
             $input = new \WxPayOrderQuery();

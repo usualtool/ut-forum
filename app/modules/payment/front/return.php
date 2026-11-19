@@ -1,12 +1,9 @@
 <?php
 namespace Controller\Payment\Front;
 use usualtool\Lib\Inc;
-use PayPal\Api\Amount;
-use PayPal\Api\Details;
-use PayPal\Api\ExecutePayment;
-use PayPal\Api\Payment;
-use PayPal\Api\PaymentExecution;
-use PayPal\Api\Transaction;
+use usualtool\Payment\Alipay\Sdk as AlipaySdk;
+use usualtool\Payment\Paypal\Sdk as PaypalSdk;
+use usualtool\Payment\Paypal\Factory as PaypalPay;
 use Model\Payment\Pay as PayModel;
 class Pay_return{
     public function __call($name,$args){
@@ -22,8 +19,8 @@ class Pay_return{
      * /?m=payment&p=return&lb=paypal
     */
     if($lb=="alipay"):
-    		require_once MODULE_PATH.'/payment/alipay/Config.php';
-    		require_once MODULE_PATH.'/payment/alipay/service/AlipayTradeService.php';
+    		$alipay=AlipaySdk::Load($model->GetSet());
+    		\usualtool\Payment\Load::Sdk("Alipay/sdk/service/AlipayTradeWapPayService.php");
     		$arr=$_GET;
     		$alipaySevice = new \AlipayTradeService($alipay); 
     		$result = $alipaySevice->check($arr);
@@ -42,26 +39,24 @@ class Pay_return{
     				Inc::GoUrl($set["url_no"],"支付失败");
     		endif;
     elseif($lb=="paypal"):
-        require_once MODULE_PATH.'/payment/paypal/Config.php';
+        $paypal=PaypalSdk::Start($model->GetSet(),$config["APPURL"]);
     		if(isset($_GET['success']) && $_GET['success'] == 'true'):
-    				$paymentID = $_GET['paymentId'] ?? "";
-    				$payerId = $_GET['PayerID'] ?? "";
-    				$payment = Payment::get($paymentID, $paypal);
-    				$execute = new PaymentExecution();
-    				$execute->setPayerId($payerId);
-    				header("Content-type: text/html; charset=utf-8");
-    						$result = $payment->execute($execute, $paypal);
-    						$paynum=$result->transactions[0]->related_resources[0]->sale->id;
-    						$posnum=$result->transactions[0]->invoice_number;
-    						$amount=$result->transactions[0]->amount->total;
-    						$model->MarkPaid($posnum,$paynum);
-    						$return=$model->GetReturnUrl($posnum);
-    						if(!empty($return)){
-    								Inc::GoUrl(str_replace("&amp;","&",$return)."&posnum=".$posnum,"支付成功");
-    						}else{
-    								Inc::GoUrl($set["url_ok"],"支付成功");
-    						}
-    				return $payment;
+    				$result=PaypalPay::Execute($paypal,$_GET['paymentId'] ?? "",$_GET['PayerID'] ?? "");
+    				if($result===false):
+    						Inc::GoUrl($set["url_no"],"支付失败");
+    						return false;
+    				endif;
+    				$paynum=$result["paynum"];
+    				$posnum=$result["posnum"];
+    				$amount=$result["amount"];
+    				$model->MarkPaid($posnum,$paynum);
+    				$return=$model->GetReturnUrl($posnum);
+    				if(!empty($return)){
+    						Inc::GoUrl(str_replace("&amp;","&",$return)."&posnum=".$posnum,"支付成功");
+    				}else{
+    						Inc::GoUrl($set["url_ok"],"支付成功");
+    				}
+    				return true;
     		else:
     				Inc::GoUrl($set["url_no"],"支付失败");
     		endif;

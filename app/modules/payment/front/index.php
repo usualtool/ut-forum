@@ -33,6 +33,8 @@ class Index{
             Inc::GoUrl(Route::Link("payment", "pay", "lb=wechat&posnum=".$posnum),"");   
         }elseif($form==3 || $form=="paypal"){
             Inc::GoUrl(Route::Link("payment", "pay", "lb=paypal&posnum=".$posnum),"");
+        }elseif($form==4 || $form=="douyin"){
+            Inc::GoUrl(Route::Link("payment", "app", "lb=douyin&posnum=".$posnum),"");
         }
     }else{
         Inc::GoUrl("-1","支付错误,请重试!");

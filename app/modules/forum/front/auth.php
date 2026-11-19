@@ -1,6 +1,7 @@
 <?php
 namespace Controller\Forum\Front;
 use usualtool\Lib\Inc;
+use usualtool\Lib\Kernel;
 use usualtool\Lib\Route;
 use Model\Forum\Forum as ForumModel;
 use Model\Forum\Member as MemberModel;
@@ -17,9 +18,9 @@ class Auth{
         $cookname=$model->GetCookieName();
         $data=$member->GetByOpenid($_COOKIE["auth_openid"] ?? "");
         if($data["querynum"]==1){
-            setcookie("auth_openid","");
-            setcookie("auth_name","");
-            setcookie("auth_avatar","");
+            Kernel::Cookie("auth_openid","");
+            Kernel::Cookie("auth_name","");
+            Kernel::Cookie("auth_avatar","");
             $rows=$data["querydata"][0];
             if($rows["black"]==0){
                 $member->RecordLogin($rows["id"]);
@@ -40,9 +41,9 @@ class Auth{
                 ($_POST["avatar"] ?? ""),
                 $name);
             if($newid){
-                setcookie("auth_openid","");
-                setcookie("auth_name","");
-                setcookie("auth_avatar","");
+                Kernel::Cookie("auth_openid","");
+                Kernel::Cookie("auth_name","");
+                Kernel::Cookie("auth_avatar","");
                 $member->RecordLogin($newid);
                 $session->SetLogin($cookname,$newid,$name);
                 session_regenerate_id(TRUE);

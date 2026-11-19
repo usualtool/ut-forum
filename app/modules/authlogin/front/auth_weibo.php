@@ -1,6 +1,7 @@
 <?php
 namespace Controller\Authlogin\Front;
 use usualtool\Lib\Inc;
+use usualtool\Lib\Kernel;
 use usualtool\Lib\Route;
 use Model\Authlogin\Authlogin as AuthloginModel;
 class Auth_weibo{
@@ -18,9 +19,9 @@ class Auth_weibo{
             $openid=$data['uid'] ?? "";
             if(!empty($token) && !empty($openid)){
                 $data_r=$model->WeiboUser($openid,$token);
-                setcookie("auth_openid",$data['id'] ?? "");
-                setcookie("auth_name",$data_r['screen_name'] ?? "");
-                setcookie("auth_avatar",$data_r['profile_image_url'] ?? "");
+                Kernel::Cookie("auth_openid",$data['id'] ?? "");
+                Kernel::Cookie("auth_name",$data_r['screen_name'] ?? "");
+                Kernel::Cookie("auth_avatar",$data_r['profile_image_url'] ?? "");
                 if(count($state)>1){
                     Inc::GoUrl(Route::Link($state[0],$state[1]));
                 }else{

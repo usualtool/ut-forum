@@ -1,12 +1,12 @@
 <?php
 namespace Controller\Payment\Front;
 use usualtool\Lib\Inc;
-use PayPal\Api\Amount;
-use PayPal\Api\Details;
-use PayPal\Api\ExecutePayment;
-use PayPal\Api\Payment;
-use PayPal\Api\PaymentExecution;
-use PayPal\Api\Transaction;
+use usualtool\Payment\Alipay\Sdk as AlipaySdk;
+use usualtool\Payment\Wechat\Init as WechatInit;
+use usualtool\Payment\Paypal\Sdk as PaypalSdk;
+use usualtool\Payment\Paypal\Factory as PaypalPay;
+use usualtool\Payment\Load;
+use usualtool\Payment\Douyin\DouyinPay;
 use Model\Payment\Pay as PayModel;
 class Notify{
     public function __call($name,$args){
@@ -20,10 +20,29 @@ class Notify{
      * /?m=payment&p=notify&lb=alipay
      * /?m=payment&p=notify&lb=wechat
      * /?m=payment&p=notify&lb=paypal
+     * /?m=payment&p=notify&lb=douyin
     */
-    if($lb=="alipay"):
-    		require_once MODULE_PATH.'/payment/alipay/Config.php';
-        require_once MODULE_PATH.'/payment/alipay/service/AlipayTradeService.php';
+    if($lb=="douyin"):
+            $payset=$model->GetSet();
+            $douyin=new DouyinPay($payset["dy_appid"] ?? "",$payset["dy_salt"] ?? "");
+            if($douyin->Ready() && $douyin->VerifyNotify($_POST)):
+                    $msg=json_decode($_POST["msg"],true);
+                    if(is_array($msg) && ($msg["status"] ?? "")=="SUCCESS"):
+                            $posnum=trim($msg["cp_orderno"] ?? "");
+                            $paynum=trim($msg["order_id"] ?? "");
+                            $model->MarkPaid($posnum,$paynum);
+                            $return=$model->GetReturnUrl($posnum);
+                            if(!empty($return)):
+                                    Inc::HttpPost(str_replace("&amp;","&",$return),"posnum=".$posnum);
+                            endif;
+                    endif;
+                    echo json_encode(array("err_no"=>0,"err_tips"=>"success"));
+            else:
+                    echo json_encode(array("err_no"=>1,"err_tips"=>"verify fail"));
+            endif;
+    elseif($lb=="alipay"):
+    		$alipay=AlipaySdk::Load($model->GetSet());
+    		Load::Sdk("Alipay/sdk/service/AlipayTradeWapPayService.php");
     		$arr=$_POST;
     		$alipaySevice = new \AlipayTradeService($alipay); 
     		$alipaySevice->writeLog(var_export($_POST,true));
@@ -48,9 +67,10 @@ class Notify{
     		endif;
     elseif($lb=="wechat"):
     		ini_set('date.timezone', 'Asia/Shanghai');
-    		require_once MODULE_PATH.'/payment/wechat/lib/WxPay.Api.php';
-    		require_once MODULE_PATH.'/payment/wechat/lib/WxPay.Notify.php';
-    		require_once MODULE_PATH.'/payment/wechat/lib/WxPay.Data.php';
+    		WechatInit::Start($model->GetSet());
+    		Load::Sdk("Wechat/lib/WxPay.Api.php");
+    		Load::Sdk("Wechat/lib/WxPay.Notify.php");
+    		Load::Sdk("Wechat/lib/WxPay.Data.php");
     		$xml = file_get_contents("php://input");
     		$WxPayNotifyReply = new \WxPayNotifyReply();
     		$result = \WxPayResults::Init($xml);
@@ -74,24 +94,23 @@ class Notify{
     		\WxpayApi::replyNotify($WxPayNotifyReply->ToXml());
     		exit();
     elseif($lb=="paypal"):
-    		require_once MODULE_PATH.'/payment/paypal/Config.php';
+    		$paypal=PaypalSdk::Start($model->GetSet(),$config["APPURL"]);
     		if(isset($_POST['success']) && $_POST['success'] == 'true'):
-    				$paymentID = $_POST['paymentId'] ?? "";
-    				$payerId = $_POST['PayerID'] ?? "";
-    				$payment = Payment::get($paymentID, $paypal);
-    				$execute = new PaymentExecution();
-    				$execute->setPayerId($payerId);
-    				$result = $payment->execute($execute, $paypal);
-    				$paynum=$result->transactions[0]->related_resources[0]->sale->id;
-    				$posnum=$result->transactions[0]->invoice_number;
-    				$amount=$result->transactions[0]->amount->total;
+    				$result=PaypalPay::Execute($paypal,$_POST['paymentId'] ?? "",$_POST['PayerID'] ?? "");
+    				if($result===false):
+    						echo "fail";
+    						return false;
+    				endif;
+    				$paynum=$result["paynum"];
+    				$posnum=$result["posnum"];
+    				$amount=$result["amount"];
     				$model->MarkPaid($posnum,$paynum);
     				$return=$model->GetReturnUrl($posnum);
     				if(!empty($return)):
     						Inc::HttpPost(str_replace("&amp;","&",$return),"posnum=".$posnum);
     				endif;
     				echo "success";
-    				return $payment;
+    				return true;
     		else:
     				echo "fail";
     		endif;

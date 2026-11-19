@@ -2,15 +2,11 @@
 namespace Controller\Payment\Front;
 use usualtool\Lib\Inc;
 use usualtool\Lib\Route;
-use \PayPal\Api\Payer;
-use \PayPal\Api\Item;
-use \PayPal\Api\ItemList;
-use \PayPal\Api\Details;
-use \PayPal\Api\Amount;
-use \PayPal\Api\Transaction;
-use \PayPal\Api\RedirectUrls;
-use \PayPal\Api\Payment;
-use \PayPal\Exception\PayPalConnectionException;
+use usualtool\Payment\Alipay\Sdk as AlipaySdk;
+use usualtool\Payment\Wechat\Init as WechatInit;
+use usualtool\Payment\Paypal\Sdk as PaypalSdk;
+use usualtool\Payment\Paypal\Factory as PaypalPay;
+use usualtool\Payment\Load;
 use Model\Payment\Pay as PayModel;
 class Pay{
     public function __call($name,$args){
@@ -32,12 +28,12 @@ class Pay{
         Inc::GoUrl("-1","Paypal ERROR!");
     endif;
     if($lb=="alipay"):
-        require_once MODULE_PATH.'/payment/alipay/Config.php';
+        $alipay=AlipaySdk::Load($model->GetSet());
         $amount=$model->GetAmount($posnum);
         //支付宝移动支付
         if(Inc::IsApp()):
-            require_once MODULE_PATH.'/payment/alipay/service/AlipayTradeWapPayService.php';
-            require_once MODULE_PATH.'/payment/alipay/wappaybuilder/AlipayTradeWapPayContentBuilder.php';
+            Load::Sdk("Alipay/sdk/service/AlipayTradeWapPayService.php");
+            Load::Sdk("Alipay/sdk/wappaybuilder/AlipayTradeWapPayContentBuilder.php");
             $timeout="1m";
             $payRequestBuilder = new \AlipayTradeWapPayContentBuilder();
             $payRequestBuilder->setBody("订单号：".$posnum."，该订单从移动端支付。");
@@ -50,8 +46,8 @@ class Pay{
             return;
     	//支付宝电脑支付
         else:
-            require_once MODULE_PATH.'/payment/alipay/service/AlipayTradePagePayService.php';
-            require_once MODULE_PATH.'/payment/alipay/pagepaybuilder/AlipayTradePagePayContentBuilder.php';
+            Load::Sdk("Alipay/sdk/service/AlipayTradePagePayService.php");
+            Load::Sdk("Alipay/sdk/pagepaybuilder/AlipayTradePagePayContentBuilder.php");
     	    $payRequestBuilder = new \AlipayTradePagePayContentBuilder();
     	    $payRequestBuilder->setBody("订单号：".$posnum."，该订单从电脑端支付。");
     	    $payRequestBuilder->setSubject("支付");
@@ -62,13 +58,14 @@ class Pay{
     	    //var_dump($response);
         endif;
     elseif($lb=="wechat"):
-        require_once MODULE_PATH.'/payment/wechat/lib/WxPay.Api.php';
-        require_once MODULE_PATH.'/payment/wechat/Log.php';
+        WechatInit::Start($payset);
+        Load::Sdk("Wechat/lib/WxPay.Api.php");
+        Load::Sdk("Wechat/Log.php");
     		$pay=$model->GetLog($posnum,"0");
     		$amount=$pay["amount"]*100;
     	//微信移动支付
         if(Inc::IsApp()):
-            require_once MODULE_PATH.'/payment/wechat/WxPay.JsApiPay.php';
+            Load::Sdk("Wechat/WxPay.JsApiPay.php");
     				$logHandler= new \CLogFileHandler(MODULE_PATH.'/payment/logs/wechat_'.date("Y-m-d").'.log');
     				$log = \Log::Init($logHandler, 15);
     				function printf_info($data){
@@ -142,7 +139,7 @@ class Pay{
     				echo '</html>';
     	//微信电脑支付
         else:
-    				require_once MODULE_PATH.'/payment/wechat/WxPay.NativePay.php';
+    				Load::Sdk("Wechat/WxPay.NativePay.php");
     				$timediff=time()-strtotime($pay["postime"]);
     				if($timediff>"7140"):
     					Inc::GoUrl("","支付时间失效!");
@@ -199,45 +196,20 @@ class Pay{
     				endif;
     		endif;
     elseif($lb=="paypal"):
-        require_once MODULE_PATH.'/payment/paypal/Config.php';
+        $paypal=PaypalSdk::Start($payset,$config["APPURL"]);
     		$pay=$model->GetLogPaypal($posnum);
-    		$shipping = 0.00;
-    		$total = $pay["amount"] + $shipping;
-    		$payer = new Payer();
-    		$payer->setPaymentMethod('paypal');
-    		$item = new Item();
-    		$item->setName("Pay Order:".$posnum."")
-    				->setCurrency($pay["unit"])
-    				->setQuantity(1)
-    				->setPrice($pay["amount"]);
-    		$itemList = new ItemList();
-    		$itemList->setItems([$item]);
-    		$details = new Details();
-    		$details->setShipping($shipping)
-    				->setSubtotal($pay["amount"]);
-    		$amount = new Amount();
-    		$amount->setCurrency($pay["unit"])
-    				->setTotal($total)
-    				->setDetails($details);
-    		$transaction = new Transaction();
-    		$transaction->setAmount($amount)
-    				->setItemList($itemList)
-    				->setDescription("Pay ".$pay["posnum"]."")
-    				->setInvoiceNumber($pay["posnum"]);
-    		$redirectUrls = new RedirectUrls();
-    		$redirectUrls->setReturnUrl(SITE_URL.Route::Link("payment", "return", "lb=paypal&success=true"))->setCancelUrl(SITE_URL.Route::Link("payment", "return", "lb=paypal&success=false"));
-    		$payment = new Payment();
-    		$payment->setIntent('sale')
-    				->setPayer($payer)
-    				->setRedirectUrls($redirectUrls)
-    				->setTransactions([$transaction]);
-    		try {	
-    			$payment->create($paypal);
-    		} catch (PayPalConnectionException $e) {
-    				echo $e->getData();
-    				die();
-    		}
-    		$approvalUrl = $payment->getApprovalLink();
+    		$approvalUrl=PaypalPay::Order(
+    		    $paypal,
+    		    $pay["amount"],
+    		    $pay["unit"],
+    		    $pay["posnum"],
+    		    SITE_URL.Route::Link("payment", "return", "lb=paypal&success=true"),
+    		    SITE_URL.Route::Link("payment", "return", "lb=paypal&success=false")
+    		);
+    		if($approvalUrl==""):
+    		    echo "PayPal ERROR!";
+    		    die();
+    		endif;
     		header("Location: {$approvalUrl}");
     endif;
     }
