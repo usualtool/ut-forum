@@ -27,6 +27,9 @@ class App{
      * @return void
      */
     public static function Boot($engine){
+        self::$bindings=array();
+        self::$instances=array();
+        self::$resolving=array();
         self::Set($engine);
         defined('APP_ROOT') or define('APP_ROOT',UTF_ROOT.'/app');
         foreach(glob(APP_ROOT."/modules/*/bind.php") ?: array() as $bind_file){

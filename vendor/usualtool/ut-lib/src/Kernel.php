@@ -56,21 +56,22 @@ class Kernel{
         ini_set('error_log',UTF_ROOT.'/log/php_errors.log');
         ini_set('session.cookie_httponly','1');
         ini_set('session.cookie_samesite','Lax');
+        if((string)Inc::Config('SESSION_SECURE')==='1'){
+            ini_set('session.cookie_secure','1');
+        }
+        ini_set('session.use_strict_mode','1');
         error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED);
         /**
          * 会话
          */
         if(session_status()===PHP_SESSION_NONE){
             $name=session_name();
-            if(self::$longrun && !empty($_COOKIE[$name])){
-                $sid=preg_replace('/[^a-zA-Z0-9,-]/','',$_COOKIE[$name]);
-                if($sid!==""){
-                    session_id($sid);
-                }
+            if(self::$longrun){
+                $sid=isset($_COOKIE[$name]) ? preg_replace('/[^a-zA-Z0-9,-]/','',$_COOKIE[$name]) : '';
+                session_id($sid!=='' ? $sid : '');
             }
             @session_start();
-            if(self::$longrun && session_status()===PHP_SESSION_ACTIVE && empty($_COOKIE[$name])){
-                self::$headers[]="Set-Cookie: ".$name."=".session_id()."; Path=/; HttpOnly";
+            if(self::$longrun && session_status()===PHP_SESSION_ACTIVE){
                 $_COOKIE[$name]=session_id();
             }
         }
@@ -222,6 +223,7 @@ class Kernel{
                 /**
                  * 过程式页面：每请求执行
                  */
+                extract(array_diff_key($GLOBALS,array_flip(array('GLOBALS','_SERVER','_GET','_POST','_COOKIE','_SESSION','_FILES','_ENV','_REQUEST'))),EXTR_SKIP);
                 require $file;
             }
         }else{
@@ -239,7 +241,9 @@ class Kernel{
         self::$headers=array();
         self::$status=200;
         self::$body=null;
+        self::$vars=array();
         Temp::$repeat=true;
+        error_clear_last();
         /**
          * 注入超级全局
          */
@@ -249,13 +253,21 @@ class Kernel{
         $_SERVER=$server;
         $_GET=$get;
         $_COOKIE=$cookie;
-        if(isset($options['post']) && is_array($options['post'])){
-            $_POST=$options['post'];
+        $sessName=session_name();
+        $_sid_in_=isset($_COOKIE[$sessName]) ? preg_replace('/[^a-zA-Z0-9,-]/','',$_COOKIE[$sessName]) : '';
+        $_POST=isset($options['post']) && is_array($options['post']) ? $options['post'] : array();
+        $_FILES=isset($options['files']) && is_array($options['files']) ? $options['files'] : array();
+        if(session_status()!==PHP_SESSION_ACTIVE){
+            $_SESSION=array();
         }
         $_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI'] ?? '/';
         $_SERVER['SCRIPT_NAME']=$_SERVER['SCRIPT_NAME'] ?? '/index.php';
         $_SERVER['HTTP_HOST']=$_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? 'localhost');
         $_SERVER['QUERY_STRING']=$_SERVER['QUERY_STRING'] ?? '';
+        $_REQUEST=array_merge($_GET,$_POST);
+        foreach(array_diff(array_keys($GLOBALS),array('GLOBALS','_SERVER','_GET','_POST','_COOKIE','_SESSION','_FILES','_ENV','_REQUEST','argv','argc')) as $_key_){
+            unset($GLOBALS[$_key_]);
+        }
         /**
          * 执行框架入口（启动 + 分发）
          */
@@ -275,6 +287,9 @@ class Kernel{
                 ob_end_clean();
             }
             if(session_status()===PHP_SESSION_ACTIVE){
+                if(session_id()!==$_sid_in_){
+                    self::$headers[]="Set-Cookie: ".$sessName."=".session_id()."; Path=/; HttpOnly; SameSite=Lax".((($_SERVER['HTTPS'] ?? ''))==='on' ? "; Secure" : "");
+                }
                 session_write_close();
             }
             throw $e;
@@ -289,6 +304,9 @@ class Kernel{
             $output=self::$body;
         }
         if(session_status()===PHP_SESSION_ACTIVE){
+            if(session_id()!==$_sid_in_){
+                self::$headers[]="Set-Cookie: ".$sessName."=".session_id()."; Path=/; HttpOnly; SameSite=Lax".((($_SERVER['HTTPS'] ?? ''))==='on' ? "; Secure" : "");
+            }
             session_write_close();
         }
         return array(
@@ -318,7 +336,7 @@ class Kernel{
      */
     public static function Cookie($name,$value){
         if(self::$longrun){
-            self::$headers[]="Set-Cookie: ".$name."=".rawurlencode($value)."; Path=/";
+            self::$headers[]="Set-Cookie: ".$name."=".rawurlencode($value)."; Path=/; SameSite=Lax";
             return;
         }
         setcookie($name,$value);

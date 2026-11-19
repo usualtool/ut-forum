@@ -41,7 +41,7 @@ class Power{
     }
     /**
      * 执行权限检查
-     * @return bool 返回 true 表示通过，false 表示被拦截
+     * @return true 未配置权限页或命中白名单时返回 true；命中权限页时由权限文件自行处理（放行/终止），不会返回 false
      */
     public function Check(){
         global $app,$m,$p,$config;
@@ -49,20 +49,31 @@ class Power{
         $power_out=$this->deve ? "ADMIN_POWER_OUT" : "FRONT_POWER_OUT";
         $_power_page_=$config[$power_page] ?? '';
         $_power_out_=$config[$power_out] ?? '';
-        if(!empty($_power_page_) && !Inc::Contain($this->page,explode(",",$_power_out_))){
+        if(!empty($_power_page_) && !Inc::Contain($this->page,array_map('trim',explode(",",$_power_out_)))){
             $_auth_=$this->path."/".$_power_page_.".php";
             if(file_exists($_auth_)){
                 $_power_cls_=Inc::GetClassName($_auth_);
                 if($_power_cls_!==null){
                     require_once $_auth_;
-                    $_power_ctrl_=new $_power_cls_();
+                    try{
+                        $_power_ctrl_=App::Make($_power_cls_);
+                    }catch(\Throwable $e){
+                        $_power_ctrl_=new $_power_cls_();
+                    }
                     if(method_exists($_power_ctrl_,"index")||method_exists($_power_ctrl_,"__call")){
                         $_power_ctrl_->index();
                     }
                 }else{
                     $_power_vars_before_=array_keys(get_defined_vars());
-                    require_once $_auth_;
+                    if(Kernel::IsLongRun()){
+                        require $_auth_;
+                    }else{
+                        require_once $_auth_;
+                    }
                     foreach(array_diff_key(get_defined_vars(),array_flip($_power_vars_before_)) as $_power_k_=>$_power_v_){
+                        if($_power_k_==='_power_vars_before_' || $_power_k_==='_power_k_' || $_power_k_==='_power_v_'){
+                            continue;
+                        }
                         $GLOBALS[$_power_k_]=$_power_v_;
                     }
                 }
@@ -72,5 +83,6 @@ class Power{
         }else{
             return true;
         }
+        return true;
     }
 }

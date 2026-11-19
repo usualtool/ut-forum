@@ -29,7 +29,7 @@ class Request extends \Exception{
      * 响应状态码
      * @var int
      */
-    private $status=200;
+    private $status=0;
     /**
      * 响应头 名称=>值
      * @var array
@@ -46,7 +46,7 @@ class Request extends \Exception{
      * @param string|null $body
      * @param string $message
      */
-    public function __construct($status=200,array $headers=array(),$body=null,$message=''){
+    public function __construct($status=0,array $headers=array(),$body=null,$message=''){
         parent::__construct($message);
         $this->status=intval($status);
         $this->headers=$headers;

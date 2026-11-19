@@ -31,7 +31,7 @@ class Inc{
         $config = array();
         foreach($arr as $k=>$v){
             $arrs = explode('=',$v);
-            $config[$arrs[0]] = trim($arrs[1]);
+            $config[$arrs[0]] = isset($arrs[1]) ? trim($arrs[1]) : "";
         } 
         return $config;
     }
@@ -73,7 +73,10 @@ class Inc{
                 self::Stop();
             }else{
                 $url=str_replace(array("\r","\n"),"",$url);
-                if(Kernel::IsLongRun() || !headers_sent()){
+                if(Kernel::IsLongRun()){
+                    throw Request::redirect($url);
+                }
+                if(!headers_sent()){
                     Kernel::Header("Location: ".$url);
                 }else{
                     echo'<script>window.location.href="'.$url.'"</script>';
@@ -486,11 +489,17 @@ class Inc{
      * @return string
      */
     public static function GetIp(){
-        if(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+        $ip=$_SERVER['REMOTE_ADDR'] ?? '';
+        $trusted=array_values(array_filter(array_map('trim',explode(',',(string)self::Config('TRUSTED_PROXIES')))));
+        if(!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && in_array($ip,$trusted,true)){
             $ips=explode(',',$_SERVER['HTTP_X_FORWARDED_FOR']);
-            $ip=trim($ips[0]);
-        }else{
-            $ip=$_SERVER['REMOTE_ADDR'] ?? '';
+            for($i=count($ips)-1;$i>=0;$i--){
+                $candidate=trim($ips[$i]);
+                if(filter_var($candidate,FILTER_VALIDATE_IP) && !in_array($candidate,$trusted,true)){
+                    $ip=$candidate;
+                    break;
+                }
+            }
         }
         return filter_var($ip,FILTER_VALIDATE_IP) ? $ip : '0.0.0.0';
     }
@@ -765,50 +774,72 @@ class Inc{
      * @param int $type 默认为0 readfile数据流方式获取，否则为curl
      * @return array 返回文件信息集合
      */
-    public static function SaveFile($url,$save_dir='',$filename='',$type=0){  
+    public static function SaveFile($url,$save_dir='',$filename='',$type=0){
         if(trim($url) == ''){
             return false;
-        }  
+        }
+        $scheme=strtolower((string)parse_url($url,PHP_URL_SCHEME));
+        if(!in_array($scheme,array('http','https'))){
+            return false;
+        }
+        $host=(string)parse_url($url,PHP_URL_HOST);
+        $ip=filter_var($host,FILTER_VALIDATE_IP) ? $host : gethostbyname($host);
+        if(!filter_var($ip,FILTER_VALIDATE_IP,FILTER_FLAG_NO_PRIV_RANGE|FILTER_FLAG_NO_RES_RANGE)){
+            return false;
+        }
+        $save_dir=str_replace("\\","/",(string)$save_dir);
+        if(strpos($save_dir,'..')!==false){
+            return false;
+        }
         if(trim($save_dir) == ''){
             $save_dir = './';
-        }  
+        }
         if(0 !== strrpos($save_dir, '/')){
             $save_dir.= '/';
-        }   
+        }
         if(!file_exists($save_dir) && !mkdir($save_dir, 0777, true)){
             return false;
-        }    
-        if($type){  
-            $ch = curl_init();  
-            $timeout = 5;  
+        }
+        $filename=basename(str_replace("\\","/",(string)$filename));
+        if($type){
+            $ch = curl_init();
+            $timeout = 5;
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);  
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);  
-            $content = curl_exec($ch);  
-            
+            curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+            curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            $content = curl_exec($ch);
+
             if(is_resource($ch)){
                 curl_close($ch);
             }else{
                 unset($ch);
             }
-        }else{  
-            ob_start();  
-            readfile($url);  
-            $content = ob_get_contents();  
-            ob_end_clean();  
-        }   
+        }else{
+            ob_start();
+            readfile($url,false,stream_context_create(array('http'=>array('follow_location'=>0,'max_redirects'=>0))));
+            $content = ob_get_contents();
+            ob_end_clean();
+        }
+        if(!isset($content) || $content===false || $content===''){
+            return false;
+        }
         $size = strlen($content);
-        $fp2 = @fopen($save_dir . $filename, 'a');  
-        fwrite($fp2, $content);  
-        fclose($fp2);  
-        unset($content, $url);  
-        return array(  
-        'file_name' => $filename,  
-        'save_path' => $save_dir . $filename,  
-        'file_size' => $size  
-        );  
+        $fp2 = @fopen($save_dir . $filename, 'a');
+        if(!$fp2){
+            return false;
+        }
+        fwrite($fp2, $content);
+        fclose($fp2);
+        unset($content, $url);
+        return array(
+        'file_name' => $filename,
+        'save_path' => $save_dir . $filename,
+        'file_size' => $size
+        );
     } 
     /**
      * 检测文件夹权限
