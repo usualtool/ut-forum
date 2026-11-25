@@ -1,20 +1,24 @@
-#### 系统简述
-UTForum 是一款简洁、轻量、扩展性强的社区论坛系统，基于 UT 框架（UT Framework v7+）开发，遵循 Apache 2.0 开源协议。
+#### System Overview
+UTForum is a concise, lightweight, and highly scalable community forum system developed based on the UT Framework (UT Framework v7+) and following the Apache 2.0 open source protocol.
 
-#### 特性
+#### Project Home
+- https://github.com/usualtool
+- https://gitee.com/usualtool
 
-- 简洁的社区论坛系统，开箱即用
-- 基于 UT 框架开发，扩展性强
-- 支持在线安装 UT 开放市场的应用
-- 社区管理功能内置于系统本身，管理员登录社区后即可进行管理
-- 支持通过 UT 可视包以安装模块的方式安装，也可以直接下载压缩包安装
+#### Characteristic
 
-#### 系统要求
-- Web 服务器：Nginx / Apache / IIS
-- PHP 7+（基于 UT 框架 7+）
+- A concise community forum system, ready to use out of the box.
+- Developed based on the UT framework, with strong scalability.
+- Support online installation of UT open market applications.
+- The community management function is built into the system itself, and administrators can manage the community after logging in.
+- Support installing modules through UT visual package, or directly downloading compressed files for installation.
 
-#### 安装方式 
-- 下载安装包并解压
-- 运行应用域名/IP进行初始配置
-- 初始超级账户密码，均为admin
-> 首次登录后请立即修改默认密码。
+#### Requirement
+- Web Server: Nginx / Apache / IIS
+- PHP 7+（UT Framework 7+）
+- Database: MySQL
+
+#### Installation method 
+- Download the installation package and unzip it.
+- Run the application domain/IP for initial configuration.
+- The initial super account/password is admin.

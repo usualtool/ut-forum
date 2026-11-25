@@ -1,7 +1,7 @@
 {
     "name":             "usualtool/ut-forum",
     "description":      "UTForum 是一款简洁、轻量、扩展性强的社区论坛系统，基于 UT 框架（UT Framework v7+）开发，遵循 Apache 2.0 开源协议。",
-    "keywords":         ["UTForum", "社区论坛"],
+    "keywords":         ["UTForum", "社区论坛", "bbs"],
     "homepage":         "https://github.com/usualtool",
     "license": "Apache-2.0",
     "authors": [{
