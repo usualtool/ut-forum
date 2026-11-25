@@ -1,7 +1,7 @@
 {
-    "name":             "usualtool/framework",
-    "description":      "UsualTool Framework (UT) is a PHP-based multi-end development framework with a comprehensive class library, suitable for building various types of applications.",
-    "keywords":         ["UT框架", "UsualTool Framework", "UTFramework"],
+    "name":             "usualtool/ut-forum",
+    "description":      "UTForum是一款简洁的社区论坛系统，扩展性强，支持在线安装UT开放市场的应用。",
+    "keywords":         ["UTForum", "社区论坛"],
     "homepage":         "https://github.com/usualtool",
     "license": "Apache-2.0",
     "authors": [{
